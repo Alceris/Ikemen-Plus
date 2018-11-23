@@ -1392,7 +1392,7 @@ channel = 1
 [State NHB -ZC]
 type = nothitby
 trigger1 = prevstateno = 750 && animelemtime(3) < 0
-value = SCA
+value = SCA,AA,AP,AT
 time = 1
 
 [State 255, Hit]
@@ -3114,7 +3114,7 @@ x = 24
 [State 890, NHB]
 type = nothitby
 trigger1 = 1
-value = SCA
+value = SCA,AA,AP,AT
 time = 1
 [State 890, Push]
 type = playerpush
@@ -3186,7 +3186,7 @@ value = 140
 [State 895, NHB]
 type = nothitby
 trigger1 = 1
-value = SCA
+value = SCA,AA,AP,AT
 time = 1
 [State 895, Push]
 type = playerpush

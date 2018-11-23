@@ -22,25 +22,25 @@ const ^/char kuuhaktokigou = " !()-,[]:"\"\t\r\n + enzansiMoji;
 |CtrlTy
 {
   Unknown,
-  ChangeState, SelfState, ChangeAnim, ChangeAnim2,
+  ChangeState, SelfState, ChangeAnim, ChangeAnim2, ReverseState,
   PosSet, PosAdd, VelSet, VelAdd, VelMul, Turn,
-  VarSet, VarAdd, ParentVarSet, ParentVarAdd, VarRangeSet,
+  VarSet, VarAdd, ParentVarSet, ParentVarAdd, RootVarSet, RootVarAdd, VarRangeSet,
   VarRandom,
   CtrlSet, StateTypeSet, SprPriority,
-  HitDef, Projectile, ReversalDef,
+  HitDef, Projectile, ReversalDef, HitDefClear,
   AttackDist,
   HitOverride,
-  Pause, SuperPause,
+  Pause, SuperPause, TotalPause,
   LifeAdd, LifeSet, PowerAdd, PowerSet,
-  TargetLifeAdd, TargetBind, BindToTarget, TargetState,
+  TargetLifeAdd, TargetLifeSet, TargetBind, BindToTarget, TargetState, TargetChangeAnim, TargetChangeAnim2,
   TargetVelSet, TargetVelAdd, TargetFacing,
-  TargetPowerAdd, TargetDrop,
+  TargetPowerAdd, EnemyPowerAdd, TargetDrop, TargetVarSet, TargetVarAdd, DelegateTarget,
   HitBy, NotHitBy, AttackMulSet, DefenceMulSet,
   MoveHitReset,
   AssertSpecial, PosFreeze, PlayerPush, Gravity,
   BindToParent, BindToRoot,
   Helper,
-  DestroySelf,
+  DestroySelf, DestroyTarget,
   Explod, GameMakeAnim, ModifyExplod, ExplodBindTime, RemoveExplod,
   AfterImage, AfterImageTime, MakeDust,
   AngleDraw, AngleAdd, AngleMul, AngleSet,
@@ -58,6 +58,7 @@ const ^/char kuuhaktokigou = " !()-,[]:"\"\t\r\n + enzansiMoji;
   VictoryQuote,
   RemapPal,
   Zoom,
+  WinAdd,
   Null
 }
 &StateCtrl
@@ -82,6 +83,8 @@ const ^/char kuuhaktokigou = " !()-,[]:"\"\t\r\n + enzansiMoji;
   public int ignorehitpause;
   public int persistent;
   public int no;
+  public int dodge;
+  public bool nominus;
   public bool i;
   new()
   {
@@ -98,6 +101,8 @@ const ^/char kuuhaktokigou = " !()-,[]:"\"\t\r\n + enzansiMoji;
     `hitdefpersist = 0;
     `movehitpersist = 0;
     `juggle = 0;
+	`dodge = 0;
+	`nominus = false;
   }
   public void tmpreset()
   {
@@ -138,8 +143,8 @@ const ^/char kuuhaktokigou = " !()-,[]:"\"\t\r\n + enzansiMoji;
     `guard_sparkno = 40;
     `ko_echo = 0;
     `volume = 256;
-    `intpersistindex = 0;
-    `floatpersistindex = 0;
+    `intpersistindex = 60;
+    `floatpersistindex = 40;
   }
 }
 &Size
@@ -804,7 +809,7 @@ public &StateBuilder
         `lasterror = hit[i] + "が無効な値です";
         ret false;
       }
-      if(hitdef && i == 1) hitdefflg = flg;
+      if(hitdef) hitdefflg = flg;
       if(#foo > 2) break;
       i++;
     while i < #hit:
@@ -1146,6 +1151,17 @@ public &StateBuilder
       else:
         out .= temp;
       }
+    cond .s.equ("trunc", token):
+      if(`oneArg(token, temp=, in=)=>typ < 0) ret -1;
+      branch{
+      cond typ == 0:
+        out .= temp .= "$`trTrunc()";
+      cond typ == 1:
+        out .= "(int).m.floor(" .= temp .= ')';
+        typ = 2;
+      else:
+        out .= temp;
+      }
     cond .s.equ("pi", token):
       out .= ".m.PI";
       typ = 1;
@@ -1388,7 +1404,7 @@ public &StateBuilder
       out .= obj .= "trP2Life()";
       typ = 0;
     cond .s.equ("lifemax", token):
-      out .= obj .= "sysivar[.iLIFEMAX]";
+      out .= '(' .= obj .= "sysivar[.iLIFEMAX]-" .= obj .= "sysivar[.iLIFEPENALTY])";
       typ = 2;
     cond .s.equ("power", token):
       out .= obj .= "getSharePower()";
@@ -1425,6 +1441,12 @@ public &StateBuilder
     cond .s.equ("id", token):
       out .= obj .= "trId()";
       typ = 2;
+    cond .s.equ("leftbound", token):
+      out .= ".com.cam.boundL";
+      typ = 1;
+    cond .s.equ("rightbound", token):
+      out .= ".com.cam.boundR";
+      typ = 1;
     cond .s.equ("facing", token):
       out .= "(int)" .= obj .= "facing";
       typ = 2;
@@ -1849,12 +1871,51 @@ public &StateBuilder
     cond .s.equ("stateno", token):
       out .= obj .= "stVal.no";
       typ = 2;
+    cond .s.equ("stateowner", token):
+      out .= obj .= "stVal.playerno+1";
+      typ = 2;
+    cond .s.equ("dodge", token):
+      out .= obj .= "stVal.hb.dodge";
+      typ = 2;
+    cond .s.equ("playerno", token):
+      out .= obj .= "playerno+1";
+      typ = 2;
+    cond .s.equ("pause", token):
+      out .= obj .= "trPause()";
+      typ = 2;
+    cond .s.equ("super", token):
+      out .= obj .= "trSuper()";
+      typ = 2;
+    cond .s.equ("totalpause", token):
+      out .= obj .= "trTotal()";
+      typ = 2;
+    cond .s.equ("fighting", token):
+      out .= ".com.intro == 0";
+      typ = 3;
+    cond .s.equ("clsn1", token):
+      out .= obj .= "trClsn1Count()";
+      typ = 2;
+    cond .s.equ("clsn2", token):
+      out .= obj .= "trClsn2Count()";
+      typ = 2;
+    cond .s.equ("clsn3", token):
+      out .= obj .= "trClsn3Count()";
+      typ = 2;
     cond .s.equ("p2stateno", token):
       out .= obj .= "trP2StateNo()";
       typ = 0;
     cond .s.equ("prevstateno", token):
       out .= obj .= "stVal.prevno";
       typ = 2;
+    cond .s.equ("prevstatetime", token):
+      out .= obj .= "stVal.prevtime";
+      typ = 2;
+    cond .s.equ("prevstateowner", token):
+      out .= obj .= "stVal.prevplayerno+1";
+      typ = 2;
+    cond .s.equ("prevstatectrl", token):
+      out .= obj .= "stVal.prevctrl";
+      typ = 3;
     cond .s.equ("statetype", token) || .s.equ("p2statetype", token):
       if(!eqneq2(out=, in=, typ=)<, [bool(%char out=){
         bool p2 = token[0] == 'p';
@@ -1907,6 +1968,54 @@ public &StateBuilder
         if(p2) typ = 0;
         ret true;
       }]) ret -1;
+    cond .s.equ("prevstatetype", token):
+      if(!eqneq2(out=, in=, typ=)<, [bool(%char out=){
+        ^/char sty;
+        token = `tokenizer(in=);
+        branch{
+        cond #token > 0:
+          switch(token[0]){
+          case 's':
+            sty = ".StTy::S";
+          case 'c':
+            sty = ".StTy::C";
+          case 'a':
+            sty = ".StTy::A";
+          case 'l':
+            sty = ".StTy::L";
+          default:
+            break, else;
+          }
+        else:
+          `lasterror = token + "が無効な値です";
+          ret false;
+        }
+        out .= obj .= "trPrevStateType(" .= sty .= ")";
+        ret true;
+      }]) ret -1;
+    cond .s.equ("prevmovetype", token):
+      if(!eqneq2(out=, in=, typ=)<, [bool(%char out=){
+        ^/char tmp;
+        token = `tokenizer(in=);
+        branch{
+        cond #token > 0:
+          switch(token[0]){
+          case 'i':
+            tmp = ".MovTy::I";
+          case 'a':
+            tmp = ".MovTy::A";
+          case 'h':
+            tmp = ".MovTy::H";
+          default:
+            break, else;
+          }
+        else:
+          `lasterror = token + "が無効な値です";
+          ret false;
+        }
+        out .= obj .= "trPrevMoveType(" .= tmp .= ")";
+        ret true;
+      }]) ret -1;
     cond .s.equ("teammode", token):
       if(!eqneq(out=, in=, typ=)<, [bool(){
         ^/char pty;
@@ -1952,6 +2061,9 @@ public &StateBuilder
         typ = 2;
       cond .s.equ("damage", token):
         out .= obj .= "stVal.hb.damage";
+        typ = 2;
+      cond .s.equ("maxlifedamage", token):
+        out .= obj .= "stVal.hb.maxlifedamage";
         typ = 2;
       cond .s.equ("hitcount", token):
         out .= obj .= "stVal.hb.hitcount";
@@ -2072,6 +2184,15 @@ public &StateBuilder
           typ = 3;
         }
       }
+	cond .s.equ("hitflag", token):
+      out .= obj .= "stVal.hit.hitflag";
+      typ = 2;
+	  cond .s.equ("nominus", token):
+		out .= obj .= "stVal.nominus";
+		typ = 3;
+	cond .s.equ("hitpriority", token):
+      out .= obj .= "clash";
+      typ = 2;
     cond
       .s.equ("numhelper", token) || .s.equ("numexplod", token)
       || .s.equ("numtarget", token) || .s.equ("numprojid", token)
@@ -2120,6 +2241,12 @@ public &StateBuilder
       }
     cond .s.equ("noko", token):
       out .= ".gs(.gsNOKO)";
+      typ = 3;
+    cond .s.equ("isplayer", token):
+      out .= "`player";
+      typ = 3;
+    cond .s.equ("unkillable", token):
+      out .= "`ls(.lsUNKILLABLE)";
       typ = 3;
     cond .s.equ("active", token):
       out .= obj .= "isActive()";
@@ -2187,7 +2314,10 @@ public &StateBuilder
       out .= obj .= "trHitPauseTime()";
       typ = 2;
     cond .s.equ("ctrl", token):
-      out .= obj .= "canCtrl()";
+      out .= obj .= "ctrl";
+      typ = 3;
+    cond .s.equ("ctrlover", token):
+      out .= obj .= "ctrlOver()";
       typ = 3;
     cond .s.equ("teamside", token):
       out .= "((int)(" .= obj .= "playerno&1)+1)";
@@ -2225,6 +2355,9 @@ public &StateBuilder
     cond .s.equ("bottomedge", token):
       out .= obj .= "trBottomEdge()";
       typ = 1;
+    cond .s.equ("groundlevel", token):
+      out .= ".com.cam.groundLevel()";
+      typ = 1;
     cond .s.equ("camerapos", token):
       token = `tokenizer(in=);
       branch{
@@ -2261,16 +2394,46 @@ public &StateBuilder
       out .= obj .= "trRoundsExisted()";
       typ = 2;
     cond .s.equ("movecontact", token):
-      out .= obj .= "trMoveContact()";
+      out .= obj .= "trMoveContact(false)";
+      typ = 2;
+    cond .s.equ("movecontacttrue", token):
+      out .= obj .= "trMoveContact(true)";
       typ = 2;
     cond .s.equ("movereversed", token):
-      out .= obj .= "trMoveReversed()";
+      out .= obj .= "trMoveReversed(false)";
+      typ = 2;
+    cond .s.equ("movereversedtrue", token):
+      out .= obj .= "trMoveReversed(true)";
       typ = 2;
     cond .s.equ("movehit", token):
-      out .= obj .= "trMoveHit()";
+      out .= obj .= "trMoveHit(false)";
+      typ = 2;
+    cond .s.equ("movehittrue", token):
+      out .= obj .= "trMoveHit(true)";
       typ = 2;
     cond .s.equ("moveguarded", token):
-      out .= obj .= "trMoveGuarded()";
+      out .= obj .= "trMoveGuarded(false)";
+      typ = 2;
+    cond .s.equ("moveguardedtrue", token):
+      out .= obj .= "trMoveGuarded(true)";
+      typ = 2;
+    cond .s.equ("movedodged", token):
+      out .= obj .= "trMoveDodged(false)";
+      typ = 2;
+    cond .s.equ("movedodgedtrue", token):
+      out .= obj .= "trMoveDodged(true)";
+      typ = 2;
+    cond .s.equ("moveclash", token):
+      out .= obj .= "trMoveClash()";
+      typ = 2;
+    cond .s.equ("moveclashtrue", token):
+      out .= obj .= "trMoveClash()";
+      typ = 2;
+    cond .s.equ("moveclashed", token):
+      out .= obj .= "trMoveClashed()";
+      typ = 2;
+    cond .s.equ("moveclashedtrue", token):
+      out .= obj .= "trMoveClashed()";
       typ = 2;
     cond .s.equ("roundstate", token):
       out .= obj .= "roundState()";
@@ -2281,6 +2444,30 @@ public &StateBuilder
     cond .s.equ("ailevel", token):
       out .= obj .= "trAILevel()";
       typ = 2;
+    cond .s.equ("spritegroup", token):
+      out .= obj .= "trSpriteGroup()";
+      typ = 2;
+    cond .s.equ("spriteindex", token):
+      out .= obj .= "trSpriteIndex()";
+      typ = 2;
+    cond .s.equ("spriteoffset.x", token):
+      out .= obj .= "trSpriteOffsetX()";
+      typ = 2;
+    cond .s.equ("spriteoffset.y", token):
+      out .= obj .= "trSpriteOffsetY()";
+      typ = 2;
+    cond .s.equ("spritewidth", token):
+      out .= obj .= "trSpriteWidth()";
+      typ = 2;
+    cond .s.equ("spriteheight", token):
+      out .= obj .= "trSpriteHeight()";
+      typ = 2;
+    cond .s.equ("spritecenter.x", token):
+      out .= obj .= "trSpriteCenterX()";
+      typ = 1;
+    cond .s.equ("spritecenter.y", token):
+      out .= obj .= "trSpriteCenterY()";
+      typ = 1;
     cond .s.equ("const240p", token):
       if(`oneArg(token, temp=, in=)=>typ < 0) ret -1;
       `expCast(out=, 1, typ, temp);
@@ -3122,8 +3309,12 @@ public &StateBuilder
       switch(`state.ctrlList[-1].typ){
       case .CtrlTy::ChangeState, .CtrlTy::SelfState:
         if(!`changeState(am=)) ret false;
+      case .CtrlTy::ReverseState:
+        if(!`reverseState(am=)) ret false;
       case .CtrlTy::ChangeAnim, .CtrlTy::ChangeAnim2:
         if(!`changeAnim(am=)) ret false;
+      case .CtrlTy::TargetChangeAnim, .CtrlTy::TargetChangeAnim2:
+        if(!`targetChangeAnim(am=)) ret false;
       case
         .CtrlTy::PosSet, .CtrlTy::PosAdd,
         .CtrlTy::VelSet, .CtrlTy::VelAdd, .CtrlTy::VelMul
@@ -3131,7 +3322,8 @@ public &StateBuilder
         if(!`posvelSet(am=)) ret false;
       case
         .CtrlTy::VarSet, .CtrlTy::VarAdd,
-        .CtrlTy::ParentVarSet, .CtrlTy::ParentVarAdd
+        .CtrlTy::ParentVarSet, .CtrlTy::ParentVarAdd,
+		.CtrlTy::RootVarSet, .CtrlTy::RootVarAdd
         :
         if(!`varSet(am=)) ret false;
       case .CtrlTy::VarRangeSet:
@@ -3140,6 +3332,8 @@ public &StateBuilder
         if(!`varRandom(am=)) ret false;
       case .CtrlTy::Turn:
         if(!`turn(am=)) ret false;
+      case .CtrlTy::DelegateTarget:
+        if(!`delegateTarget(am=)) ret false;
       case .CtrlTy::CtrlSet:
         if(!`ctrlSet(am=)) ret false;
       case .CtrlTy::StateTypeSet:
@@ -3148,6 +3342,8 @@ public &StateBuilder
         if(!`sprPriority(am=)) ret false;
       case .CtrlTy::HitDef, .CtrlTy::Projectile, .CtrlTy::ReversalDef:
         if(!`hitDef(am=)) ret false;
+      case .CtrlTy::HitDefClear:
+        if(!`hitDefClear(am=)) ret false;
       case .CtrlTy::AttackDist:
         if(!`attackDist(am=)) ret false;
       case .CtrlTy::HitOverride:
@@ -3156,6 +3352,8 @@ public &StateBuilder
         if(!`pause(am=)) ret false;
       case .CtrlTy::SuperPause:
         if(!`superPause(am=)) ret false;
+      case .CtrlTy::TotalPause:
+        if(!`totalPause(am=)) ret false;
       case .CtrlTy::LifeAdd:
         if(!`lifeAdd(am=)) ret false;
       case .CtrlTy::LifeSet:
@@ -3166,6 +3364,8 @@ public &StateBuilder
         if(!`powerSet(am=)) ret false;
       case .CtrlTy::TargetLifeAdd:
         if(!`targetLifeAdd(am=)) ret false;
+      case .CtrlTy::TargetLifeSet:
+        if(!`targetLifeSet(am=)) ret false;
       case .CtrlTy::TargetBind, .CtrlTy::BindToTarget:
         if(!`targetBind(am=)) ret false;
       case .CtrlTy::TargetState:
@@ -3176,8 +3376,12 @@ public &StateBuilder
         if(!`targetFacing(am=)) ret false;
       case .CtrlTy::TargetPowerAdd:
         if(!`targetPowerAdd(am=)) ret false;
+      case .CtrlTy::EnemyPowerAdd:
+        if(!`enemyPowerAdd(am=)) ret false;
       case .CtrlTy::TargetDrop:
         if(!`targetDrop(am=)) ret false;
+	  case .CtrlTy::TargetVarSet, .CtrlTy::TargetVarAdd:
+        if(!`targetVarSet(am=)) ret false;
       case .CtrlTy::HitBy, .CtrlTy::NotHitBy:
         if(!`hitBy(am=)) ret false;
       case .CtrlTy::AttackMulSet:
@@ -3200,6 +3404,8 @@ public &StateBuilder
         if(!`helper(am=)) ret false;
       case .CtrlTy::DestroySelf:
         if(!`destroySelf(am=)) ret false;
+      case .CtrlTy::DestroyTarget:
+        if(!`destroyTarget(am=)) ret false;
       case .CtrlTy::Explod, .CtrlTy::GameMakeAnim, .CtrlTy::ModifyExplod:
         if(!`explod(am=)) ret false;
       case .CtrlTy::ExplodBindTime:
@@ -3260,6 +3466,8 @@ public &StateBuilder
         if(!`remapPal(am=)) ret false;
       case .CtrlTy::Zoom:
         if(!`zoom(am=)) ret false;
+      case .CtrlTy::WinAdd:
+        if(!`winAdd(am=)) ret false;
       default:
         {
           bool error = false;
@@ -3479,13 +3687,30 @@ public &StateBuilder
         ret true;
       }])) ret false;
       if(`state.hitdefpersist == 0) `state.deftask .= "`clearHitDef();";
+      if(!`stateParam(param=, "dodge", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.deftask=, data=, "if(!(",
+            "))`clearDodge();", 3)) ret false;
+        `state.dodge = 1;
+        ret true;
+      }])) ret false;
+      if(`state.dodge == 0) `state.deftask .= "`clearDodge();";
       if(!`stateParam(param=, "sprpriority", [`paraF_t(data=){
         if(
           !`fullExpression(
             `state.deftask=, data=, "`sprpriority=", ";", 2)) ret false;
         ret true;
       }])) ret false;
-      if(!`stateParam(param=, "facep2", [`paraF_t(data=){
+      if(!`stateParam(param=, "nominus", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.deftask=, data=, "`stVal.nominus=", ";", 3)) ret false;
+		`state.nominus = true;
+        ret true;
+      }])) ret false;
+      if(`state.nominus == false) `state.deftask .= "`stVal.nominus=false;";
+     if(!`stateParam(param=, "facep2", [`paraF_t(data=){
         if(
           !`fullExpression(
             `state.deftask=, data=, "if(",
@@ -3576,6 +3801,13 @@ public &StateBuilder
       ret true;
     }]);
   }
+  bool reverseState(&.tbl.NameTable!^/char? param=)
+  {
+    ret `stateSec(param=,[bool(){
+      `state.ctrlList[-1].task .= "`trReverseState();";
+      ret true;
+    }]);
+  }
   bool changeAnim(&.tbl.NameTable!^/char? param=)
   {
     ret `stateSec(param=,[bool(){
@@ -3604,6 +3836,42 @@ public &StateBuilder
         ret false;
       }
       `state.ctrlList[-1].task .= elem;
+      ret true;
+    }]);
+  }
+  bool targetChangeAnim(&.tbl.NameTable!^/char? param=)
+  {
+    ret `stateSec(param=,[bool(){
+      `state.ctrlList[-1].task .= "%int tar=`getTarget(-1);if(#tar==0)ret;int e=0;";
+      if(!`stateParam(param=, "id", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=,
+            "tar=`getTarget(", ");if(#tar==0)ret;", 2)) ret false;
+        ret true;
+      }])) ret false;
+      if(!`stateParam(param=, "elem", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "e=", ";", 2)) ret false;
+		ret true;
+      }])) ret false;
+      bool value = false;
+      if(!`stateParam(param=, "value", [`paraF_t(data=){
+        value = true;
+        `state.ctrlList[-1].task .=
+          `state.ctrlList[-1].typ == .CtrlTy::TargetChangeAnim2
+          ? "`trTargetChangeAnim2" : "`trTargetChangeAnim";
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=,
+            "(tar, .m.max!int?(0,", "), e);", 2)) ret false;
+        ret true;
+      }])) ret false;
+      if(!value){
+        `lasterror = "valueが指定されていません";
+        ret false;
+      }
       ret true;
     }]);
   }
@@ -3666,11 +3934,20 @@ public &StateBuilder
       bool par =
         `state.ctrlList[-1].typ == .CtrlTy::ParentVarSet
         || `state.ctrlList[-1].typ == .CtrlTy::ParentVarAdd;
+      bool root =
+        `state.ctrlList[-1].typ == .CtrlTy::RootVarSet
+        || `state.ctrlList[-1].typ == .CtrlTy::RootVarAdd;
       bool add =
         `state.ctrlList[-1].typ == .CtrlTy::VarAdd
-        || `state.ctrlList[-1].typ == .CtrlTy::ParentVarAdd;
-      if(par){
+        || `state.ctrlList[-1].typ == .CtrlTy::ParentVarAdd
+		|| `state.ctrlList[-1].typ == .CtrlTy::RootVarAdd
+		|| `state.ctrlList[-1].typ == .CtrlTy::TargetVarAdd;
+     if(par){
         `state.ctrlList[-1].task .= "^`self p=`trParent()$.c;if(#p==0)ret;";
+      }
+     if(root){
+		par = true;
+        `state.ctrlList[-1].task .= "^`self p=`trRoot()$.c;if(#p==0)ret;";
       }
       bool v = false, fv = false, value = false;
       ^/char valexp;
@@ -3977,6 +4254,12 @@ public &StateBuilder
   bool hitDef(&.tbl.NameTable!^/char? param=)
   {
     ret `stateSec(param=,[bool(){
+      if(!`stateParam(param=, "slot", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "hs=", ";", 2)) ret false;
+        ret true;
+      }])) ret false;
       switch(`state.ctrlList[-1].typ){
       case .CtrlTy::HitDef:
         `state.ctrlList[-1].task .=
@@ -3995,6 +4278,11 @@ public &StateBuilder
         ? "pr~hit" : "`stVal.hit";
       `state.ctrlList[-1].task .=
         obj .= ".player=" .= ''`playerno .= ';';
+	if(`state.ctrlList[-1].typ != .CtrlTy::Projectile)
+		{
+			`state.ctrlList[-1].task .=
+			obj .= ".helper=(`helperindex != 0);";
+		}
       if(!`stateParam(param=, "attr", [`paraF_t(data=){
         int flg;
         if(!`attr(flg=, data, true)) ret false;
@@ -4014,6 +4302,7 @@ public &StateBuilder
           case 'P', 'p': flg |= (int).chr.StTy::U;
           case '-':      flg |= (int).chr.MovTy::I;
           case '+':      flg |= (int).chr.MovTy::H;
+          case '=':		 flg |= (int).chr.MovTy::A;
           }
           i++;
         while i < #data:}
@@ -4363,6 +4652,30 @@ public &StateBuilder
             ".hitonce=(int)(", ");", 3)) ret false;
         ret true;
       }])) ret false;
+      if(!`stateParam(param=, "abshit", [`paraF_t(data=){
+        `state.ctrlList[-1].task .= obj;
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=,
+            ".abshit=", ";", 2)) ret false;
+        ret true;
+      }])) ret false;
+      if(!`stateParam(param=, "nobox", [`paraF_t(data=){
+        `state.ctrlList[-1].task .= obj;
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=,
+            ".nobox=(int)(", ");", 3)) ret false;
+        ret true;
+      }])) ret false;
+      if(!`stateParam(param=, "nohelper", [`paraF_t(data=){
+        `state.ctrlList[-1].task .= obj;
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=,
+            ".nohelper=", ";", 2)) ret false;
+        ret true;
+      }])) ret false;
       if(!`stateParam(param=, "air.juggle", [`paraF_t(data=){
         `state.ctrlList[-1].task .= obj;
         if(
@@ -4401,6 +4714,21 @@ public &StateBuilder
         }
         ret true;
       }])) ret false;
+      if(!`stateParam(param=, "maxlifedamage", [`paraF_t(data=){
+        `state.ctrlList[-1].task .= obj;
+        if(
+          !`argExpression(
+            `state.ctrlList[-1].task=, data=,
+            ".hitmaxlifedamage=", ";", 2)) ret false;
+        if(.s.equ(",")<, `tokenizer(data=)){
+          `state.ctrlList[-1].task .= obj;
+          if(
+            !`fullExpression(
+              `state.ctrlList[-1].task=, data=,
+              ".guardmaxlifedamage=", ";", 2)) ret false;
+        }
+        ret true;
+      }])) ret false;
       if(!`stateParam(param=, "givepower", [`paraF_t(data=){
         `state.ctrlList[-1].task .= obj;
         if(
@@ -4421,6 +4749,13 @@ public &StateBuilder
         if(
           !`fullExpression(
             `state.ctrlList[-1].task=, data=, ".numhits=", ";", 2)) ret false;
+        ret true;
+      }])) ret false;
+      if(!`stateParam(param=, "nominus", [`paraF_t(data=){
+        `state.ctrlList[-1].task .= obj;
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, ".nominus=", ";", 3)) ret false;
         ret true;
       }])) ret false;
       ~$bool(^/char, ^/char=) snset = [bool(^/char name, ^/char data=){
@@ -4464,16 +4799,39 @@ public &StateBuilder
         if(
           !`argExpression(
             `state.ctrlList[-1].task=, data=, ".priority=", ";", 2)) ret false;
+		`state.ctrlList[-1].task .= obj .= ".helperpriority=" .= obj .= ".priority;";
         if(.s.equ(",")<, `tokenizer(data=)){
           data = .s.trim(data);
           if(#data == 0) break;
           switch(data[0]){
           case 'H', 'h':
-            `state.ctrlList[-1].task .= obj .= ".bothhittype=.PriTy::Hit;";
+            `state.ctrlList[-1].task .= obj .= ".bothhittype=" .= obj .= ".helperbothhittype=.PriTy::Hit;";
           case 'M', 'm':
-            `state.ctrlList[-1].task .= obj .= ".bothhittype=.PriTy::Miss;";
+            `state.ctrlList[-1].task .= obj .= ".bothhittype=" .= obj .= ".helperbothhittype=.PriTy::Miss;";
           case 'D', 'd':
-            `state.ctrlList[-1].task .= obj .= ".bothhittype=.PriTy::Dodge;";
+            `state.ctrlList[-1].task .= obj .= ".bothhittype=" .= obj .= ".helperbothhittype=.PriTy::Dodge;";
+          default:
+            `lasterror = data + "が無効な値です";
+            ret false;
+          }
+        }
+        ret true;
+      }])) ret false;
+      if(!`stateParam(param=, "helperpriority", [`paraF_t(data=){
+        `state.ctrlList[-1].task .= obj;
+        if(
+          !`argExpression(
+            `state.ctrlList[-1].task=, data=, ".helperpriority=", ";", 2)) ret false;
+        if(.s.equ(",")<, `tokenizer(data=)){
+          data = .s.trim(data);
+          if(#data == 0) break;
+          switch(data[0]){
+          case 'H', 'h':
+            `state.ctrlList[-1].task .= obj .= ".helperbothhittype=.PriTy::Hit;";
+          case 'M', 'm':
+            `state.ctrlList[-1].task .= obj .= ".helperbothhittype=.PriTy::Miss;";
+          case 'D', 'd':
+            `state.ctrlList[-1].task .= obj .= ".helperbothhittype=.PriTy::Dodge;";
           default:
             `lasterror = data + "が無効な値です";
             ret false;
@@ -4813,13 +5171,13 @@ public &StateBuilder
         ret true;
       }])) ret false;
       if(!`stateParam(param=, "pausetime", [`paraF_t(data=){
-        `state.ctrlList[-1].task .= obj .= ".guard_pausetime=" .= obj;
+        `state.ctrlList[-1].task .= obj .= ".guard_pausetime=" .= obj .= ".helperpausetime=" .= obj .= ".guard_helperpausetime=" .= obj;
         if(
           !`argExpression(
             `state.ctrlList[-1].task=, data=,
             ".pausetime=", ";", 2)) ret false;
         if(.s.equ(",")<, `tokenizer(data=)){
-          `state.ctrlList[-1].task .= obj .= ".guard_shaketime=" .= obj;
+          `state.ctrlList[-1].task .= obj .= ".guard_shaketime=" .= obj .= ".helpershaketime=" .= obj .= ".guard_helpershaketime=" .= obj;
           if(
             !`fullExpression(
               `state.ctrlList[-1].task=, data=,
@@ -4827,18 +5185,48 @@ public &StateBuilder
         }
         ret true;
       }])) ret false;
+      if(!`stateParam(param=, "helperpausetime", [`paraF_t(data=){
+        `state.ctrlList[-1].task .= obj .= ".guard_helperpausetime=" .= obj;
+        if(
+          !`argExpression(
+            `state.ctrlList[-1].task=, data=,
+            ".helperpausetime=", ";", 2)) ret false;
+        if(.s.equ(",")<, `tokenizer(data=)){
+          `state.ctrlList[-1].task .= obj .= ".guard_helpershaketime=" .= obj;
+          if(
+            !`fullExpression(
+              `state.ctrlList[-1].task=, data=,
+              ".helpershaketime=", ";", 2)) ret false;
+        }
+        ret true;
+      }])) ret false;
       if(!`stateParam(param=, "guard.pausetime", [`paraF_t(data=){
-        `state.ctrlList[-1].task .= obj;
+        `state.ctrlList[-1].task .= obj .= ".guard_helperpausetime=" .= obj;
         if(
           !`argExpression(
             `state.ctrlList[-1].task=, data=,
             ".guard_pausetime=", ";", 2)) ret false;
         if(.s.equ(",")<, `tokenizer(data=)){
-          `state.ctrlList[-1].task .= obj;
+          `state.ctrlList[-1].task .= obj .= ".guard_helpershaketime=" .= obj;
           if(
             !`fullExpression(
               `state.ctrlList[-1].task=, data=,
               ".guard_shaketime=", ";", 2)) ret false;
+        }
+        ret true;
+      }])) ret false;
+      if(!`stateParam(param=, "guard.helperpausetime", [`paraF_t(data=){
+        `state.ctrlList[-1].task .= obj;
+        if(
+          !`argExpression(
+            `state.ctrlList[-1].task=, data=,
+            ".guard_helperpausetime=", ";", 2)) ret false;
+        if(.s.equ(",")<, `tokenizer(data=)){
+          `state.ctrlList[-1].task .= obj;
+          if(
+            !`fullExpression(
+              `state.ctrlList[-1].task=, data=,
+              ".guard_helpershaketime=", ";", 2)) ret false;
         }
         ret true;
       }])) ret false;
@@ -5258,6 +5646,13 @@ public &StateBuilder
       ret true;
     }]);
   }
+  bool hitDefClear(&.tbl.NameTable!^/char? param=)
+  {
+	ret `stateSec(param=,[bool(){
+		`state.ctrlList[-1].task .= "`stVal.hit.clear();";
+      ret true;
+    }]);
+  }
   bool attackDist(&.tbl.NameTable!^/char? param=)
   {
     ret `stateSec(param=,[bool(){
@@ -5280,7 +5675,7 @@ public &StateBuilder
   bool hitOverride(&.tbl.NameTable!^/char? param=)
   {
     ret `stateSec(param=,[bool(){
-      `state.ctrlList[-1].task .= "int a=0,s=0,st=-1,t=1,f=0;";
+      `state.ctrlList[-1].task .= "int a=0,s=0,st=-1,t=1,f=0,n=0,has=-1,d=0,r=0,ap=0,ah=0,hsg=.com.IERR,hsn=-1,cpr=4;bool pro=false;";
       if(!`stateParam(param=, "attr", [`paraF_t(data=){
         int flg;
         if(!`attr(flg=, data, false)) ret false;
@@ -5299,6 +5694,54 @@ public &StateBuilder
             `state.ctrlList[-1].task=, data=, "st=", ";", 2)) ret false;
         ret true;
       }])) ret false;
+      if(!`stateParam(param=, "helperaggressorstate", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "has=", ";", 2)) ret false;
+        ret true;
+      }])) ret false;
+      if(!`stateParam(param=, "destroyaggressor", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "d=", ";", 2)) ret false;
+        ret true;
+      }])) ret false;
+      if(!`stateParam(param=, "nothitstate", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "n=", ";", 2)) ret false;
+        ret true;
+      }])) ret false;
+      if(!`stateParam(param=, "clashpriority", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "cpr=", ";", 2)) ret false;
+        ret true;
+      }])) ret false;
+      if(!`stateParam(param=, "hotype", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "r=", ";", 2)) ret false;
+        ret true;
+      }])) ret false;
+      if(!`stateParam(param=, "allproj", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "ap=", ";", 2)) ret false;
+        ret true;
+      }])) ret false;
+      if(!`stateParam(param=, "allhelpers", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "ah=", ";", 2)) ret false;
+        ret true;
+      }])) ret false;
+      if(!`stateParam(param=, "protect", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "pro=", ";", 3)) ret false;
+        ret true;
+      }])) ret false;
       if(!`stateParam(param=, "time", [`paraF_t(data=){
         if(
           !`fullExpression(
@@ -5311,11 +5754,97 @@ public &StateBuilder
             `state.ctrlList[-1].task=, data=, "f=(int)(", ");", 3)) ret false;
         ret true;
       }])) ret false;
+      ~$bool(^/char, ^/char=) snset = [bool(^/char name, ^/char data=){
+        int flg = -1;
+        branch{
+          if(#data == 0) else;
+        cond data[0] == 'F' || data[0] == 'f':
+        cond data[0] == 'S' || data[0] == 's':
+          flg = 0;
+        else:
+          break;
+        comm:
+          data = data[1..-1];
+        }
+        if(
+          !`argExpression(
+            `state.ctrlList[-1].task=, data=, "hsg=", ";", 2)) ret false;
+		if(flg == -1) `state.ctrlList[-1].task .= "if(hsg!=.com.IERR)hsg=!hsg;";
+        if(.s.equ(",")<, `tokenizer(data=)){
+          if(
+            !`fullExpression(
+              `state.ctrlList[-1].task=, data=, "hsn=", ";", 2)) ret false;
+        }
+        ret true;
+      }];
+      if(!`stateParam(param=, "hitsound", [`paraF_t(data=){
+        ret snset(:"hitsound", data=:);
+      }])) ret false;
       `state.ctrlList[-1].task .=
-        "if(s<0||s>7)s=0;if(t==0||t<-1)t=1;if(st<0)t=0;"
+        "if(s<0||s>7)s=0;if(t<-1)t=-1;"
         "`stVal.ho[s].player=" .= ''`playerno .= ";"
         "`stVal.ho[s].attr=a;`stVal.ho[s].stateno=st;"
-        "`stVal.ho[s].time=t;`stVal.ho[s].forceair=f;";
+        "`stVal.ho[s].time=t;`stVal.ho[s].forceair=f;"
+        "`stVal.ho[s].nothitstate=n;`stVal.ho[s].helperaggressorstate=has;"
+		"`stVal.ho[s].destroyaggressor=d;`stVal.ho[s].hotype=r;"
+		"`stVal.ho[s].allproj=ap;`stVal.ho[s].allhelpers=ah;"
+		"`stVal.ho[s].hitsoundg=hsg;`stVal.ho[s].hitsoundn=hsn;"
+		"`stVal.ho[s].clashpriority=cpr;`stVal.ho[s].protect=pro;";
+		^/char obj = "`stVal.ho[s]";
+		~$bool(^/char, ^/char=) spset = [bool(^/char name, ^/char data=){
+        int flg = -1;
+        branch{
+          if(#data == 0) else;
+        cond data[0] == 'S' || data[0] == 's':
+          flg = 0;
+        else:
+          break;
+        comm:
+          data = data[1..-1];
+        }
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "{int spn=", ";", 2)) ret false;
+        `state.ctrlList[-1].task .=
+          obj .= (
+            name[0] == 's'
+            ? ".sparkno=spn<0?.com.IERR:" : ".guard_sparkno=spn<0?.com.IERR:")
+          .= (flg == 0 ?  "spn;}" : "!spn;}");
+        ret true;
+      }];
+      if(!`stateParam(param=, "sparkno", [`paraF_t(data=){
+        ret spset(:"sparkno", data=:);
+      }])) ret false;
+	  if(!`stateParam(param=, "pausetime", [`paraF_t(data=){
+        `state.ctrlList[-1].task .= obj .= ".helperpausetime=" .= obj;
+        if(
+          !`argExpression(
+            `state.ctrlList[-1].task=, data=,
+            ".pausetime=", ";", 2)) ret false;
+        if(.s.equ(",")<, `tokenizer(data=)){
+         `state.ctrlList[-1].task .= obj .= ".helpershaketime=" .= obj;
+          if(
+            !`fullExpression(
+              `state.ctrlList[-1].task=, data=,
+              ".shaketime=", ";", 2)) ret false;
+        }
+        ret true;
+      }])) ret false;
+	  if(!`stateParam(param=, "helperpausetime", [`paraF_t(data=){
+        `state.ctrlList[-1].task .= obj;
+        if(
+          !`argExpression(
+            `state.ctrlList[-1].task=, data=,
+            ".helperpausetime=", ";", 2)) ret false;
+        if(.s.equ(",")<, `tokenizer(data=)){
+         `state.ctrlList[-1].task .= obj;
+          if(
+            !`fullExpression(
+              `state.ctrlList[-1].task=, data=,
+              ".helpershaketime=", ";", 2)) ret false;
+        }
+        ret true;
+      }])) ret false;
       ret true;
     }]);
   }
@@ -5323,7 +5852,7 @@ public &StateBuilder
   {
     ret `stateSec(param=,[bool(){
       `state.ctrlList[-1].task .=
-        "int t=0,mt=0;.pausebg=1;.pauseendcmdbuftime=0;";
+        "int t=0,mt=0;.pausebg=1;.pauseendcmdbuftime=0;bool uh=true,ah=false;";
       if(!`stateParam(param=, "time", [`paraF_t(data=){
         if(
           !`fullExpression(
@@ -5350,7 +5879,19 @@ public &StateBuilder
             ".pauseendcmdbuftime=", ";", 2)) ret false;
         ret true;
       }])) ret false;
-      `state.ctrlList[-1].task .= "`setPauseTime(t,mt);";
+      if(!`stateParam(param=, "unhittable", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "uh=", ";", 3)) ret false;
+        ret true;
+      }])) ret false;
+      if(!`stateParam(param=, "abshit", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "ah=", ";", 3)) ret false;
+        ret true;
+      }])) ret false;
+      `state.ctrlList[-1].task .= "`setPauseTime(t,mt,uh,ah);";
       ret true;
     }]);
   }
@@ -5359,7 +5900,7 @@ public &StateBuilder
     ret `stateSec(param=,[bool(){
       `state.ctrlList[-1].task .=
         .sndstart
-        .= "int t=30,mt=0;bool uh=true;"
+        .= "int t=30,mt=0;bool uh=true,ah=false;"
         ".superanim=.fight~getAction(30);.superfacing=`facing;"
         ".superposx=`sysfvar[.fX];.superposy=`sysfvar[.fY];"
         ".superdarken=1;.superp2defmul=.cfg.Super_TargetDefenceMul;"
@@ -5455,6 +5996,12 @@ public &StateBuilder
             `state.ctrlList[-1].task=, data=, "uh=", ";", 3)) ret false;
         ret true;
       }])) ret false;
+      if(!`stateParam(param=, "abshit", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "ah=", ";", 3)) ret false;
+        ret true;
+      }])) ret false;
       if(!`stateParam(param=, "sound", [`paraF_t(data=){
         branch{
           if(#data == 0) else;
@@ -5477,7 +6024,29 @@ public &StateBuilder
         }
         ret true;
       }])) ret false;
-      `state.ctrlList[-1].task .= "`setSuperPauseTime(t,mt,uh);" .= .sndend;
+      `state.ctrlList[-1].task .= "`setSuperPauseTime(t,mt,uh,ah);" .= .sndend;
+      ret true;
+    }]);
+  }
+  bool totalPause(&.tbl.NameTable!^/char? param=)
+  {
+    ret `stateSec(param=,[bool(){
+      `state.ctrlList[-1].task .=
+        "int t=0;.totalpausebg=1;";
+      if(!`stateParam(param=, "time", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "t=", ";", 2)) ret false;
+        ret true;
+      }])) ret false;
+      if(!`stateParam(param=, "pausebg", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=,
+            ".totalpausebg=(int)(", ");", 3)) ret false;
+        ret true;
+      }])) ret false;
+      `state.ctrlList[-1].task .= "`setTotalPauseTime(t);";
       ret true;
     }]);
   }
@@ -5509,7 +6078,7 @@ public &StateBuilder
         `lasterror = "valueが指定されていません";
         ret false;
       }
-      `state.ctrlList[-1].task .= "`addLife((double)va,k!=0,a!=0);";
+      `state.ctrlList[-1].task .= "`addLife((double)va,0.0,k!=0,a!=0);";
       ret true;
     }]);
   }
@@ -5574,7 +6143,7 @@ public &StateBuilder
   {
     ret `stateSec(param=,[bool(){
       `state.ctrlList[-1].task .=
-        "%int tar=`getTarget(-1);if(#tar==0)ret;int va=0,k=1,a=0;";
+        "%int tar=`getTarget(-1);if(#tar==0)ret;int va=0,pv=0,k=1,a=0;";
       if(!`stateParam(param=, "id", [`paraF_t(data=){
         if(
           !`fullExpression(
@@ -5602,11 +6171,46 @@ public &StateBuilder
             `state.ctrlList[-1].task=, data=, "va=", ";", 2)) ret false;
         ret true;
       }])) ret false;
+      if(!`stateParam(param=, "penalty", [`paraF_t(data=){
+        value = true;
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "pv=", ";", 2)) ret false;
+        ret true;
+      }])) ret false;
       if(!value){
         `lasterror = "valueが指定されていません";
         ret false;
       }
-      `state.ctrlList[-1].task .= "`trTargetLifeAdd(tar,va,k!=0,a!=0);";
+      `state.ctrlList[-1].task .= "`trTargetLifeAdd(tar,va,pv,k!=0,a!=0);";
+      ret true;
+    }]);
+  }
+  bool targetLifeSet(&.tbl.NameTable!^/char? param=)
+  {
+    ret `stateSec(param=,[bool(){
+      `state.ctrlList[-1].task .=
+        "%int tar=`getTarget(-1);if(#tar==0)ret;int va=0;";
+      if(!`stateParam(param=, "id", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=,
+            "tar=`getTarget(", ");if(#tar==0)ret;", 2)) ret false;
+        ret true;
+      }])) ret false;
+      bool value = false;
+      if(!`stateParam(param=, "value", [`paraF_t(data=){
+        value = true;
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "va=", ";", 2)) ret false;
+        ret true;
+      }])) ret false;
+      if(!value){
+        `lasterror = "valueが指定されていません";
+        ret false;
+      }
+      `state.ctrlList[-1].task .= "`trTargetLifeSet(tar,va);";
       ret true;
     }]);
   }
@@ -5777,6 +6381,25 @@ public &StateBuilder
       ret true;
     }]);
   }
+  bool enemyPowerAdd(&.tbl.NameTable!^/char? param=)
+  {
+    ret `stateSec(param=,[bool(){
+      bool value = false;
+      if(!`stateParam(param=, "value", [`paraF_t(data=){
+        value = true;
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=,
+            "`trEnemyPowerAdd(", ");", 2)) ret false;
+        ret true;
+      }])) ret false;
+      if(!value){
+        `lasterror = "valueが指定されていません";
+        ret false;
+      }
+      ret true;
+    }]);
+  }
   bool targetDrop(&.tbl.NameTable!^/char? param=)
   {
     ret `stateSec(param=,[bool(){
@@ -5795,6 +6418,132 @@ public &StateBuilder
         ret true;
       }])) ret false;
       `state.ctrlList[-1].task .= "`trTargetDrop(ex,one);";
+      ret true;
+    }]);
+  }
+  bool delegateTarget(&.tbl.NameTable!^/char? param=)
+  {
+    ret `stateSec(param=,[bool(){
+      `state.ctrlList[-1].task .= "if(#`getTarget(-1)==0)ret;";
+      `state.ctrlList[-1].task .= "`trDelegateTarget();";
+      ret true;
+    }]);
+  }
+  bool targetVarSet(&.tbl.NameTable!^/char? param=)
+  {
+    ret `stateSec(param=,[bool(){
+      `state.ctrlList[-1].task .= "%int tar=`getTarget(-1);if(#tar==0)ret;";
+      if(!`stateParam(param=, "id", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=,
+            "tar=`getTarget(", ");if(#tar==0)ret;", 2)) ret false;
+        ret true;
+      }])) ret false;
+		bool add =
+        `state.ctrlList[-1].typ == .CtrlTy::TargetVarAdd;
+      bool v = false, fv = false, value = false;
+      ^/char valexp;
+      %char varexp;
+      if(!`stateParam(param=, "value", [`paraF_t(data=){
+        value = true;
+        valexp = data;
+        ret true;
+      }]))ret false;
+      if(value && !`stateParam(param=, "v", [`paraF_t(data=){
+        v = true;
+        ret `fullExpression(varexp=, data=, "", "", 2);
+      }])) ret false;
+      if(value && !v && !`stateParam(param=, "fv", [`paraF_t(data=){
+        fv = true;
+        ret `fullExpression(varexp=, data=, "", "", 2);
+      }])) ret false;
+      if((v || fv) && value){
+        `state.ctrlList[-1].task .= "`" .=(
+            v ? (add ? "trTargetAddIVar(tar, " : "trTargetSetIVar(tar, ")
+            : (add ? "trTargetAddFVar(tar, " : "trTargetSetFVar(tar, "))
+          .= varexp .= ',';
+        `errorexp = valexp;
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, valexp=, "", "", v ? 2 : 1)) ret false;
+        `errorexp = "";
+        `state.ctrlList[-1].task.= ");";
+        ret true;
+      }
+      v = fv = false;
+      bool sys = false;
+      ~$bool(^/char=) set = [bool(^/char data=){
+        data = .s.trim(data);
+        if(data[0] != '('){
+          `lasterror = "'('がありません";
+          ret false;
+        }
+        `state.ctrlList[-1].task .= "`" .=(
+            sys ? (
+              v ? (add ? "trTargetAddSysIVar(tar, " : "trTargetSetSysIVar(tar, ")
+              : (add ? "trTargetAddSysFVar(tar, " : "trTargetSetSysFVar(tar, "))
+            : (
+              v ? (add ? "trTargetAddIVar(tar, " : "trTargetSetIVar(tar, ")
+              : (add ? "trTargetAddFVar(tar, " : "trTargetSetFVar(tar, ")));
+        if(
+          !`typeExp!`expValue?(
+            `state.ctrlList[-1].task=, data=, 2)) ret false;
+        `state.ctrlList[-1].task .= ',';
+        index f = .s.find("=", data);
+        if(f < 0){
+          `lasterror = "'='がありません";
+          ret false;
+        }
+        data = data[f+1..-1];
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "", "", v ? 2 : 1)) ret false;
+        `state.ctrlList[-1].task.= ");";
+        ret true;
+      }];
+      if(!value && !`stateParam(param=, "var", [`paraF_t(data=){
+        if(data[0] != 'v'){
+          `lasterror = data[0..3] + "の'v'が小文字でありません";
+          ret false;
+        }
+        data = data[3..-1];
+        value = true;
+        v = true;
+        ret set(:data=:);
+      }])) ret false;
+      if(!value && !`stateParam(param=, "fvar", [`paraF_t(data=){
+        if(data[0] != 'f'){
+          `lasterror = data[0..4] + "の'f'が小文字でありません";
+          ret false;
+        }
+        data = data[4..-1];
+        value = true;
+        fv = true;
+        ret set(:data=:);
+      }])) ret false;
+      if(!value && !`stateParam(param=, "sysvar", [`paraF_t(data=){
+        if(data[3] != 'v'){
+          `lasterror = data[0..6] + "の'v'が小文字でありません";
+          ret false;
+        }
+        data = data[6..-1];
+        value = true;
+        v = true;
+        sys = true;
+        ret set(:data=:);
+      }])) ret false;
+      if(!value && !`stateParam(param=, "sysfvar", [`paraF_t(data=){
+        data = data[7..-1];
+        value = true;
+        fv = true;
+        sys = true;
+        ret set(:data=:);
+      }])) ret false;
+      if(!value){
+        `lasterror = "valueが指定されていません";
+        ret false;
+      }
       ret true;
     }]);
   }
@@ -5835,6 +6584,48 @@ public &StateBuilder
       if(!time){
         `state.ctrlList[-1].task .=
           (ni ? "`stVal.hb.hitt2=1;" : "`stVal.hb.hitt1=1;");
+      }
+	  bool dodge = false;
+      if(!`stateParam(param=, "dodge", [`paraF_t(data=){
+        dodge = true;
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=,
+            ("`stVal.hb.dodge="),
+            ";", 2)) ret false;
+        ret true;
+      }])) ret false;
+      if(!dodge){
+        `state.ctrlList[-1].task .=
+          ("`stVal.hb.dodge=0;");
+      }
+	  bool ignoreproj = false;
+      if(!`stateParam(param=, "ignoreproj", [`paraF_t(data=){
+        ignoreproj = true;
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=,
+            ("`stVal.hb.ignoreproj="),
+            ";", 2)) ret false;
+        ret true;
+      }])) ret false;
+      if(!ignoreproj){
+        `state.ctrlList[-1].task .=
+          ("`stVal.hb.ignoreproj=0;");
+      }
+	  bool ignorehelper = false;
+      if(!`stateParam(param=, "ignorehelper", [`paraF_t(data=){
+        ignorehelper = true;
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=,
+            ("`stVal.hb.ignorehelper="),
+            ";", 2)) ret false;
+        ret true;
+      }])) ret false;
+      if(!ignorehelper){
+        `state.ctrlList[-1].task .=
+          ("`stVal.hb.ignorehelper=0;");
       }
       ret true;
     }]);
@@ -5907,6 +6698,9 @@ public &StateBuilder
         cond .s.equ(text, "noairguard"):
           `state.ctrlList[-1].task .=
             "`sysivar[.iSPECIALFLAG]|=.lsNOAIRGUARD;";
+        cond .s.equ(text, "noguard"):
+          `state.ctrlList[-1].task .=
+            "`sysivar[.iSPECIALFLAG]|=(.lsNOSTANDGUARD+.lsNOCROUCHGUARD+.lsNOAIRGUARD);";
         cond .s.equ(text, "roundnotover"):
           `state.ctrlList[-1].task .= ".specialFlag|=.gsROUNDNOTOVER;";
         cond .s.equ(text, "nomusic"):
@@ -5941,6 +6735,15 @@ public &StateBuilder
             "`sysivar[.iSPECIALFLAG]|=.lsNOJUGGLECHECK;";
         cond .s.equ(text, "noko"):
           `state.ctrlList[-1].task .= ".specialFlag|=.gsNOKO;";
+        cond .s.equ(text, "unkillable"):
+          `state.ctrlList[-1].task .=
+            "`sysivar[.iSPECIALFLAG]|=.lsUNKILLABLE;";
+        cond .s.equ(text, "animfreeze"):
+          `state.ctrlList[-1].task .=
+            "`sysivar[.iSPECIALFLAG]|=.lsANIMFREEZE;";
+        cond .s.equ(text, "guard"):
+          `state.ctrlList[-1].task .=
+            "`sysivar[.iSPECIALFLAG]|=.lsGUARD;";
         else:
           `lasterror = data + "が無効な値です";
           ret false;
@@ -6283,6 +7086,34 @@ public &StateBuilder
       ret true;
     }]);
   }
+  bool destroyTarget(&.tbl.NameTable!^/char? param=)
+  {
+    ret `stateSec(param=,[bool(){
+      `state.ctrlList[-1].task .= "%int tar=`getTarget(-1);if(#tar==0)ret;";
+      if(!`stateParam(param=, "id", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=,
+            "tar=`getTarget(", ");if(#tar==0)ret;", 2)) ret false;
+        ret true;
+      }])) ret false;
+      `state.ctrlList[-1].task .= "bool rec=false,rem=false;";
+      if(!`stateParam(param=, "recursive", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "rec=", ";", 3)) ret false;
+        ret true;
+      }])) ret false;
+      if(!`stateParam(param=, "removeexplods", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "rem=", ";", 3)) ret false;
+        ret true;
+      }])) ret false;
+      `state.ctrlList[-1].task .= "`trDestroyTarget(tar,rec,rem);";
+      ret true;
+    }]);
+  }
   bool explod(&.tbl.NameTable!^/char? param=)
   {
     ret `stateSec(param=,[bool(){
@@ -6515,6 +7346,14 @@ public &StateBuilder
               ".pausemovetime=", ";", 2)) ret false;
           ret true;
         }])) ret false;
+        if(!`stateParam(param=, "totalmovetime", [`paraF_t(data=){
+          `state.ctrlList[-1].task .= exp;
+          if(
+            !`fullExpression(
+              `state.ctrlList[-1].task=, data=,
+              ".totalmovetime=", ";", 2)) ret false;
+          ret true;
+        }])) ret false;
         if(!`stateParam(param=, "sprpriority", [`paraF_t(data=){
           `state.ctrlList[-1].task .= exp;
           if(
@@ -6661,7 +7500,7 @@ public &StateBuilder
         case .CtrlTy::Explod:
           `state.ctrlList[-1].task .=
             "`insertExplodEx(i,rpg,rpi);"
-            "e~ignorehitpause=ih;if(e~ontop != 0)e~sprpriority=0;";
+            "e~ignorehitpause=ih;";
         case .CtrlTy::GameMakeAnim:
           `state.ctrlList[-1].task .= "`insertExplod(i);";
         }
@@ -7060,6 +7899,29 @@ public &StateBuilder
         if(
           !`fullExpression(
             `state.ctrlList[-1].task=, data=, "addb=", ";", 2)) ret false;
+        ret true;
+      }])) ret false;
+      if(!`stateParam(param=, "con", [`paraF_t(data=){
+        `state.ctrlList[-1].task .= pf;
+        if(
+          !`argExpression(
+            `state.ctrlList[-1].task=, data=, "emulr=", ";", 2)) ret false;
+        if(!.s.equ(",")<, `tokenizer(data=)){
+          `lasterror = "conの要素が足りません";
+          ret false;
+        }
+        `state.ctrlList[-1].task .= pf;
+        if(
+          !`argExpression(
+            `state.ctrlList[-1].task=, data=, "emulg=", ";", 2)) ret false;
+        if(!.s.equ(",")<, `tokenizer(data=)){
+          `lasterror = "conの要素が足りません";
+          ret false;
+        }
+        `state.ctrlList[-1].task .= pf;
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "emulb=", ";", 2)) ret false;
         ret true;
       }])) ret false;
       if(!`stateParam(param=, "mul", [`paraF_t(data=){
@@ -7559,7 +8421,8 @@ public &StateBuilder
           !`fullExpression(
             `state.ctrlList[-1].task=, data=,
             "branch{int i=.m.min!int?(255,",
-            ");cond i<0:.stopAllSound();"
+            ");cond i==-1:`sounds:<-[void(s=){s.sound.new(0);}];"
+			"cond i<-1:.stopAllSound();"
             "else:`sounds.new[i].sound.new(0);}", 2)) ret false;
         ret true;
       }])) ret false;
@@ -7753,6 +8616,26 @@ public &StateBuilder
       ret true;
     }]);
   }
+  bool winAdd(&.tbl.NameTable!^/char? param=)
+  {
+    ret `stateSec(param=,[bool(){
+      `state.ctrlList[-1].task .= "int t1=0,t2=0;";
+      if(!`stateParam(param=, "p1", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "t1=", ";", 2)) ret false;
+        ret true;
+      }])) ret false;
+      if(!`stateParam(param=, "p2", [`paraF_t(data=){
+        if(
+          !`fullExpression(
+            `state.ctrlList[-1].task=, data=, "t2=", ";", 2)) ret false;
+        ret true;
+      }])) ret false;
+	  `state.ctrlList[-1].task .= "`winAdd(t1,t2);";
+      ret true;
+    }]);
+  }
   ^/char stateBulid(%char buf=, ^/char def, ^/char st=)
   {:<-
     public bool statedef(^/char sec, ^/char name, ^/char data)
@@ -7775,10 +8658,16 @@ public &StateBuilder
           `state.ctrlList[-1].typ = .CtrlTy::ChangeState;
         cond .s.equ(s, "selfstate"):
           `state.ctrlList[-1].typ = .CtrlTy::SelfState;
+        cond .s.equ(s, "reversestate"):
+          `state.ctrlList[-1].typ = .CtrlTy::ReverseState;
         cond .s.equ(s, "changeanim"):
           `state.ctrlList[-1].typ = .CtrlTy::ChangeAnim;
         cond .s.equ(s, "changeanim2"):
           `state.ctrlList[-1].typ = .CtrlTy::ChangeAnim2;
+        cond .s.equ(s, "targetchangeanim"):
+          `state.ctrlList[-1].typ = .CtrlTy::TargetChangeAnim;
+        cond .s.equ(s, "targetchangeanim2"):
+          `state.ctrlList[-1].typ = .CtrlTy::TargetChangeAnim2;
         cond .s.equ(s, "posset"):
           `state.ctrlList[-1].typ = .CtrlTy::PosSet;
         cond .s.equ(s, "posadd"):
@@ -7797,12 +8686,18 @@ public &StateBuilder
           `state.ctrlList[-1].typ = .CtrlTy::ParentVarSet;
         cond .s.equ(s, "parentvaradd"):
           `state.ctrlList[-1].typ = .CtrlTy::ParentVarAdd;
+        cond .s.equ(s, "rootvarset"):
+          `state.ctrlList[-1].typ = .CtrlTy::RootVarSet;
+        cond .s.equ(s, "rootvaradd"):
+          `state.ctrlList[-1].typ = .CtrlTy::RootVarAdd;
         cond .s.equ(s, "varrangeset"):
           `state.ctrlList[-1].typ = .CtrlTy::VarRangeSet;
         cond .s.equ(s, "varrandom"):
           `state.ctrlList[-1].typ = .CtrlTy::VarRandom;
         cond .s.equ(s, "turn"):
           `state.ctrlList[-1].typ = .CtrlTy::Turn;
+        cond .s.equ(s, "delegatetarget"):
+          `state.ctrlList[-1].typ = .CtrlTy::DelegateTarget;
         cond .s.equ(s, "ctrlset"):
           `state.ctrlList[-1].typ = .CtrlTy::CtrlSet;
         cond .s.equ(s, "statetypeset"):
@@ -7815,6 +8710,8 @@ public &StateBuilder
           `state.ctrlList[-1].typ = .CtrlTy::Projectile;
         cond .s.equ(s, "reversaldef"):
           `state.ctrlList[-1].typ = .CtrlTy::ReversalDef;
+        cond .s.equ(s, "hitdefclear"):
+          `state.ctrlList[-1].typ = .CtrlTy::HitDefClear;
         cond .s.equ(s, "attackdist"):
           `state.ctrlList[-1].typ = .CtrlTy::AttackDist;
         cond .s.equ(s, "hitoverride"):
@@ -7823,6 +8720,8 @@ public &StateBuilder
           `state.ctrlList[-1].typ = .CtrlTy::Pause;
         cond .s.equ(s, "superpause"):
           `state.ctrlList[-1].typ = .CtrlTy::SuperPause;
+        cond .s.equ(s, "totalpause"):
+          `state.ctrlList[-1].typ = .CtrlTy::TotalPause;
         cond .s.equ(s, "lifeadd"):
           `state.ctrlList[-1].typ = .CtrlTy::LifeAdd;
         cond .s.equ(s, "lifeset"):
@@ -7833,6 +8732,8 @@ public &StateBuilder
           `state.ctrlList[-1].typ = .CtrlTy::PowerSet;
         cond .s.equ(s, "targetlifeadd"):
           `state.ctrlList[-1].typ = .CtrlTy::TargetLifeAdd;
+        cond .s.equ(s, "targetlifeset"):
+          `state.ctrlList[-1].typ = .CtrlTy::TargetLifeSet;
         cond .s.equ(s, "targetbind"):
           `state.ctrlList[-1].typ = .CtrlTy::TargetBind;
         cond .s.equ(s, "targetstate"):
@@ -7845,8 +8746,14 @@ public &StateBuilder
           `state.ctrlList[-1].typ = .CtrlTy::TargetFacing;
         cond .s.equ(s, "targetpoweradd"):
           `state.ctrlList[-1].typ = .CtrlTy::TargetPowerAdd;
+        cond .s.equ(s, "enemypoweradd"):
+          `state.ctrlList[-1].typ = .CtrlTy::EnemyPowerAdd;
         cond .s.equ(s, "targetdrop"):
           `state.ctrlList[-1].typ = .CtrlTy::TargetDrop;
+        cond .s.equ(s, "targetvarset"):
+          `state.ctrlList[-1].typ = .CtrlTy::TargetVarSet;
+        cond .s.equ(s, "targetvaradd"):
+          `state.ctrlList[-1].typ = .CtrlTy::TargetVarAdd;
         cond .s.equ(s, "hitby"):
           `state.ctrlList[-1].typ = .CtrlTy::HitBy;
         cond .s.equ(s, "nothitby"):
@@ -7875,6 +8782,8 @@ public &StateBuilder
           `state.ctrlList[-1].typ = .CtrlTy::Helper;
         cond .s.equ(s, "destroyself"):
           `state.ctrlList[-1].typ = .CtrlTy::DestroySelf;
+        cond .s.equ(s, "destroytarget"):
+          `state.ctrlList[-1].typ = .CtrlTy::DestroyTarget;
         cond .s.equ(s, "explod"):
           `state.ctrlList[-1].typ = .CtrlTy::Explod;
         cond .s.equ(s, "gamemakeanim"):
@@ -7953,6 +8862,8 @@ public &StateBuilder
           `state.ctrlList[-1].typ = .CtrlTy::RemapPal;
         cond .s.equ(s, "zoom"):
           `state.ctrlList[-1].typ = .CtrlTy::Zoom;
+        cond .s.equ(s, "winadd"):
+          `state.ctrlList[-1].typ = .CtrlTy::WinAdd;
         cond .s.equ(s, "null"):
           `state.ctrlList[-1].typ = .CtrlTy::Null;
         else:
@@ -8262,10 +9173,11 @@ public &StateBuilder
             buf .= "()";
           }
           buf .= `state.ctrlList[-1].typ == .CtrlTy::TagIn ? ')' : ';';
+		  if(`state.ctrlList[-1].typ == .CtrlTy::Pause || `state.ctrlList[-1].typ == .CtrlTy::SuperPause) buf .= "`stVal.pausies = true;";
         diff<cs>:
            buf .= "ret;}";
         diff<ds>:
-           buf .= "if(`ls(.lsDESTROY))ret;}";
+           buf .= "if(`ls(.lsDESTROY) && `helperindex != 0)ret;}";
         comm:
            buf .= \r\n;
         }
@@ -8661,6 +9573,9 @@ public &StateBuilder
       if(#(data = sc.get("buffer.time")) > 0){
         `cmdl~ctmp~buffertime = .m.max!int?(1)<, .com.atonOF!int?(data);
       }
+      if(#(data = sc.get("nopausebuf")) > 0){
+        `cmdl~ctmp~nopausebuf = .com.atonOF!int?(data);
+      }
       if(#(data = sc.get("command")) > 0) `cmdl~ctmp~readCmd(data);
       if(#`cmdl~ctmp~cmd == 1 && `cmdl~ctmp~cmd~slash){
         `cmdl~ctmp~buffertime = 1;
@@ -8864,6 +9779,8 @@ public &StateBuilder
       \t"`sysfvar[.fAIRJUMP_NEUY] = " .= `fToS(`c.v.airjump_neuy) .= ";"\r\n
       \t"`sysfvar[.fAIRJUMP_BACK] = " .= `fToS(`c.v.airjump_back) .= ";"\r\n
       \t"`sysfvar[.fAIRJUMP_FWD] = " .= `fToS(`c.v.airjump_fwd) .= ";"\r\n
+      \t"`rangeSetIVar(0, #`ivar-1, 0);"\r\n
+      \t"`rangeSetFVar(0, #`fvar-1, 0.0);"\r\n
       \t"`sysfvar[.fAIR_GETHIT_GROUNDRECOVERX] = "
       .= `fToS(`c.v.air_gethit_groundrecoverx) .= ";"\r\n
       \t"`sysfvar[.fAIR_GETHIT_GROUNDRECOVERY] = "
@@ -8935,6 +9852,9 @@ public &StateBuilder
       \t"`state_1 = `s_1_" .= ''`playerno .= "P;"\r\n
       \t"`state_2 = `s_2_" .= ''`playerno .= "P;"\r\n
       \t"`state_3 = `s_3_" .= ''`playerno .= "P;"\r\n
+      \t"`state_4 = `s_4_" .= ''`playerno .= "P;"\r\n
+      \t"`state_5 = `s_5_" .= ''`playerno .= "P;"\r\n
+      \t"`state_6 = `s_6_" .= ''`playerno .= "P;"\r\n
       \t"`state_i1 = `s_I1_" .= ''`playerno .= "P;"\r\n
       \t"`clearSpSysVar();"\r\n
       "}"\r\n;

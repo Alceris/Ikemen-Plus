@@ -8,24 +8,33 @@
 [Statedef -3]
 
 
+[Statedef -4]
+
+
+[Statedef -5]
+
+
+[Statedef -6]
+
+
 [Statedef -I1]
+
+[State -I1, KO2]
+type = VarSet
+trigger1 = !noko && !unkillable && life <= 0
+sysvar(56) = sysvar(56) | 4;SYSFLAG,KO
+
+[State -I1, KO1]
+type = PlaySnd
+triggerall = !sysvar(9)
+triggerall = !nokosnd
+trigger1 = (sysvar(56) & 4);SYSFLAG,KO
+value = 11, 0
 
 [State -I1, KO Cond]
 type = VarSet
 trigger1 = 1
-sysvar(9) = !noko && life <= 0
-
-[State -I1, KO1]
-type = PlaySnd
-triggerall = sysvar(9)
-triggerall = !nokosnd
-trigger1 = !(sysvar(56) & 4);SYSFLAG,KO
-value = 11, 0
-
-[State -I1, KO2]
-type = VarSet
-trigger1 = sysvar(9)
-sysvar(56) = sysvar(56) | 4;SYSFLAG,KO
+sysvar(9) = sysvar(56) & 4
 
 [State -I1, Getup1]
 type = VarSet

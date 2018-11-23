@@ -79,6 +79,13 @@ public double floor(double x)
   ret Floor(:x:);
 }
 
+public double trunc(double x) // Is this even necessary? Is this code gore? I dunno...
+{
+  plugin double Ceil(:double:) = <dll/math.dll>;
+  plugin double Floor(:double:) = <dll/math.dll>;
+  ret (x < 0.0) ? Ceil(:x:) : Floor(:x:);
+}
+
 public bool isfinite(double x)
 {
   plugin bool IsFinite(:double:) = <dll/math.dll>;

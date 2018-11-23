@@ -1,0 +1,449 @@
+;--------------------------------------------------------------------------------------------------------------------------
+; コマンド基本設定
+;--------------------------------------------------------------------------------------------------------------------------
+[Remap]
+	x = x      ;Ｘボタンの入力判定を実際に押すボタンに割り当てる。
+	y = y      ;Ｙボタン　　　　　　　　　〃
+	z = z      ;Ｚボタン　　　　　　　　　〃
+	a = a      ;Ａボタン　　　　　　　　　〃
+	b = b      ;Ｂボタン　　　　　　　　　〃
+	c = c      ;Ｃボタン　　　　　　　　　〃
+	s = s      ;スタートボタン　　　　　　〃
+
+;-------------------------------------------------------------
+; デフォルト設定
+;-------------------------------------------------------------
+[Defaults]
+	command.Time=15
+	command.buffer.Time=1
+
+;-------------------------------------------------------------
+; CPUアルゴリズム用コマンド
+;-------------------------------------------------------------
+
+;-------------------------------------------------------------
+; 超必殺技
+;-------------------------------------------------------------
+[Command]
+	name="神浄"
+	command=$B,DB,D,DF,F,z
+	Time=20
+	buffer.Time=10
+
+[Command]
+	name="竜王の顎"
+	command=$F,DF,D,DB,B,z
+	Time=20
+	buffer.Time=10
+
+[Command]
+	name="最弱"
+	command=$F,DF,D,DB,B,c
+	Time=20
+	buffer.Time=10
+
+[Command]
+	name="その幻想をぶち殺す！！"
+	command=$L,DL,D,DR,R,c
+	Time=20
+	buffer.Time=10
+
+[Command]
+	name="その幻想をぶち殺す！！"
+	command=$R,DR,D,DL,L,c
+	Time=20
+	buffer.Time=10
+
+[Command]
+	name="FIRST…COMES…SOGEBU…"
+	command=$B,DB,D,DF,F,b
+	Time=20
+	buffer.Time=10
+	
+[Command]
+	name="ハンドオブグローリー"
+	command=$B,DB,D,DF,F,a
+	Time=20
+	buffer.Time=10
+	
+[Command]
+	name="昇竜そげぶEX"
+	command=F,D,DF,c
+	Time=20
+	buffer.Time=10
+	
+[Command]
+	name="不幸だ☆そげぶEX"
+	command=D,DB,B,c
+	Time=20
+	buffer.Time=10
+
+[Command]
+	name="バスターそげぶ"
+	command=D,DB,B,c
+	Time=20
+	buffer.Time=10
+
+[Command]
+	name="バスターそげぶ"
+	command=D,B,c
+	Time=20
+	buffer.Time=10
+
+[Command]
+	name="そげぶラッシュ"
+	command=D,DF,F,c
+	Time=10
+	buffer.Time=10
+
+[Command]
+	name="そげぶラッシュ"
+	command=D,F,c
+	Time=10
+	buffer.Time=10
+
+
+
+;-------------------------------------------------------------
+; 必殺技
+;-------------------------------------------------------------
+[Command]
+	name="昇竜そげぶ弱"
+	command=F,D,DF,a
+	buffer.Time=10
+
+[Command]
+	name="昇竜そげぶ強"
+	command=F,D,DF,b
+	buffer.Time=10
+
+[Command]
+	name="連続そげぶ"
+	command=D,DF,F,a
+	buffer.Time=10
+
+[Command]
+	name="連続そげぶ強"
+	command=D,DF,F,b
+	buffer.Time=10
+
+[Command]
+	name="不幸だ☆弱"
+	command=D,DB,B,a
+	buffer.Time=10
+
+[Command]
+	name="不幸だ☆弱"
+	command=D, B,a
+	buffer.Time=10
+
+[Command]
+	name="不幸だ☆強"
+	command=D,DB,B,b
+	buffer.Time=10
+
+[Command]
+	name="不幸だ☆強"
+	command=D,B,b
+	buffer.Time=10
+
+[Command]
+	name="突撃そげぶ弱"
+	command=D,DB,B,a
+	buffer.Time=10
+
+[Command]
+	name="突撃そげぶ弱"
+	command=D, B,a
+	buffer.Time=10
+
+[Command]
+	name="突撃そげぶ強"
+	command=D,DB,B,b
+	buffer.Time=10
+
+[Command]
+	name="突撃そげぶ強"
+	command=D,B,b
+	buffer.Time=10
+
+[Command]
+	name="コマ投げ"
+	command=F,D,DF,y
+	Time=20
+	buffer.Time=10
+
+;-------------------------------------------------------------
+; 特殊
+;-------------------------------------------------------------
+[Command]
+	name = "RC"
+	command = x
+	time = 1
+	
+[Command]
+	name = "緊急回避"
+	command = a+b
+	time = 1
+
+[Command]
+	name="そげぶカウンター"
+	command=D,DF,F,z
+	buffer.Time=3
+
+[Command]
+	name="だまれよ"
+	command=s;D,DB,B,z
+	buffer.Time=3
+
+[Command]
+	name="RR"
+	command=R,R
+	Time=10
+
+[Command]
+	name="LL"
+	command=L,L
+	Time=10
+
+[Command]
+	name="FF"
+	command=F,F
+	Time=10
+
+[Command]
+	name="BB"
+	command=B,B
+	Time=10
+
+[Command]
+	name="recovery"
+	command=/x
+	Time=1
+
+[Command]
+	name="recovery"
+	command=/y
+	Time=1
+
+[Command]
+	name="recovery"
+	command=/z
+	Time=1
+
+[Command]
+	name="recovery"
+	command=/a
+	Time=1
+
+[Command]
+	name="recovery"
+	command=/b
+	Time=1
+
+[Command]
+	name="recovery"
+	command=/c
+	Time=1
+
+;-------------------------------------------------------------
+; 方向キー＋ボタン
+;-------------------------------------------------------------
+
+[Command]
+	name="down_a"
+	command=/$D,a
+	Time=1
+
+[Command]
+	name="down_b"
+	command=/$D,b
+	Time=1
+
+[Command]
+	name="F_z"
+	command=/$F,z
+	Time=1
+
+[Command]
+	name="B_z"
+	command=/$B,z
+	Time=1
+
+;-------------------------------------------------------------
+; ボタン単発
+;-------------------------------------------------------------
+
+[Command]
+	name="a"
+	command=a
+	Time=1
+
+[Command]
+	name="b"
+	command=b
+	Time=1
+
+[Command]
+	name="c"
+	command=c
+	Time=1
+
+[Command]
+	name="x"
+	command=x
+	Time=1
+
+[Command]
+	name="y"
+	command=y
+	Time=1
+
+[Command]
+	name="GoodLuck"
+	command=D, D, y
+	Time=20
+
+[Command]
+	name="z"
+	command=z
+	Time=1
+
+[Command]
+	name="start"
+	command=s
+	Time=1
+
+[Command]
+	name="holdstart"
+	command=/s
+	Time=1
+
+[Command]
+	name="BK"
+	command=F
+	Time=1
+
+[Command]
+	name="BK"
+	command=DF
+	Time=1
+
+[Command]
+	name="BK_H"
+	command=/F
+	Time=1
+
+[Command]
+	name="hold_a"
+	command=/a
+
+[Command]
+	name="hold_b"
+	command=/b
+
+[Command]
+	name="hold_c"
+	command=/c
+
+[Command]
+	name="hold_x"
+	command=/x
+
+[Command]
+	name="hold_y"
+	command=/y
+
+[Command]
+	name="hold_z"
+	command=/z
+
+;-------------------------------------------------------------
+; 方向キー
+;-------------------------------------------------------------
+
+[Command]
+	name="holdleft"
+	command=/$L
+	Time=1
+
+[Command]
+	name="holdright"
+	command=/$R
+	Time=1
+
+[Command]
+	name="holdfwd"
+	command=/$F
+	Time=1
+
+[Command]
+	name="holdback"
+	command=/$B
+	Time=1
+
+[Command]
+	name="holdup"
+	command=/$U
+	Time=1
+
+[Command]
+	name="holddown"
+	command=/$D
+	Time=1
+
+;---------------------------------------------------------------------------
+
+[Command]
+name = "inputup"
+command = /U
+
+[Command]
+name = "inputupright"
+command = /UR
+
+[Command]
+name = "inputupleft"
+command = /UL
+
+[Command]
+name = "inputdown"
+command = /D
+
+[Command]
+name = "inputdownright"
+command = /DR
+
+[Command]
+name = "inputdownleft"
+command = /DL
+
+[Command]
+name = "inputright"
+command = /R
+
+[Command]
+name = "inputleft"
+command = /L
+
+;--------------------------------------------------------------------------------------------------------------------------
+; 準常時監視ステート（‐１）
+;--------------------------------------------------------------------------------------------------------------------------
+[Statedef -1]
+;-------------------------------------------------------------
+; 超必殺技
+;-------------------------------------------------------------
+
+[State -1,竜王の顎]
+	Type=Null;ChangeState
+	value=3400
+	TriggerAll = command = "竜王の顎"
+	TriggerAll = StateType != A
+	TriggerAll = var(3)>5
+	TriggerAll = var(12) || Power>5999
+	TriggerAll = Life <= LifeMax/3 || Var(12) = 2 || PalNo >= 9 || var(3) = 7
+	TriggerAll = stateno != [200,499];通常攻撃からキャンセル不可
+	TriggerAll = stateno != [1000,1999];必殺技からキャンセル不可
+	TriggerAll = stateno != 6667;ゲジマユエンハンスからキャンセル不可
+	Trigger1 = Ctrl
+	Trigger2 = var(1)

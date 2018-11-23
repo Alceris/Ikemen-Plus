@@ -1,0 +1,29 @@
+[Info]
+name ="ARCHETYPE:ALCERIS"
+displayname ="ARCHETYPE:ALCERIS"
+mugenversion = 1.1
+author ="Alceris"
+localcoord = 320,240
+
+[Files]
+cmd     =Archetype_cmd.cns
+stcommon =common1.cns
+sprite  =Archetype.sff
+anim    =Archetype.air
+cns     =Archetype.cns
+sound   =Archetype.snd
+st      =Archetype.cns
+
+[Palette Keymap]
+a = 1
+b = 2
+c = 3
+x = 4
+y = 5
+z = 6
+a2 = 7
+b2 = 8
+c2 = 9
+x2 = 10
+y2 = 11
+z2 = 12

@@ -138,7 +138,7 @@ void game()
   void put(float y=, ^/char txt)
   {
     bool tmp = .sff.allPalFX~enable;
-    .sff.allPalFX~enable = false;
+    .sff.allPalFX~enable = true;
     loop{
       ^/char t = txt;
       index i;
@@ -156,7 +156,7 @@ void game()
         1.0/.com.WidthScale,  1.0/.com.HeightScale, 0, 1, t[0..i]);
       t = t[i..-1];
     while #t > 0:}
-    .sff.allPalFX~enable = tmp;
+    .sff.allPalFX~enable = true;
   }
   %char line;
   void drawDebug()
@@ -249,7 +249,7 @@ void game()
     `x = `newx = 0.0;
     `y = `newy = 0.0;
     `l = `r = 0.0;
-    `scl = `sclmul = 1.0;
+    `scl = `sclmul = .com.cam.stg.startzoom;
     .com.cam.update!.chr.stg<>.self?(`scl, `x, `y, .chr.stg<>=);
   }
   loop{
@@ -411,6 +411,30 @@ void game()
     olddraws = .com.draws;
     reset();
   do:
+  if(.com.tickFrame())
+  {
+ branch
+ {
+    cond .com.total >= 0:
+      .com.total--;
+    cond .com.super >= 0:
+      .com.super--;
+    cond .com.pause >= 0:
+      .com.pause--;
+ }
+    if(.com.pausetime < 0){
+      .com.pausetime = !.com.pausetime;
+      .com.pause = .com.pausetime;
+    }
+    if(.com.supertime < 0){
+      .com.supertime = !.com.supertime;
+      .com.super = .com.supertime;
+    }
+    if(.com.totaltime < 0){
+      .com.totaltime = !.com.totaltime;
+      .com.total = .com.totaltime;
+    }
+  }
     .com.step = false;
     .dscri.roundResetFlg = false;
     .dscri.reloadFlg = false;
@@ -502,8 +526,9 @@ void game()
     if(!.com.cam.zoom) x = .m.ceil(x*4.0 - 0.5)/4.0;
     y = .com.cam.yBound(scl, newy);
     if(
-      .com.tickFrame() && (.chr.super <= 0 || .chr.superpausebg == 0)
-      && (.chr.pause <= 0 || .chr.pausebg == 0)) 
+      .com.tickFrame() && (.com.super < 0 || .chr.superpausebg == 0)
+      && (.com.pause < 0 || .chr.pausebg == 0)
+	  && (.com.total < 0 || .chr.totalpausebg == 0)) 
     {
       .chr.stg~action();
       stagetime++;
@@ -511,7 +536,7 @@ void game()
     newx = x;
     newy = y;
     sclmul = .chr.action(newx=, newy=, l=, r=, scl);
-    debugInput();
+    //debugInput();
     if(!.com.addFrameTime(.com.turbo)){
       if(!.se.eventUpdate()) break, while;
       break, do;
@@ -526,7 +551,7 @@ void game()
         dscl =
           .m.max!float?(
             .com.cam.minScale, .com.drawscale / .com.cam.baseScale());
-        dx = .com.cam.xBound(dscl, x + .com.zoomposx * (dscl - scl) / dscl);
+        dx = .com.cam.xBound(dscl, x + .com.zoomposx);
         dy = y + .com.zoomposy;
       }
       .chr.draw(dx, dy, dscl);

@@ -229,13 +229,13 @@ var(10) = ifelse(((p2movetype = H && p2statetype = A) || prevstateno = 750), 3, 
 [State 1100, nothitby]
 type = nothitby
 trigger1 = anim = 1100 && animelemtime(4) < 0 && prevstateno != 750
-value = SCA
+value = SCA,AA,AP,AT
 time = 1
 ignorehitpause = 1
 [State NHB -ZC]
 type = nothitby
 trigger1 = prevstateno = 750 && animelemtime(2) < 1
-value = SCA
+value = SCA,AA,AP,AT
 time = 1
 
 [State 1100, Vel]
@@ -392,7 +392,7 @@ var(10) = ifelse(p2movetype = H, 3, 1)
 [State 1200, nothitby]
 type = nothitby
 trigger1 = anim = 1200 && animelemtime(2) < 0
-value = SCA
+value = SCA,AA,AP,AT
 time = 1
 ignorehitpause = 1
 
@@ -1846,7 +1846,7 @@ value = 0
 [State 1450, nothitby]
 type = nothitby
 trigger1 = anim = 1450
-value = , AT
+value = SCA,AA,AP
 time = 1
 
 [State 1450, Anim]

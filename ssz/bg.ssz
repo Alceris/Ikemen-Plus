@@ -165,6 +165,7 @@ public &BackGround
   public int id = 0;
   public float startx = 0.0, starty = 0.0, xofs = 0.0, camstartx = 0.0;
   public float deltax = 1.0, deltay = 1.0;
+  public float zoomdeltax = 1.0, zoomdeltay = 1.0;
   public float xtscale = 1.0, xbscale = 1.0;
   public float rasterxtspeed = 1.0, rasterxbspeed = 1.0;
   public float yscalestart = 100.0;
@@ -242,6 +243,10 @@ public &BackGround
     }
     if(#(data = sc.get("delta")) > 0){
       .readPair!float?(`deltax=, `deltay=, data);
+	  `zoomdeltax = `zoomdeltay = `deltax;
+    }
+    if(#(data = sc.get("zoomdelta")) > 0){
+      .readPair!float?(`zoomdeltax=, `zoomdeltay=, data);
     }
     if(typ != 1 && #(data = sc.get("mask")) > 0){
       `anim.mask = .com.atonOF!int?(data) != 0 ? 0 : -1;
@@ -410,7 +415,7 @@ public &BackGround
   {
     float xras = (`rasterxbspeed-`rasterxtspeed) / `rasterxtspeed;
     float xbs = `xbscale;
-    float dx = .m.max!float?(0.0, `deltax*bgscl);
+    float dx = .m.max!float?(0.0, `zoomdeltax*bgscl);
     float sclx = .m.max!float?(0.0, scl + (1.0 - scl)*(1.0 - dx));
     float lxscl = localscl * xscale, lyscl = localscl * yscale;
     if(sclx != 0.0){
@@ -424,7 +429,7 @@ public &BackGround
     sclx *= lxscl;
     float scly =
       .m.max!float?(
-        0.0, scl + (1.0 - scl)*(1.0 - .m.max!float?(0.0, `deltay*bgscl)))
+        0.0, scl + (1.0 - scl)*(1.0 - .m.max!float?(0.0, `zoomdeltay*bgscl)))
       * localscl;
     float x2 = `startx + `xofs - (x/xscale+`camstartx)*`deltax + `bga.xoffset;
     float y2 = `starty - (y/yscale)*`deltay + `bga.yoffset;

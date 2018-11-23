@@ -165,7 +165,7 @@ public &Sound
   {
     branch{
     cond v < 0: `volume = 0;
-    cond v > 512: `volume = 512;
+//    cond v > 512: `volume = 512;
     else: `volume = v;
     }
   }

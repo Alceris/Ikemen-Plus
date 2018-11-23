@@ -1,0 +1,2076 @@
+[Statedef -4]
+
+[State 0, AssertSpecial]
+type = AssertSpecial
+trigger1 = stateno = 3501
+flag = noko
+
+[State 0, PowerSet]
+type = PowerSet
+trigger1 = palno = 12
+value = powermax
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = palno = 12
+var(12) = 7000
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = palno = 12
+var(21) = 7000
+ignorehitpause = 1
+
+[State 0, StopSnd]
+type = StopSnd
+trigger1 = !win && anim != 3301
+trigger2 = lose
+channel = 7
+ignorehitpause = 1
+
+[State 0, RemoveExplod]
+type = RemoveExplod
+triggerall = numexplod(6500)
+trigger1 = anim != 3301
+id = 6500
+ignorehitpause = 1
+
+[State 0, RemoveExplod]
+type = RemoveExplod
+triggerall = numexplod(4444)
+trigger1 = stateno != 3501
+id = 4444
+ignorehitpause = 1
+
+[State 0, AssertSpecial]
+type = AssertSpecial
+trigger1 = 1
+flag = noautoturn
+;flag2 = nostandguard
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+sysvar(46) = 1
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = win || stateno = 3400 || stateno = 3501 || roundstate < 2;var(51) >= 11 || var(3) = 7
+trigger2 = stateno = 3300 && enemynear,sysvar(47)
+trigger3 = enemynear,name = "bernkastel" && enemynear,stateno = 2900
+sysvar(47) = 1
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = !super
+sysvar(47) = 0
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = !super || sysvar(47)
+sysvar(4) = ctrl
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = Null;VarSet
+trigger1 = 1
+sysvar(56) = ifelse(command = "holdback" && sysvar(4),(sysvar(56) | 16),(sysvar(56) & ~16))
+
+[State 0, VarAdd]
+type = VarAdd
+trigger1 = var(4) >= 10
+var(4) = -10
+ignorehitpause = 1
+
+[State 0, VarAdd]
+type = VarSet
+trigger1 = command = "holdup"
+var(4) = 0
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = var(4) < 10
+var(3) = 0
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = var(4) < 10
+var(5) = ifelse(enemynear,pos X < pos X && statetype != A,-1,ifelse(statetype = A,facing,1));facing
+ignorehitpause = 1
+
+[State 0, VarAdd]
+type = VarAdd
+triggerall = var(4)%10 != 0
+trigger1 = command != "inputright" && command != "inputleft" && command != "inputdown" && command != "inputdownright" && command != "inputdownleft"
+var(4) = 100
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = command != "inputright" && command != "inputleft" && command != "inputdown" && command != "inputdownright" && command != "inputdownleft"
+var(4) = -var(4)%10
+ignorehitpause = 1
+
+[State 0, VarAdd]
+type = VarAdd
+triggerall = var(4)%10 != 6
+trigger1 = command = "inputright"
+var(3) = ifelse(command = "inputleft",0,ifelse(var(5) = -1,400000,600000))
+ignorehitpause = 1
+
+[State 0, VarAdd]
+type = VarAdd
+triggerall = var(4)%10 != 6
+trigger1 = command = "inputright"
+var(4) = ifelse(command = "inputleft",0,100)
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = command = "inputright"
+var(4) = -var(4)%10
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = command = "inputright"
+var(4) = ifelse(command = "inputleft",0,6)
+ignorehitpause = 1
+
+[State 0, VarAdd]
+type = VarAdd
+triggerall = var(4)%10 != 4
+trigger1 = command = "inputleft"
+var(3) = ifelse(command = "inputright",0,ifelse(var(5) = 1,400000,600000))
+ignorehitpause = 1
+
+[State 0, VarAdd]
+type = VarAdd
+triggerall = var(4)%10 != 4
+trigger1 = command = "inputleft"
+var(4) = ifelse(command = "inputright",0,100)
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = command = "inputleft"
+var(4) = -var(4)%10
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = command = "inputleft"
+var(4) = ifelse(command = "inputright",0,4)
+ignorehitpause = 1
+
+[State 0, VarAdd]
+type = VarAdd
+triggerall = var(4)%10 != 2
+trigger1 = command = "inputdown"
+var(3) = 200000
+ignorehitpause = 1
+
+[State 0, VarAdd]
+type = VarAdd
+triggerall = var(4)%10 != 2
+trigger1 = command = "inputdown"
+var(4) = 100
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = command = "inputdown"
+var(4) = -var(4)%10
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = command = "inputdown"
+var(4) = 2
+ignorehitpause = 1
+
+[State 0, VarAdd]
+type = VarAdd
+triggerall = var(4)%10 != 3
+trigger1 = command = "inputdownright"
+var(3) = ifelse(var(5) = -1,100000,300000)
+ignorehitpause = 1
+
+[State 0, VarAdd]
+type = VarAdd
+triggerall = var(4)%10 != 3
+trigger1 = command = "inputdownright"
+var(4) = 100
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = command = "inputdownright"
+var(4) = -var(4)%10
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = command = "inputdownright"
+var(4) = 3
+ignorehitpause = 1
+
+[State 0, VarAdd]
+type = VarAdd
+triggerall = var(4)%10 != 1
+trigger1 = command = "inputdownleft"
+var(3) = ifelse(var(5) = 1,100000,300000)
+ignorehitpause = 1
+
+[State 0, VarAdd]
+type = VarAdd
+triggerall = var(4)%10 != 1
+trigger1 = command = "inputdownleft"
+var(4) = 100
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = command = "inputdownleft"
+var(4) = -var(4)%10
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = command = "inputdownleft"
+var(4) = 1
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = var(3) >= 100000
+var(3) = floor(var(3)/10)
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = floor(var(3)/100) = 632 && command = "hold_a"
+var(6) = 1001
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = floor(var(3)/100) = 632 && command = "hold_b"
+var(6) = 1002
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = floor(var(3)/100) = 632 && command = "hold_c"
+var(6) = 1003
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = floor(var(3)/100) = 412 && command = "hold_a"
+var(6) = 1004
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = floor(var(3)/100) = 412 && command = "hold_b"
+var(6) = 1005
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = floor(var(3)/100) = 412 && command = "hold_c"
+var(6) = 1006
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = floor(var(3)/100) = 326 && command = "hold_a"
+trigger2 = floor(var(3)/100) = 124 && command = "hold_a"
+var(6) = 1007
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = floor(var(3)/100) = 326 && command = "hold_b"
+trigger2 = floor(var(3)/100) = 124 && command = "hold_b"
+var(6) = 1008
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = floor(var(3)/100) = 326 && command = "hold_c"
+trigger2 = floor(var(3)/100) = 124 && command = "hold_c"
+var(6) = 1009
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+triggerall = command = "hold_c"
+trigger1 = var(3) = 63214
+trigger2 = var(3) = 41236
+var(6) = 1010
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = floor(var(3)/100) = 632 && command = "hold_z"
+var(6) = 1011
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = floor(var(3)/100) = 326 && command = "hold_y"
+var(6) = 1012
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = var(3) = 63214 && command = "hold_z"
+var(6) = 1013
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = var(3) = 41236 && command = "hold_z"
+var(6) = 1014
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = floor(var(3)/100) = 632 && command = "hold_a"
+trigger2 = floor(var(3)/100) = 632 && command = "hold_b"
+trigger3 = floor(var(3)/100) = 632 && command = "hold_c"
+trigger4 = floor(var(3)/100) = 412 && command = "hold_a"
+trigger5 = floor(var(3)/100) = 412 && command = "hold_b"
+trigger6 = floor(var(3)/100) = 412 && command = "hold_c"
+trigger7 = floor(var(3)/100) = 326 && command = "hold_a"
+trigger8 = floor(var(3)/100) = 326 && command = "hold_b"
+trigger9 = floor(var(3)/100) = 326 && command = "hold_c"
+trigger7 = floor(var(3)/100) = 124 && command = "hold_a"
+trigger8 = floor(var(3)/100) = 124 && command = "hold_b"
+trigger9 = floor(var(3)/100) = 124 && command = "hold_c"
+trigger10 = var(3) = 63214 && command = "hold_c"
+trigger11 = var(3) = 41236 && command = "hold_c"
+trigger12 = var(3) = 63214 && command = "hold_z"
+trigger13 = var(3) = 41236 && command = "hold_z"
+trigger14 = floor(var(3)/100) = 632 && command = "hold_z"
+trigger15 = floor(var(3)/100) = 326 && command = "hold_y"
+var(3) = 0
+ignorehitpause = 1
+
+[State 0, VarAdd]
+type = VarSet
+trigger1 = var(4) > 100
+var(4) = 100+(var(4)%10)
+ignorehitpause = 1
+
+;[State 0, DisplayToClipboard]
+;type = DisplayToClipboard
+;trigger1 = 1
+;text = "var(3) = %d, var(4) = %d, var(6) = %d"
+;params = var(3),var(4),var(6)
+;ignorehitpause = 1
+
+[State 0, DisplayToClipboard]
+type = Null;DisplayToClipboard
+trigger1 = 1
+text = "screenpos Y = %f"
+params = screenpos Y
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = command = "holdstart" && !AILevel && command = "holddown" && ((stateno != 3400 && stateno != 3501) || stateowner != playerno)
+var(10) = 800
+ignorehitpause = 1
+
+[State 0, StopSnd]
+type = StopSnd
+trigger1 = command = "holdstart" && !AILevel && command = "holddown" && ((stateno != 3400 && stateno != 3501) || stateowner != playerno)
+channel = -2
+ignorehitpause = 1
+
+[State 0, SelfState]
+type = SelfState
+trigger1 = command = "holdstart" && !AILevel && command = "holddown" && ((stateno != 3400 && stateno != 3501) || stateowner != playerno)
+value = 3501
+anim = 3505
+ignorehitpause = 1
+
+[State -1,竜王の顎]
+	Type=ChangeState
+	value=3500
+	TriggerAll = fighting
+TriggerAll = var(6)%100 = 14
+	TriggerAll = StateType != A
+	TriggerAll = var(12) >= 7000
+	TriggerAll = Life <= LifeMax/3
+;	TriggerAll = stateno != [200,499];通常攻撃からキャンセル不可
+;	TriggerAll = stateno != [1000,1999];必殺技からキャンセル不可
+;	TriggerAll = stateno != 6667;ゲジマユエンハンスからキャンセル不可
+	Trigger1 = sysvar(4)
+ctrl = 0
+
+[State -1,神浄]
+	Type=ChangeState
+	value=3300
+	TriggerAll = fighting
+TriggerAll = var(6)%100 = 13 || var(6)%100 = 14
+	TriggerAll = var(12) >= 7000
+	TriggerAll = !var(1)
+	TriggerAll = StateType != A
+	Trigger1 = sysvar(4)
+ctrl = 0
+
+[State 0, VarSet]
+type = VarSet
+TriggerAll = fighting
+TriggerAll = var(6)%100 = 10
+TriggerAll = StateType != A
+TriggerAll = var(12) >= 6000; || power >= 7000
+TriggerAll = Stateno < 3000
+TriggerAll = (stateno != 2200 && stateno != 2201) || (anim = 2201 && animelemtime(47) > 1)
+Trigger1 = sysvar(4)
+Trigger2 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+var(11) = 0
+
+[State 0, VarSet]
+type = ChangeState
+TriggerAll = fighting
+TriggerAll = var(6)%100 = 10
+TriggerAll = StateType != A
+TriggerAll = var(12) >= 6000; || power >= 7000
+TriggerAll = Stateno < 3000
+TriggerAll = (stateno != 2200 && stateno != 2201) || (anim = 2201 && animelemtime(47) > 1)
+Trigger1 = sysvar(4)
+Trigger2 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+value = 3050
+ctrl = 0
+
+[State -1,その幻想をぶち殺す!!]
+	Type=ChangeState
+	value=3000
+	TriggerAll = fighting
+TriggerAll = var(6)%100 = 10
+	TriggerAll = StateType != A
+	TriggerAll = var(12) || Power >= 6000
+TriggerAll = Stateno < 3000
+TriggerAll = (stateno != 2200 && stateno != 2201) || (anim = 2201 && animelemtime(47) > 1)
+	Trigger1 = sysvar(4)
+	Trigger2 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+ctrl = 0
+
+[State -1,不幸だ☆そげぶEX]
+	Type=ChangeState
+	value=2100
+	TriggerAll = fighting
+TriggerAll = var(6)%100 = 6
+	TriggerAll = StateType = A
+	TriggerAll = pos Y <= -15
+	TriggerAll = var(12) || Power >= 2000
+	TriggerAll = stateno != 2100
+	Trigger1 = sysvar(4)
+	Trigger2 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	ctrl = 0
+
+[State -1,そげぶラッシュ]
+	Type=ChangeState
+	value=2200
+	TriggerAll = fighting
+TriggerAll = var(6)%100 = 3
+	TriggerAll = StateType != A
+	TriggerAll = var(12) || Power>999
+	TriggerAll = stateno != 2101 || var(12) >= 6000
+	TriggerAll = stateno < 2200
+	Trigger1 = sysvar(4)
+	Trigger2 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+ctrl = 0
+
+[State -1,対空そげぶEX]
+	Type=ChangeState
+	value=2000
+	TriggerAll = fighting
+TriggerAll = var(6)%100 = 9
+	TriggerAll = StateType != A
+	TriggerAll = var(12) || Power >= 3000
+	TriggerAll = stateno < 2000
+	Trigger1 = sysvar(4)
+	Trigger2 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+ctrl = 0
+
+[State -1,FIRST…COMES…ROCK…]
+	Type=Null;ChangeState
+	value=2300
+	TriggerAll = command = "FIRST…COMES…SOGEBU…"
+	TriggerAll = StateType != A
+	TriggerAll = var(12) || Power>1999
+	TriggerAll = stateno != 2300
+	TriggerAll = stateno != 3001
+	Trigger1 = Ctrl
+	Trigger2 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+
+[State -1,ハンドオブグローリー]
+	Type=Null;ChangeState
+	value=2400
+	TriggerAll = command = "ハンドオブグローリー"
+	TriggerAll = StateType != A
+	TriggerAll = var(12) || Power>1999
+	TriggerAll = stateno != 2201
+	TriggerAll = stateno != 2400
+	TriggerAll = stateno != 2500
+	TriggerAll = stateno != 3001
+	Trigger1 = Ctrl
+	Trigger2 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+
+[State -1,バスターそげぶ]
+	Type=ChangeState
+	value=2500
+	TriggerAll = fighting
+TriggerAll = var(6)%100 = 6
+	TriggerAll = StateType != A
+	TriggerAll = var(12) || Power>1999
+	TriggerAll = stateno != 2101 || var(12) >= 6000
+	TriggerAll = (stateno != 2200 && stateno != 2201) || (var(12) >= 6000 && anim = 2201 && animelemtime(47) > 1)
+	TriggerAll = stateno < 2400
+	Trigger1 = sysvar(4)
+	Trigger2 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+ctrl = 0
+
+;-------------------------------------------------------------
+; 必殺技
+;-------------------------------------------------------------
+[State -1,連続そげぶ始動]
+	Type=ChangeState
+	value=1000
+	TriggerAll = fighting
+TriggerAll = var(6)%100 = 1
+	TriggerAll = StateType != A
+	Trigger1 = sysvar(4)
+	Trigger2 = (StateNo=[200,499]) || StateNo= 6430;そげぶカウンター
+	Trigger2 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+ctrl = 0
+
+[State -1,連続そげぶ 中段派生1]
+	Type=ChangeState
+	value=1075
+TriggerAll = fighting
+	TriggerAll = StateType != A
+	TriggerAll = var(58) = 2; && command = "holdback"
+	TriggerAll = StateNo=1000
+	Trigger1 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	Trigger2 = animelemtime(6) >= 0
+	Trigger2 = animelemtime(8) < 0
+	ctrl = 0
+
+[State -1,連続そげぶ 下段派生1]
+	Type=ChangeState
+	value=1100
+TriggerAll = fighting
+	TriggerAll = StateType != A
+	TriggerAll = var(58) = 3; && command = "holdback"
+	TriggerAll = StateNo = 1000
+	Trigger1 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	Trigger2 = animelemtime(6) >= 0
+	Trigger2 = animelemtime(8) < 0
+
+[State -1,連続そげぶ 上段派生1]
+	Type=ChangeState
+	value=1050
+TriggerAll = fighting
+	TriggerAll = StateType != A
+	TriggerAll = var(58) = 1; && command = "holdback"
+	TriggerAll = StateNo = 1000
+	Trigger1 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	Trigger2 = animelemtime(6) >= 0
+	Trigger2 = animelemtime(8) < 0
+	
+[State -1,連続そげぶ 上段派生2]
+	Type=ChangeState
+	value=1125
+TriggerAll = fighting
+	TriggerAll = var(58); && command = "holdback"
+	TriggerAll = StateType != A
+	Trigger1 = StateNo=1050
+	Trigger1 = animelemtime(4) > 0
+	Trigger1 = animelemtime(6) < 0
+
+[State -1,連続そげぶ 中段派生2]
+	Type=ChangeState
+	value=1150
+TriggerAll = fighting
+	TriggerAll = var(58); && command = "holdback"
+	TriggerAll = StateType != A
+	Trigger1 = StateNo=1075
+	Trigger1 = animelemtime(7)>0
+	Trigger1 = animelemtime(9)<0
+
+[State -1,連続そげぶ 下段派生2]
+	Type=ChangeState
+	value=1200
+TriggerAll = fighting
+	TriggerAll = var(58); && command = "holdback"
+	TriggerAll = StateType != A
+	Trigger1 = StateNo = 1100
+	Trigger1 = animelemtime(6) > 0
+	Trigger1 = animelemtime(9) < 0
+
+[State -1,連続そげぶ強1]
+	Type=ChangeState
+	value=1250
+	TriggerAll = fighting
+TriggerAll = var(6)%100 = 2 || (var(6)%100 = 3 && (!var(12) && power < 1000))
+	TriggerAll = StateType != A
+	Trigger1 = sysvar(4)
+	Trigger2 = StateNo =  225 && (MoveHit || MoveGuarded || MoveClash || MoveClashed);5c
+	Trigger3 = StateNo =  420 && (MoveHit || MoveGuarded || MoveClash || MoveClashed);2c
+	Trigger4 = StateNo = 1650 && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	Trigger5 = StateNo = 1125 && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	Trigger6 = StateNo = 6430 && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	Trigger7 = StateNo = 107 && AnimElemTime(10) >= 0
+	ctrl = 0
+
+[State -1,連続そげぶ強2]
+	Type=ChangeState
+	value=1251
+TriggerAll = fighting
+	TriggerAll = var(58)
+	TriggerAll = StateType != A
+	Trigger1 = StateNo = 1250
+	Trigger1 = (MoveHit || MoveGuarded || MoveClash || MoveClashed) || animelemtime(8) > 0
+
+[State -1,連続そげぶ強3]
+	Type=ChangeState
+	value=1252
+TriggerAll = fighting
+	TriggerAll = var(58); && command = "holdback"
+	TriggerAll = StateType != A
+	Trigger1 = StateNo = 1251
+	Trigger1 = (MoveHit || MoveGuarded || MoveClash || MoveClashed) || animelemtime(7) > 5
+
+[State -1,昇竜そげぶ弱]
+	Type=ChangeState
+	value=1500
+	TriggerAll = fighting
+TriggerAll = var(6)%100 = 7
+	TriggerAll = StateType != A
+	Trigger1 = sysvar(4)
+	Trigger2 = (StateNo=[200,499]) || StateNo= 6430 || StateNo = 107 || StateNo = 108
+	Trigger2 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	Trigger3 = StateNo = 1200 && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+ctrl = 0
+
+[State -1,昇竜そげぶ強]
+	Type=ChangeState
+	value=1550
+	TriggerAll = fighting
+TriggerAll = var(6)%100 = 8 || (var(6)%100 = 9 && (!var(12) && power < 3000))
+	TriggerAll = StateType != A
+	Trigger1 = sysvar(4)
+	Trigger2 = (StateNo=[200,499]) || StateNo= 6430 || StateNo = 107 || StateNo = 108
+	Trigger2 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+ctrl = 0
+
+[State -1,突撃そげぶ]
+	Type=ChangeState
+	value=1600
+	TriggerAll = fighting
+TriggerAll = var(6)%100 = 4
+	TriggerAll = StateType != A
+	Trigger1 = sysvar(4)
+	Trigger2 = (StateNo=[200,499]) || StateNo = 6430 || StateNo = 107 || StateNo = 108;そげぶカウンター
+	Trigger2 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+ctrl = 0
+
+[State -1,突撃そげぶ強]
+	Type=ChangeState
+	value=1650
+	TriggerAll = fighting
+TriggerAll = var(6)%100 = 5 || (var(6)%100 = 6 && (!var(12) && power < 2000))
+	TriggerAll = StateType != A
+	Trigger1 = sysvar(4)
+	Trigger2 = (StateNo=[200,499]) || StateNo= 53 || StateNo = 6430 || StateNo = 107 || StateNo = 108;そげぶカウンター
+	Trigger2 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+ctrl = 0
+
+[State -1,不幸だ☆弱]
+	Type=ChangeState
+	value=1700
+	TriggerAll = fighting
+TriggerAll = var(6)%100 = 4
+	TriggerAll = StateType = A
+	Trigger1 = sysvar(4)
+	Trigger2 = StateNo = [600,699]
+	Trigger2 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+ctrl = 0
+
+[State -1,不幸だ☆強]
+	Type=ChangeState
+	value=1750
+	TriggerAll = fighting
+TriggerAll = var(6)%100 = 5 || (var(6)%100 = 6 && (!var(12) && power < 2000))
+	TriggerAll = StateType = A
+	Trigger1 = sysvar(4)
+	Trigger2 = StateNo = [600,699]
+	Trigger2 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+ctrl = 0
+
+;-------------------------------------------------------------
+; 移動
+;-------------------------------------------------------------
+[State -1,JumpC];ジャンプキャンセル
+	Type=ChangeState
+	value=40
+	TriggerAll = StateType != A
+	TriggerAll = command = "holdup"
+	Trigger1 = StateNo = 220 || StateNo = 1150 || StateNo = 1500 || StateNo = 6430;そげぶカウンター
+	Trigger1 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	Trigger2 = sysvar(4)
+	ignorehitpause = 1
+ctrl = 0
+
+[State -1,Dash];走る
+	Type=ChangeState
+	value=100
+	TriggerAll = command = "RR" || Command = "LL"
+	TriggerAll = StateType != A
+	Trigger1 = sysvar(4)
+ctrl = 1
+
+[State -1,AirDash];空中ダッシュ
+	Type=ChangeState
+	value=110
+	TriggerAll = command = "FF"
+	TriggerAll = StateType = A
+	TriggerAll = anim != 110 && anim != 115
+	TriggerAll = stateno != [1700,1750]
+	Trigger1 = sysvar(4)
+	Trigger2 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+ctrl = 0
+
+[State -1,AirDash];空中ダッシュ
+	Type=ChangeState
+	value=115
+	TriggerAll = command = "BB"
+	TriggerAll = StateType = A
+	TriggerAll = anim != 110 && anim != 115
+	TriggerAll = stateno != [1700,1750]
+	Trigger1 = sysvar(4)
+	Trigger2 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+ctrl = 0
+
+;-------------------------------------------------------------
+; 特殊
+;-------------------------------------------------------------
+
+[State -1];サキスパ
+	type = SelfState
+	value = ifelse(pos Y < 0,6350,6300)
+	TriggerAll = Alive
+	triggerall = command =  "緊急回避"
+	triggerall = MoveType = H
+	triggerall = GetHitVar(damage) < life
+	triggerall = power >= 3000 || var(12)
+	trigger1 = (stateowner = playerno || (stateno = [5000,5099])) && statetype != L;stateno = 5000 && time > 0
+;	trigger2 = stateno = 5010 && time > 0
+;	trigger3 = stateno = 5020 && time > 0
+;	trigger4 = stateno = 5070 && time > 0
+;	trigger5 = stateno != 5000 && stateno != 5010 && stateno != 5020 && stateno != 5070
+;	trigger5 = stateno = [5001,5099]
+ctrl = 0
+
+[State -1];前転、後転
+	type = ChangeState
+TriggerAll = fighting
+	triggerall = command = "hold_x" || command = "x"
+	triggerall = stateNO != 6700
+	triggerall = statetype != A
+	triggerall = hitshakeover
+	trigger1 = sysvar(4)
+	trigger2 = stateno = [120,155]
+	value = 107
+ctrl = 0
+
+[State -1,そげぶ投げ]
+	Type=ChangeState
+	value=1800
+	TriggerAll = StateType != A
+	TriggerAll = fighting
+TriggerAll = var(6)%100 = 12
+	Trigger1 = sysvar(4)
+ctrl = 0
+
+[State -1,S_k];投げ
+	Type=ChangeState
+	value=800
+TriggerAll = fighting
+	TriggerAll = StateType != A
+	TriggerAll = command = "y"
+	TriggerAll = command = "holdfwd" || command = "holdback"
+	TriggerAll = command != "holddown"
+	TriggerAll = StateNo != 100
+	Trigger1 = sysvar(4)
+ctrl = 0
+
+[State -1,];ゲジマユモード
+	Type=ChangeState
+	value=6667
+triggerall = fighting
+	TriggerAll = command = "y"
+	TriggerAll = command != "holdfwd" && command != "holdback"
+	TriggerAll = StateType != A
+	Triggerall = Power >= 1000
+	TriggerAll = Var(12) = 0
+	TriggerAll = stateno != [200,499];通常攻撃からキャンセル不可
+	TriggerAll = stateno != [1000,1999];必殺技からキャンセル不可
+	TriggerAll = stateno != 6667
+	Trigger1 = sysvar(4)
+	Trigger2 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+ctrl = 0
+
+[State -1,];強エンハンス
+	Type=Null;ChangeState
+	value=6660
+	TriggerAll = command = "y"
+	TriggerAll = StateType != A
+	TriggerAll = command != "holddown"
+	Trigger1 = Ctrl
+	Trigger2 = StateNo = 230 && AnimElemTime(7) >= 5
+	Trigger3 = (StateNo = 1125 || StateNo = 1150 || StateNo = 1200) && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+
+[State -1,];そげぶカウンターA
+	Type=Null;ChangeState
+	value=6430
+	TriggerAll = command = "そげぶカウンター"
+	TriggerAll = StateType != A
+	Trigger1 = Stateno = 6402 || Stateno = 6412
+	trigger1 = power >= 999
+	Trigger2 = Stateno = 6405 || Stateno = 6415
+ctrl = 0
+
+[State -1,];そげぶ弾き
+	Type=ChangeState
+	value=6450
+	TriggerAll = fighting
+TriggerAll = var(6)%100 = 11
+	TriggerAll = StateType != A
+	Trigger1 = sysvar(4)
+ctrl = 0
+
+[State -1,];そげぶカウンターA
+	Type=ChangeState
+	value=700
+TriggerAll = fighting
+	triggerall = !AILevel
+	TriggerAll = command = "start"
+	TriggerAll = StateType != A
+	Trigger1 = sysvar(4)
+ctrl = 0
+
+[State -1,AirThrow];空中投げ
+	Type=ChangeState
+	value=900
+TriggerAll = fighting
+	TriggerAll =statetype = A
+	TriggerAll = command = "y"
+	TriggerAll = command = "holdfwd" || command = "holdback"
+	Trigger1 = sysvar(4)
+	Trigger2 = (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+ctrl = 0
+
+[State -1,];屈シールド
+	Type=ChangeState
+	value=6410
+	;TriggerAll = command = "x"
+	TriggerAll = (command = "hold_z" && !super) || command = "z"
+	TriggerAll = StateType != A
+	TriggerAll = command = "holddown"
+	Trigger1 = sysvar(4)
+ctrl = 0
+
+[State -1,];屈シールド持続
+	Type=Null;ChangeState
+	value=6411
+	TriggerAll = command = "hold_x" || command = "x"
+	Trigger1 = Stateno = 6410
+	Trigger1 = time > 6
+
+[State -1,];立ちシールド
+	Type=ChangeState
+	value=6400
+	;TriggerAll = command = "x"
+	TriggerAll = (command = "hold_z" && !super) || command = "z"
+	TriggerAll = StateType != A
+	Trigger1 = sysvar(4)
+ctrl = 0
+
+[State -1,];立ちシールド持続
+	Type=Null;ChangeState
+	value=6401
+	TriggerAll = command = "hold_x" || command = "x"
+	Trigger1 = Stateno = 6400
+	Trigger1 = time > 6
+
+[State -1,];空中シールド
+	Type=ChangeState
+	value=6420
+	;TriggerAll = command = "x"
+	TriggerAll = (command = "hold_z" && !super) || command = "z"
+	TriggerAll = StateType = A
+	Trigger1 = sysvar(4)
+	Anim = 6420
+ctrl = 0
+
+[State -1,];空中シールド持続
+	Type=Null;ChangeState
+	value=6421
+	TriggerAll = command = "hold_x" || command = "x"
+	Trigger1 = Stateno = 6420
+	Trigger1 = time > 6
+	
+[State -1,GT];ゲージ溜め
+	Type=ChangeState
+	value=6500
+TriggerAll = fighting
+	TriggerAll = StateType != A
+	TriggerAll = command = "hold_a" || command = "a"
+	TriggerAll = command = "hold_c" || command = "c"
+	TriggerAll = Power < 6000
+	TriggerAll = var(12) = 0
+	Trigger1 = sysvar(4)
+ctrl = 0
+
+
+;-------------------------------------------------------------
+; 通常
+;-------------------------------------------------------------
+[State -1,2a]
+	Type=ChangeState
+	value=400
+TriggerAll = fighting
+	TriggerAll = command = "a"
+	TriggerAll = StateType != A
+	Trigger1 = sysvar(4) && command = "holddown"
+	Trigger2 = StateNo = 107 &&  animelemtime(6) >= 0
+	Trigger3 = StateNo = 400 && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	ctrl = 0
+anim = 400
+
+[State -1,2b_2]
+	Type=ChangeState
+	value=415
+TriggerAll = fighting
+	TriggerAll = command = "b"
+	TriggerAll = StateType != A
+	Trigger1  = StateNo = 410 && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+ctrl = 0
+
+[State -1,2b]
+	Type=ChangeState
+	value=410
+TriggerAll = fighting
+	TriggerAll = command = "b"
+	TriggerAll = StateType != A
+	Trigger1 = sysvar(4) && command = "holddown"
+	Trigger2  = StateNo = 400 && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	Trigger3 = StateNo = 107 &&  animelemtime(6) >= 0
+ctrl = 0
+
+[State -1,2c]
+	Type=ChangeState
+	value=420
+TriggerAll = fighting
+	TriggerAll = command = "c"
+	TriggerAll = command = "holddown" || StateNo = 107
+	TriggerAll = StateType != A
+	Trigger1 = sysvar(4)
+	Trigger2 = StateNo = 400 && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	Trigger3 = StateNo = 410 && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	Trigger4 = StateNo = 107 &&  animelemtime(6) >= 0
+ctrl = 0
+
+[State -1,6a]
+	Type=ChangeState
+	value=210
+TriggerAll = fighting
+	TriggerAll = command = "a" && command = "holdfwd"
+	TriggerAll = command != "holddown"
+	TriggerAll = StateType != A
+	TriggerAll = StateNo != [100,101]
+	Trigger1 = sysvar(4)
+	Trigger2 = StateNo = 200 && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+ctrl = 0
+
+[State -1,5a]
+	Type=ChangeState
+	value=200
+TriggerAll = fighting
+	TriggerAll = command = "a"
+	TriggerAll = command != "holddown"
+	TriggerAll = StateType != A
+	Trigger1 = sysvar(4)
+	Trigger2 = StateNo = 200 && ((MoveHit || MoveGuarded || MoveClash || MoveClashed) || animelemtime(4) >= 0)
+	Trigger3 = (StateNo = [100,101]) &&  time >= 4
+ctrl = 0
+
+[State -1,5b_2]
+	Type=ChangeState
+	value=220
+TriggerAll = fighting
+	TriggerAll = command = "b"
+	TriggerAll = command != "holddown"
+	TriggerAll = StateType != A
+	Trigger1 = StateNo = 215 && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+ctrl = 0
+
+[State -1,5b]
+	Type=ChangeState
+	value=215
+TriggerAll = fighting
+	TriggerAll = command = "b"
+	TriggerAll = command != "holddown"
+	TriggerAll = StateType != A
+	Trigger1 = sysvar(4)
+	Trigger2 = StateNo != 215
+	Trigger2 = StateNo = 200 && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	Trigger3 = StateNo = 210 && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	Trigger4 = (StateNo = [100,101]) &&  time >= 4
+ctrl = 0
+
+[State -1,6c]
+	Type=Null;ChangeState
+	value=230
+TriggerAll = fighting
+	TriggerAll = command = "c" && command = "holdfwd"
+	TriggerAll = command != "holddown"
+	TriggerAll = StateType != A
+	Trigger1 = sysvar(4)
+	;Trigger2 = StateNo =  215 && (MoveHit || MoveGuarded || MoveClash || MoveClashed);5b
+	Trigger2 = StateNo =  225 && (MoveHit || MoveGuarded || MoveClash || MoveClashed);5c
+	Trigger3 = StateNo =  420 && (MoveHit || MoveGuarded || MoveClash || MoveClashed);2c
+	Trigger4 = StateNo = 1125 && (MoveHit || MoveGuarded || MoveClash || MoveClashed) && Var(2) >= 2;連続そげぶ上段派生三段目のカウンターヒット時
+	Trigger5 = StateNo = 1252 && (MoveHit || MoveGuarded || MoveClash || MoveClashed) && Var(2) >= 2;強連続そげぶ三段目のカウンターヒット時
+	Trigger6 = StateNo = 1600 && (MoveHit || MoveGuarded || MoveClash || MoveClashed) && Var(2) >= 2;弱突撃そげぶのカウンターヒット時
+	Trigger7 = StateNo = 1650 && (MoveHit || MoveGuarded || MoveClash || MoveClashed) && Var(2) >= 2;強突撃そげぶのカウンターヒット時
+	Trigger8 = StateNo = 1810 && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	Trigger9 = StateNo = 6450 && (MoveHit || MoveGuarded || MoveClash || MoveClashed) ;そげぶ弾き
+	Trigger10 = (StateNo = [100,101]) &&  time >= 4
+ctrl = 0
+
+[State -1,5c]
+	Type=ChangeState
+	value=225
+TriggerAll = fighting
+	TriggerAll = command = "c"
+	TriggerAll = command != "holddown"
+	TriggerAll = StateType != A
+	Trigger1 = sysvar(4)
+	Trigger2 = StateNo = 200 && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	Trigger3 = StateNo = 210 && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	Trigger4 = StateNo = 215 && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	Trigger5 = StateNo = 220 && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	Trigger6 = StateNo = 400 && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	Trigger7 = StateNo = 410 && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	Trigger8 = StateNo = 415 && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+ctrl = 0
+
+[State -1,ja]
+	Type=ChangeState
+	value=600
+TriggerAll = fighting
+	TriggerAll = command = "a"
+	TriggerAll = StateType = A
+	Trigger1 = sysvar(4)
+	Trigger2 = StateNo = 2000 && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+ctrl = 0
+
+[State -1,jb]
+	Type=ChangeState
+	value=610
+TriggerAll = fighting
+	TriggerAll = command = "b"
+	TriggerAll = StateType = A
+	Trigger1 = sysvar(4)
+	Trigger2 = (StateNo = 600 || StateNo = 2000) && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+	ctrl = 0
+
+[State -1,j2c]
+	Type=ChangeState
+	value=630
+TriggerAll = fighting
+	TriggerAll = command = "c"
+	TriggerAll = command = "holddown"
+	TriggerAll = StateType = A
+	Trigger1 = sysvar(4)
+	Trigger2 = (StateNo = 600 || StateNo = 610 || StateNo = 620 || StateNo = 2000) && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+ctrl = 0
+ignorehitpause = 1
+
+[State -1,jc]
+	Type=ChangeState
+	value=620
+TriggerAll = fighting
+	TriggerAll = command = "c"
+	TriggerAll = StateType = A
+	Trigger1 = sysvar(4)
+	Trigger2 = (StateNo = 600 || StateNo = 610 || StateNo = 1500|| StateNo = 2000) && (MoveHit || MoveGuarded || MoveClash || MoveClashed)
+ctrl = 0
+
+;-------------------------------------------------------------
+
+;---------------------------------------------------------------------------
+;コンフィグのステート 変更OK！
+;---------------------------------------------------------------------------
+[Statedef -2]
+;---------------------------------------------------------------------------
+;AI関連
+;---------------------------------------------------------------------------
+
+[State 0, PosSet]
+type = PosSet
+trigger1 = anim = 3301
+x = rightbound-camerapos X
+ignorehitpause = 1
+
+;---------------------------------------------------------------------------
+;初期設定
+;---------------------------------------------------------------------------
+
+[State 0, PlayerPush]
+type = PlayerPush
+trigger1 = super
+value = 0
+ignorehitpause = 1
+
+[State 0, CtrlSet]
+type = CtrlSet
+trigger1 = stateno = [5000,5071]
+trigger1 = hitover && !hitfall
+value = 1
+
+[State 0, CtrlSet]
+type = Null;CtrlSet
+trigger1 = teamside = 2
+value = 0
+
+[State 0, ChangeState]
+type = Null;ChangeState
+triggerall = teamside = 2
+trigger1 = enemy(0),stateno = 105 && stateno != 1600
+value = 1600
+ctrl = 0
+
+[State 0, AppendToClipboard]
+type = Null;DisplayToClipboard
+trigger1 = 1
+text = "leftbound = %f, rightbound = %f, pos X = %f"
+params = (leftbound-(gamewidth*camerazoom)/2.0) - camerapos X, (rightbound+(gamewidth*camerazoom)/2.0) - camerapos X, pos X + camerapos X
+
+[State 0, AppendToClipboard]
+type = Null;DisplayToClipboard
+trigger1 = 1
+text = "numexplod(21402) = %d"
+params = helper(30001),numexplod(21402)
+
+[State 0, VarSet]
+type = Null;VarSet
+trigger1 = 1
+sysvar(46) = 2
+
+[State 0, VarSet]
+type = Null;VarSet
+trigger1 = 1
+sysvar(47) = 2
+
+[State 0, NotHitBy]
+type = NotHitBy
+trigger1 = !fighting
+value2 = SCA,AA,AP,AT
+time = 1
+ignorehitpause = 1
+
+[State 0, NotHitBy]
+type = NotHitBy
+triggerall = enemynear,name = "Yukkuri Reimu"
+trigger1 = enemynear,numhelper(11000)
+trigger1 = enemynear,Helper(11000),var(54) >= 1
+value2 = SCA,AA,AP,AT
+time = 1
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = Null;VarSet
+trigger1 = command = "start" && !AILevel && command != "holddown"
+sysvar(2) = 1
+ignorehitpause = 1
+
+[State 0, SelfState]
+type = Null;SelfState
+trigger1 = command = "holdstart" && !AILevel && command != "holddown" && ((stateno != 3440 && stateno != 3501) || stateowner != playerno)
+value = 3440
+ignorehitpause = 1
+
+[State 0, SelfState]
+type = SelfState
+trigger1 = stateowner != playerno && time && (stateno = 0 || ctrl || movetype != H || (anim = [0,152]))
+value = 50*(pos Y < 0)
+ctrl = 1
+ignorehitpause = 1
+
+[State -2];ハードラックゲージy軸
+	type = Null;Varset
+	trigger1 = Numhelper(30000) = 0
+	var(31) = 0;デフォルトは0 -方向で中央に
+
+[State -2];ハードラックゲージx軸
+	type = Null;Varset
+	trigger1 = Numhelper(30000) = 0
+	var(32) = 0;デフォルトは0 -方向で中央に
+
+[State -2];バーストアイコンy軸
+	type = Null;Varset
+	trigger1 = Numhelper(30000) = 0
+	var(33) = 0;デフォルトは0 +方向で下に
+
+[State -2];バーストアイコンx軸
+	type = Null;Varset
+	trigger1 = Numhelper(30000) = 0
+	var(34) = 0;デフォルトは0 -方向で中央に
+
+
+;===========================================================================
+;以下システム記述 変更×
+;===========================================================================
+
+[State -2, クリップボード（追加専用）]
+	type = Null;AppendToClipboard
+	TriggerAll = !IsHelper
+	trigger1 = 1
+	text = "Position X=%d,Y=%d, Velocity X=%f,Y=%f, Hit=%d \n"
+	params = floor(Pos X),floor(Pos Y),(Vel X),(Vel Y),(MoveHit)
+
+;---------------------------------------------------------------------------
+;キャンセル初期化
+;---------------------------------------------------------------------------
+[State -2]
+	type = Varset
+	trigger1 = movetype = H
+	var(1) = 0
+	ignorehitpause = 1
+
+;---------------------------------------------------------------------------
+;カウンター
+;---------------------------------------------------------------------------
+[State -2]
+ 	type = Varset
+ 	trigger1 = enemynear,movetype = A
+	var(2) = 1
+	ignorehitpause = 1
+
+[State -2]
+ 	type = Varset
+ 	triggerall = stateno !=[6300,6350]
+ 	triggerall = stateno !=[6400,6425]
+ 	triggerall = stateno !=[800,950]
+ 	triggerall = stateno !=[3200,3501]
+ 	triggerall = movetype != H
+ 	triggerall = enemynear,movetype = H
+ 	triggerall = var(2) = 1
+ 	trigger1 = movehit
+ 	trigger2 = helper(2410),movehit
+	var(2) = 2
+	ignorehitpause = 1
+
+[State -2, カウンターアタックボイス]
+	type = PlaySnd
+	trigger1 = var(2)=2
+	value = 1, 33
+	ignorehitpause = 1
+
+[State -2]
+	type = Explod
+	trigger1 = var(2) = 2
+	trigger2 = numexplod(14000) = 0
+	trigger2 = var(2) = 3
+	anim = ifelse(var(2)=2,14000,14002)
+	ID = 14000
+	pos = ifelse(teamside=1,60,260),  60
+	postype = left
+	bindtime = -1
+	removetime = -1
+	supermovetime = 9999
+	pausemovetime = 9999
+	sprpriority = 9999
+	scale = .5,.5
+	ontop = 1
+	ownpal = 1
+	ignorehitpause = 1
+
+[State -2]
+ 	type = Varset
+ 	trigger1 = var(2) = 2
+	var(2) = 3
+	ignorehitpause = 1
+
+[State -2]
+	type = RemoveExplod
+	trigger1 = enemynear,movetype = I
+	trigger2 = target,stateno =[5110,5120]
+	trigger3 = RoundState = 3
+	trigger4 = stateno = 3310 || stateno = 3400
+	ID = 14000
+	ignorehitpause = 1
+	
+[State -2]
+	type = Explod
+	triggerall =var(2) != 0
+	triggerall =var(2) != 1
+	trigger1 = enemynear,movetype = I
+	trigger2 = target,stateno =[5110,5120]
+	trigger3 = RoundState >= 3
+	trigger4 = stateno = 3310 || stateno = 3501
+	anim = 14001
+	pos = ifelse(teamside=1,60,260),  60
+	postype = left
+	bindtime = -1
+	supermovetime = 9999
+	pausemovetime = 9999
+	sprpriority = 9999
+	scale = .5,.5
+	ontop = 1
+	ownpal = 1
+	ignorehitpause = 1
+
+[State -2]
+ 	type = Varset
+	trigger1 = enemynear,movetype = I
+	trigger2 = target,stateno =[5110,5120]
+	trigger3 = RoundState >= 3
+	trigger4 = stateno = 3310 || stateno = 3501
+	var(2) = 0
+	ignorehitpause = 1
+
+;---------------------------------------------------------------------------
+;アーマー
+;---------------------------------------------------------------------------
+[State -2, アーマーヘルパー呼び出し]
+type = Helper
+triggerall = !NumHelper(9000) && MoveType != H
+trigger1 = StateNo = 2300 && Time = 1 ;FIRST…COMES…ROCK…
+trigger2 = var(13)
+name = "Armor"
+stateno = 9000
+ID = 9000
+size.xscale = 1
+size.yscale = 1
+postype = p1
+pos = 0,0
+ownpal = 1
+supermovetime = 99999
+pausemovetime = 99999
+
+[State -2, アーマー中の投げ以外無敵]
+type = NotHitBy
+trigger1 = NumHelper(9000)
+value = SCA,AA,AP
+time = 1
+ignorehitpause = 1
+
+[State -2, アーマー中に被弾した時の無敵時間延長（２重被弾抑制処置）]
+type = Null;NotHitBy
+trigger1 = NumHelper(9000)
+trigger1 = Helper(9000),GetHitVar(damage)
+value = SCA,AA,AP,AT
+time = Helper(9000),GetHitVar(hitshaketime)+5
+
+[State -2, アーマー中の投げ以外無敵]
+type = NotHitBy
+trigger1 = NumHelper(8000) && (Anim != [6400,6401]) && (Anim != [6410,6411]) && (Anim != [6420,6421])
+value2 = SCA,AP
+time = 1
+ignorehitpause = 1
+
+;[State -2, アーマー受けした時の点滅]
+;type = PalFX
+;trigger1 = NumHelper(9000)
+;trigger1 = Helper(9000),GetHitVar(damage)
+;time = 5
+;add = 256,10,10
+
+[State -2, アーマー受けした時のライフ減少]
+type = LifeAdd
+trigger1 = NumHelper(9000)
+trigger1 = Helper(9000),GetHitVar(damage)
+value = -Helper(9000),GetHitVar(damage)
+absolute = 1
+ignorehitpause = 1
+;---------------------------------------------------------------------------
+;壁吹き飛ばし
+;---------------------------------------------------------------------------
+[State -2,壁吹き飛ばし]
+	type = TargetState
+	trigger1 = StateNo = 230 || StateNo =2300 || StateNo = 6300 || StateNo =6350 || StateNo =6667
+	trigger1 = movehit = 1
+	value = 7000
+
+[State -2,向き直し]
+	type = Null;TargetFacing
+	trigger1 = StateNo = 230 || StateNo =2300 || StateNo = 6300 || StateNo =6350 || StateNo =6667
+	trigger1 = movehit = 1
+	value = -1
+		
+;[State -2,壁吹き飛ばしエフェクト]
+;	type = Explod
+;	triggerAll =Target(230),Pos Y > -10
+;	trigger1 = numTarget
+;	trigger1 = Target,StateNo = 7010
+;	trigger1 = Target,Time = 1
+;	anim = 13480
+;	pos = 0, 10
+;	postype = p2
+;	bindtime = -1
+;	removetime = -1
+;	supermovetime = 9999
+;	pausemovetime = 9999
+;	sprpriority = 9999
+;	scale = 1,1
+;	ontop = 1
+;	ownpal = 1
+;	facing =-1
+;	ignorehitpause = 1
+;	ID =13480
+
+[State -2,壁吹き飛ばしエフェクト消し]
+	type = RemoveExplod
+	trigger1 = numTarget
+	trigger1 = Target,StateNo = 7020
+	trigger1 = Target,Time = 1
+	trigger3 = numExplod(13480)
+	trigger3 = Target,StateNo != 7010
+	ID =13480
+
+[State -2,壁ぶつかりエフェクト]
+	type = Explod
+	trigger1 = numTarget
+	trigger1 = Target,StateNo = 7020
+	trigger1 = Target,Time = 1
+	anim = 6030
+	pos = -40, -70
+	postype = p2
+;	bindtime = -1
+	supermovetime = 9999
+	pausemovetime = 9999
+	sprpriority = 9999
+	scale = 1,1
+	ontop = 1
+	ownpal = 1
+	facing =-1
+	ignorehitpause = 1
+
+[State -2]
+	type = Targetvelset
+	trigger1 = numTarget
+	trigger1 = Target,StateNo = 7020
+	trigger1 = Target,Time = 1
+	y = -1.5
+
+[State -2]
+	type = Targetveladd
+	trigger1 = numTarget
+	trigger1 = Target,StateNo = 7020
+	trigger1 = Target,Time = 1
+		y = 0.25
+
+[State -2]
+	type = TargetVelSet
+	trigger1 = numTarget(230)
+	trigger1 = Target(230),StateNo = 7010
+	trigger1 = Target(230),Time = 1
+	x = -30
+	y = -15
+id = 230
+
+[State -2]
+	type = TargetVelSet
+	trigger1 = numTarget(2300)
+	trigger1 = Target(2300),StateNo = 7010
+	trigger1 = Target(2300),Time = 1
+	x = -28
+id = 2300
+
+[State -2]
+	type = Null;TargetVelSet
+	trigger1 = numTarget(230)
+	trigger1 = Target(230),StateNo = 7030
+	trigger1 = Target(230),Time = 1
+	x = -.1
+	y = -6.3
+
+;---------------------------------------------------------------------------
+;床バウンド
+;---------------------------------------------------------------------------
+
+	[State -2,向き直し]
+		type = TargetFacing
+		trigger1 = numTarget(630)
+		trigger1 = Target(630),statetype = A
+		trigger1 = movehit =1
+		trigger2 = numTarget(1075)
+		trigger2 = Target(1075),statetype = A
+		trigger2 = movehit =1
+		value = -1
+
+	[State -2,床吹き飛ばし]
+		type = TargetState
+;		trigger1 = var(10) = 1
+		trigger1 = numTarget(630)
+		trigger1 = Target(630),statetype = A
+		trigger1 = movehit =1
+		trigger2 = numTarget(1075)
+		trigger2 = Target(1075),statetype = A
+		trigger2 = movehit =1
+		value = 7050
+		persistent = 0
+
+[State -2]
+	type = TargetVelSet
+	trigger1 = numTarget
+	trigger1 = Target,StateNo = 7060
+	trigger1 = Target,Time = 1
+	x = -12.75
+	y = 20.5
+
+[State -2, 床ぶつかり音]
+	type = PlaySnd
+	trigger1 = numTarget
+	trigger1 = Target,StateNo = 7070
+	trigger1 = Target,Time = 1
+	value = 500, 2
+	
+;===========================================================================
+;特殊システム
+;===========================================================================
+;---------------------------------------------------------------------------
+;幻想殺し
+;---------------------------------------------------------------------------
+
+[State -2, 幻想殺しヘルパー呼び出し]
+	type = Helper
+	triggerall = 0;!NumHelper(8000) && alive
+	trigger1 = Var(3)  =    6                     ;凶運状態
+	trigger2 = Var(3)  =    7                     ;天運状態
+	name = "Imagine Breaker"
+	stateno = 8000
+	ignorehitpause = 1
+	ID = 8000
+	size.xscale = 1
+	size.yscale = 1
+	postype = p1
+	pos = 0,0
+	ownpal = 1
+	supermovetime = 99999
+	pausemovetime = 99999
+
+[State 0, StopSnd]
+type = StopSnd
+trigger1 = !ishelper
+trigger1 = movetype = H
+channel = 4
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = movetype != H
+trigger1 = stateno != 8001 && stateno != 3
+var(59) = stateno
+
+[State -2, 幻想殺し中の飛び道具無敵]
+	type = Null;NotHitBy
+	trigger1 = NumHelper(8000)
+	trigger1 = !NumHelper(9000)
+	value = SCA,AP
+	time = 2
+
+;---------------------------------------------------------------------------
+;ハードラック
+;---------------------------------------------------------------------------
+[State -2];タッグパートナー判定
+	type = Null;Varadd
+	trigger1 = Numhelper(30000) = 0
+	Trigger1 = P3Name="Accelerator" || P3Name="Kamijo toma";自分か上条
+	Trigger1 = NumPartner
+	Trigger1 = Partner,ID < ID		;相手が前
+	var(31) = -20;デフォルトは0 -方向で上に
+
+[State -2];ゲージ呼び出し
+	type = Null;Helper
+	trigger1 = Numhelper(30000) = 0
+	stateno = 30000
+	ID = 30000
+	pos = 0,0
+	postype = left
+	helpertype = normal
+	name = "gauge"
+	keyctrl = 0
+	ownpal = 1
+	pausemovetime = -1
+	supermovetime = -1
+
+[State -2];タイマー呼び出し
+	type = Helper
+	trigger1 = Numhelper(30001) = 0
+	stateno = 30001
+	ID = 30001
+	pos = 0,0
+	postype = left
+	helpertype = normal
+	name = "timers"
+	keyctrl = 1
+	ownpal = 1
+	pausemovetime = -1
+	supermovetime = -1
+
+[State -2,そげぶ補正]
+type = VarSet
+triggerall = !var(1)
+trigger1 = !numtarget
+fvar(0)  = 1.0
+
+[State -2,そげぶ補正]
+type = VarSet
+trigger1 = 1
+fvar(1)  = ifelse(var(12) >= 7000,.2,ifelse(var(12) >= 6000,.1,0))+ifelse(enemynear,statetype = A || var(2),.2,0)
+
+[State 0, DisplayToClipboard]
+type = Null;DisplayToClipboard
+trigger1 = 1
+text = "fvar(0) = %f"
+params = fvar(0)-fvar(1)
+ignorehitpause = 1
+
+[State 0, VarAdd]
+type = VarAdd
+trigger1 = var(1) > 0 && !numtarget
+var(1) = -1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = !var(1)
+var(9) = 0
+
+[State 0, Explod]
+type = Explod
+trigger1 = !numexplod(7777) && power >= 7000 && !var(12) && Life <= LifeMax/3 && Alive && stateno != 3300 && stateno != 3310 && stateno != 3200 && stateno != 3205 && stateno != 3210 && stateno != 3214 && stateno != 3215 && stateno != 3500 && stateno != 3501 && roundstate = 2
+anim = 13370
+ID = 7777
+pos = 0,0
+postype = p1  ;p2,front,back,left,right
+facing = -1
+vfacing = 1
+bindtime = -1
+removetime = -1
+pausemovetime = -1
+supermovetime = -1
+scale = 1,1
+sprpriority = 5
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+trans = sub
+removeongethit = 0
+ignorehitpause = 1
+
+[State 0, Explod]
+type = Explod
+trigger1 = numexplod(7777) && (power < 7000 || Life > LifeMax/3 || !Alive || stateno = 3300 || stateno = 3310 || stateno = 3200 || stateno = 3205 || stateno = 3210 || stateno = 3214 || stateno = 3215 || stateno = 3500 || stateno = 3501 || roundstate != 2)
+anim = 13371
+ID = 7778
+pos = 0,0
+postype = p1  ;p2,front,back,left,right
+facing = -1
+vfacing = 1
+bindtime = 0
+removetime = -2
+pausemovetime = -1
+supermovetime = -1
+scale = 1,1
+sprpriority = 5
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+trans = sub
+removeongethit = 0
+ignorehitpause = 1
+
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 = numexplod(7777) && (power < 7000 || var(12) || Life > LifeMax/3 || !Alive || stateno = 3300 || stateno = 3310 || stateno = 3200 || stateno = 3205 || stateno = 3210 || stateno = 3214 || stateno = 3215 || stateno = 3500 || stateno = 3501 || roundstate != 2)
+id = 7777
+ignorehitpause = 1
+
+;---------------------------------------------------------------------------
+;幻想殺し(対一方)
+;---------------------------------------------------------------------------
+[State -2, ]
+	type = varset
+	;通常技
+	triggerall= var(50) =    0
+	trigger1  = StateNo =  230 && AnimElemTime(3)=0;ふっ飛ばし攻撃
+	;必殺技
+	trigger2  = StateNo = 1000 && AnimElemTime(5)=0;連続そげぶ始動
+	trigger3  = StateNo = 1050 && AnimElemTime(2)=0;連続そげぶ上段派生1
+	trigger4  = StateNo = 1100 && AnimElemTime(5)=0;連続そげぶ下段派生1
+	trigger5  = StateNo = 1125 && AnimElemTime(6)=0;連続そげぶ上段派生2
+	trigger6  = StateNo = 1150 && AnimElemTime(4)=0;連続そげぶ中段派生2
+	trigger7  = StateNo = 1200 && AnimElemTime(4)=0;連続そげぶ下段派生2
+	trigger8  = StateNo = 1250 && AnimElemTime(5)=0;強連続そげぶ1
+	trigger9  = StateNo = 1251 && AnimElemTime(4)=0;強連続そげぶ2
+	trigger10 = StateNo = 1252 && AnimElemTime(4)=0;強連続そげぶ3
+	trigger11 = StateNo = 1500 && AnimElemTime(5)=0;昇竜そげぶ弱
+	trigger12 = StateNo = 1550 && AnimElemTime(5)=0;昇竜そげぶ強
+	trigger13 = StateNo = 1600 && AnimElemTime(4)=0;突撃そげぶ弱
+	trigger14 = StateNo = 1650 && AnimElemTime(6)=0;突撃そげぶ強
+	trigger15 = StateNo = 1800 && AnimElem = 2
+	;超必殺技
+	trigger16 = StateNo = 2000 && AnimElemTime(5) =0;昇竜そげぶEX
+	trigger17 = StateNo = 2100;不幸だ☆そげぶEX
+	trigger18 = StateNo = 2101;不幸だ☆そげぶEX着地
+	trigger19 = StateNo = 2200 && AnimElemTime(5) =0;そげぶラッシュ
+	trigger20 = StateNo = 2300 && AnimElemTime(15)=0;FIRST…COMES…ROCK…
+	trigger21 = StateNo = 2500 && AnimElemTime(10)<0;バスターそげぶ
+	trigger22 = StateNo = 2501 && Time = 70
+	trigger23 = StateNo = 3000 && AnimElemTime(21)=0;その幻想をぶち殺す!!
+	trigger24 = StateNo = 3300 && AnimElem = 4
+	trigger25 = Anim = 3400 || Anim = 3405 && AnimElemTime(5) = -1
+	;特殊技
+	trigger26 = StateNo = 6430 && AnimElemTime(4)=0;そげぶカウンター
+	var(50) = 666
+
+	[State -2, ]
+		type = varset
+		triggerall = var(50) = 666
+		trigger1 = StateNo !=  230
+		trigger1 = StateNo != 1000
+		trigger1 = StateNo != 1050 ;連続そげぶ上段派生1
+		trigger1 = StateNo != 1100 ;連続そげぶ下段派生1
+		trigger1 = StateNo != 1125 ;連続そげぶ上段派生2
+		trigger1 = StateNo != 1150 ;連続そげぶ中段派生2
+		trigger1 = StateNo != 1200 ;連続そげぶ下段派生2
+		trigger1 = StateNo != 1250 ;強連続そげぶ1
+		trigger1 = StateNo != 1251 ;強連続そげぶ2
+		trigger1 = StateNo != 1252 ;強連続そげぶ3
+		trigger1 = StateNo != 1500 ;昇竜そげぶ弱
+		trigger1 = StateNo != 1550 ;昇竜そげぶ強
+		trigger1 = StateNo != 1600 ;突撃そげぶ弱
+		trigger1 = StateNo != 1650 ;突撃そげぶ強
+		trigger1 = StateNo != 1800
+		trigger1 = StateNo != 2000 ;昇竜そげぶEX
+		trigger1 = StateNo != 2100
+		trigger1 = StateNo != 2101 ;不幸だ☆そげぶEX着地
+		trigger1 = StateNo != 2200 ;そげぶラッシュ
+		trigger1 = StateNo != 2300 ;FIRST…COMES…ROCK…
+		trigger1 = StateNo != 2500 ;バスターそげぶ
+		trigger1 = StateNo != 2501 ;バスターそげぶ
+		trigger1 = StateNo != 3000 ;その幻想をぶち殺す!!
+		trigger1 = StateNo != 3300
+		trigger1 = StateNo != 3400
+		trigger1 = StateNo != 6430 ;
+		;通常技
+		trigger2 = StateNo =  230 && AnimElemTime(6)>0
+		;必殺技
+		trigger3 = StateNo = 1000 && AnimElemTime(6)>0
+		trigger4 = StateNo = 1050 && AnimElemTime(5)>0 ;連続そげぶ上段派生1
+		trigger5 = StateNo = 1100 && AnimElemTime(7)>0 ;連続そげぶ下段派生1
+		trigger6 = StateNo = 1125 && AnimElemTime(8)>0 ;連続そげぶ上段派生2
+		trigger7 = StateNo = 1150 && AnimElemTime(7)>0 ;連続そげぶ中段派生2
+		trigger8 = StateNo = 1200 && AnimElemTime(5)>0 ;連続そげぶ下段派生2
+		trigger9 = StateNo = 1250 && AnimElemTime(9)>0 ;強連続そげぶ1
+		trigger10= StateNo = 1251 && AnimElemTime(8)>0 ;強連続そげぶ2
+		trigger11= StateNo = 1252 && AnimElemTime(9)>0 ;強連続そげぶ3
+		trigger12= StateNo = 1500 && AnimElemTime(10)>0;昇竜そげぶ弱
+		trigger13= StateNo = 1550 && AnimElemTime(12)>0;昇竜そげぶ強
+		trigger14= StateNo = 1600 && AnimElemTime(9)>0 ;突撃そげぶ弱
+		trigger15= StateNo = 1650 && AnimElemTime(9)>0 ;突撃そげぶ強
+		trigger16 = StateNo = 1800 && AnimElemTime(3) >= 0
+		;超必殺技
+		trigger17= StateNo = 2000 && AnimElemTime(13)>0;昇竜そげぶEX
+		trigger18= StateNo = 2101 && AnimElemTime(7)>0 ;不幸だ☆そげぶEX着地
+		trigger19= StateNo = 2200 && AnimElemTime(6)>0 ;そげぶラッシュ
+		trigger20= StateNo = 2300 && AnimElemTime(12)>0;FIRST…COMES…ROCK…
+		trigger21= StateNo = 2500 && AnimElemTime(10)>=0;バスターそげぶ
+		trigger22 = Anim = 2502 && AnimElemTime(2)>=0
+		trigger23= StateNo = 3000 && AnimElemTime(25)>0;その幻想をぶち殺す!!
+		trigger24 = StateNo = 3300 && AnimElemTime(5) >= 0
+		trigger25 = (Anim = 3403 && AnimElemTime(14) >= 0) || Anim = 3404
+		;特殊技
+		trigger26= StateNo = 6430 && AnimElemTime(6)>0
+		var(50) = 0
+;===========================================================================
+;音関連
+;===========================================================================
+;効果音
+[State -2, 効果音]
+	type = PlaySnd
+	triggerall = AnimElemTime(1) = 1
+	trigger1 = stateno = 53  ;着地ステート
+	trigger2 = stateno = 106 ;バックステップ後の着地ステート
+	value = 40, 0
+;---------------------------------------------------------------------------
+;ボイス
+[State -2, イントロスキップ]
+	type = Null;StopSnd
+	TriggerAll = !IsHelper
+	Trigger1 = RoundState = 2
+	channel = 1
+
+[State -2, 変数 KOボイス重複スイッチ初期化]
+type = VarSet
+trigger1 = var(43)
+trigger1 = Alive
+var(43) = 0
+ignorehitpause = 1
+
+[State -2, KOボイス]
+type = playsnd
+trigger1 = !Alive
+trigger1 = !Var(43)
+value = S12,0
+channel = 2
+lowpriority = 0
+ignorehitpause = 1
+
+[State -2, 変数 KOボイス重複防止]
+type = VarSet
+trigger1 = !var(43)
+trigger1 = !Alive
+var(43) = 1
+ignorehitpause = 1
+
+
+;===========================================================================
+;エフェクト関連
+;===========================================================================
+[State 2400,Explod Delete]
+Type=RemoveExplod
+trigger1 = numexplod(2401)
+trigger1 = stateno != 2400
+ID = 2401
+
+
+
+;===========================================================================
+;ステート奪われ判断
+;===========================================================================
+
+[Statedef -5]
+
+[State 0, AssertSpecial]
+type = AssertSpecial
+trigger1 = var(12)
+flag = timerfreeze
+
+[State 0, DisplayToClipboard]
+type = DisplayToClipboard
+trigger1 = 1
+text = "hitpriority = %d"
+params = hitpriority
+ignorehitpause = 1
+
+[State 0, PalFX]
+type = Null;PalFX
+trigger1 = 1
+time = 1
+add = ifelse((gametime*10)%1024 <= 255 || (gametime*10)%1024 > 1023,256,ifelse((gametime*10)%1024 > 255 && (gametime*10)%1024 <= 511,256-(gametime*10)%256,ifelse((gametime*10)%1024 >= 767,(gametime*10)%256,0))),ifelse((gametime*10)%1024 <= 255,(gametime*10)%256,ifelse((gametime*10)%1024 > 255 && (gametime*10)%1024 <= 511,256,ifelse((gametime*10)%1024 > 511 && (gametime*10)%1024 <= 767,256-(gametime*10)%256,0))),ifelse((gametime*10)%1024 > 511 && (gametime*10)%1024 <= 767,(gametime*10)%256,ifelse((gametime*10)%1024 > 767 && (gametime*10)%1024 <= 1023,256-(gametime*10)%256,0))
+;mul = ifelse((gametime*10)%1024 <= 255 || (gametime*10)%1024 > 1023,256,ifelse((gametime*10)%1024 > 255 && (gametime*10)%1024 <= 511,256-(gametime*10)%256,ifelse((gametime*10)%1024 >= 767,(gametime*10)%256,0))),ifelse((gametime*10)%1024 <= 255,(gametime*10)%256,ifelse((gametime*10)%1024 > 255 && (gametime*10)%1024 <= 511,256,ifelse((gametime*10)%1024 > 511 && (gametime*10)%1024 <= 767,256-(gametime*10)%256,0))),ifelse((gametime*10)%1024 > 511 && (gametime*10)%1024 <= 767,(gametime*10)%256,ifelse((gametime*10)%1024 > 767 && (gametime*10)%1024 <= 1023,256,ifelse((gametime*10)%1024 > 1023,256-(gametime*10)%256,0)))
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+triggerall = stateno = 8001
+trigger1 = prevstateno != 8001
+var(59) = prevstateno
+ignorehitpause = 1
+
+[State 8001]
+type = PowerAdd
+trigger1 = stateno = 8001
+value = 100+ifelse(gethitvar(damage) > 0,gethitvar(damage)*7,0)
+ignorehitpause = 1
+
+[State -1];そげぶ音
+Type=PlaySnd
+triggerall = stateno = 8001
+trigger1= !var(52)
+value=0,10
+volume=255
+channel=-1
+ignorehitpause = 1
+
+[State -1];打ち消しエフェクト
+type = Explod
+trigger1= stateno = 8001
+anim = 7002
+ID = 7002
+pos = 15, -65
+random = 50,35
+postype = p1
+bindtime = 0;1
+supermovetime = 9999
+pausemovetime = 9999
+scale = 1, 1
+sprpriority = 3
+ontop = 1
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = stateno = 8001
+var(52) = 10
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarAdd
+triggerall = stateno = 8001
+trigger1 = hitpausetime > 0
+sysvar(51) = -1
+ignorehitpause = 1
+
+[State 8000]
+Type=SelfState
+Trigger1=stateno = 8001
+value=var(59);prevstateno;8000
+ctrl = var(59) = 0
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarAdd
+triggerall = !super || sysvar(47)
+trigger1 = var(6) >= 100
+var(6) = -100
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = var(6) < 100
+var(6) = 0
+ignorehitpause = 1
+
+[State 0, NotHitBy]
+type = NotHitBy
+trigger1 = ((super && sysvar(47) = 0) || enemynear,stateno = 660 || enemynear,stateno = 600 || enemynear,stateno = 602 || enemynear,stateno = 604) && enemynear,name = "Hatate_Himekaidou"
+value = SCA,AA,AP,AT
+time = 5
+ignorehitpause = 1
+
+[State -2, アーマー中の投げ以外無敵]
+type = NotHitBy
+trigger1 = enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301)))
+trigger1 = NumHelper(8000) && (Anim != [6400,6401]) && (Anim != [6410,6411]) && (Anim != [6420,6421])
+trigger2 = enemynear,name = "bernkastel" && (enemynear,stateno = 2500 || enemynear,stateno = 2300 || enemynear,movetype = H)
+value2 = SCA,AA,AP,AT
+time = 1
+ignorehitpause = 1
+
+[State 0, AssertSpecial]
+type = AssertSpecial
+trigger1 = var(42) = 1
+trigger2 = var(42) = 3
+trigger3 = matchover && win && playerno = teamside
+flag = nomusic
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = winko && var(52) > -1
+var(52) = -2
+ignorehitpause = 1
+
+[State 0, Zoom]
+type = Zoom
+trigger1 = winko && var(52) < -1 && anim != 3505
+pos = enemynear,pos X,enemynear,pos Y - camerapos Y
+scale = 2
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = var(52) < -1
+var(52) = 1
+ignorehitpause = 1
+
+[State 0, PlaySnd]
+type = Helper
+triggerall = numhelper(30006) = 0
+trigger1 = matchover && winko && playerno = teamside
+stateno = 30006
+id = 30006
+ignorehitpause = 1
+pausemovetime = -1
+supermovetime = -1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = !super && !pause && var(51) = 11
+var(51) = 0
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = !pause && var(51) > 0
+var(51) = -1
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = var(52) > 0
+var(52) = -1
+
+[State 0, SelfState]
+type = Null;SelfState
+triggerall = stateowner != playerno
+trigger1 = pause && !var(51)
+value = 50*(statetype = A)
+ctrl = 1
+
+
+[State 0, SelfState]
+type = SelfState
+trigger1 = stateowner != playerno
+trigger1 = var(59) = 6300 || var(59) = 6350
+trigger2 = ((stateno != 3500 && stateno != 3501) || stateowner != playerno) && var(59) = 3501
+trigger3 = ((stateno != 3300 && stateno != 3310) || stateowner != playerno) && var(59) = 3310
+value = var(59)
+
+[State -1];そげぶ音
+Type=PlaySnd
+trigger1 = pause && !var(51)
+value=0,10
+volume=255
+channel=-1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = pause && var(51) < 10
+var(51) = 10
+
+[State -1];打ち消しエフェクト
+type = Null;Explod
+trigger1= var(51) > 0 && var(51) < 3
+anim = 7002
+ID = 7002
+pos = 15, -65
+random = 50,35
+postype = p1
+bindtime = 0;1
+supermovetime = 9999
+pausemovetime = 9999
+scale = 1, 1
+sprpriority = 3
+ontop = 1
+ownpal = 1
+removeongethit = 1

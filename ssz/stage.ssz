@@ -151,9 +151,22 @@ public &Stage
         .com.cam.stg.boundright =
           .com.atonOF!.com.cam.stg.boundright.self?(data);
       }
+      if(#(data = sc.get("startzoom")) > 0){
+        .com.cam.stg.startzoom = .com.atonOF!.com.cam.stg.startzoom.self?(data);
+      }
+      if(#(data = sc.get("zoomin")) > 0){
+        .com.cam.stg.zoomin = .com.atonOF!.com.cam.stg.zoomin.self?(data);
+      }
+      if(#(data = sc.get("zoomout")) > 0){
+        .com.cam.stg.zoomout = .com.atonOF!.com.cam.stg.zoomout.self?(data);
+      }
       if(#(data = sc.get("boundhigh")) > 0){
         .com.cam.stg.boundhigh =
           .com.atonOF!.com.cam.stg.boundhigh.self?(data);
+      }
+      if(#(data = sc.get("boundlow")) > 0){
+        .com.cam.stg.boundlow =
+          .com.atonOF!.com.cam.stg.boundlow.self?(data);
       }
       if(#(data = sc.get("verticalfollow")) > 0){
         .com.cam.stg.verticalfollow = .com.atof(data);
@@ -478,7 +491,7 @@ public &Stage
       }
       i++;
     while i < #`bg:
-      if(zlink >= 0) .com.cam.stg.zoffset += (int)(`bg[zlink].starty*`yscale);
+      if(zlink >= 0) .com.cam.stg.zoffset += (`bg[zlink].starty*`yscale);
     }
     .com.cam.stg.drawOffsetY =
       (float).com.cam.stg.localw/(float).com.cam.stg.localh

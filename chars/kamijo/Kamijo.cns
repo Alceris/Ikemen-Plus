@@ -1,0 +1,3407 @@
+;===========================================================================
+; コンスタンツ（定数）
+;===========================================================================
+;---------------------------------------------------------------------------
+; 基本データ
+;---------------------------------------------------------------------------
+[Data]
+	life              = 1000    ;ライフ（体力ゲージ）最大値
+	power             = 7000   ;パワーゲージ最大値（オプション・デフォルトは3000=Lv.3）
+	attack            = 100    ;攻撃力（デフォルトは１００％）
+	defence           = 100    ;防御力（デフォルトは１００％）
+	fall.defence_up   = 50     ;横に倒れている時に一時的に加える防御力（％）
+	liedown.time      = 60     ;横に倒れている時間（フレーム）
+	airjuggle         = 15     ;ジャグルポイント限界値（「小ネタ.txt」参照）
+	sparkno           = 2      ;デフォルトのヒットスパーク（fightfxから）
+	guard.sparkno     = 40     ;デフォルトのガードスパーク（fightfxから）
+	KO.echo           = 0      ;ＫＯ時の音声（11,0）にエコーを掛けるか否か（0=掛けない,1=掛ける）
+	volumescale            = 150    ;キャラの標準の音量（最小-255・最大255）
+	IntPersistIndex   = 0     ;次のラウンドへ持ち越せる「Var」のアドレスの範囲を決める
+	FloatPersistIndex = 0     ;次のラウンドへ持ち越せる「FVar」のアドレスの範囲を決める
+
+;---------------------------------------------------------------------------
+; サイズ
+;---------------------------------------------------------------------------
+[Size]
+	xscale           = 1       ;キャラの横の大きさ（絶対値・float）
+	yscale           = 1       ;キャラの縦の大きさ（絶対値・float）
+	ground.back      = 17      ;地上にいる時の「後方の物理的な幅」
+	ground.front     = 17      ;地上にいる時の「前方の物理的な幅」
+	air.back         = 12      ;空中にいる時の「後方の物理的な幅」
+	air.front        = 12      ;空中にいる時の「前方の物理的な幅」
+	height           = 60      ;キャラの物理的な高さ（高いほど相手は飛び越しにくくなる）
+	attack.dist      = 160     ;相手がガード態勢に入る最低の距離
+	proj.attack.dist = 90       ;自分の「Projectile」に対して相手がガード態勢に入る最低の距離
+	proj.doscale     = 0       ;xscaleとyscaleを「Projectile」にも影響させるか否か（0=させない・1=させる）
+	head.pos         = 5,-95  ;キャラの標準の頭の座標（Bind系で適用される）
+	mid.pos          = 7,-65  ;キャラの標準の体中心の座標（Bind系で適用される）
+	shadowoffset     = 0       ;影のＹ軸方向の位置座標
+	draw.offset      = 0,0     ;キャラの表示座標（Ｘ軸,Ｙ軸）
+
+;---------------------------------------------------------------------------
+; 移動速度
+;---------------------------------------------------------------------------
+[Velocity]
+	walk.fwd     = 2.45        ;前進速度（Ｘ軸・[Statedef 20]に適用される）
+	walk.back    = -2.0        ;後退速度（Ｘ軸・[Statedef 20]に適用される）
+	run.fwd      = 6.61         ;前方に走る速度（Ｘ軸,Ｙ軸・[Statedef 100]に適用される）
+	run.back     = -4.5,-2.8   ;後方に走る速度（Ｘ軸,Ｙ軸・[Statedef 105]に適用される）
+
+	jump.neu     = 0,-20      ;垂直ジャンプの速度（Ｘ軸,Ｙ軸・[Statedef 40]に適用される）
+	jump.back    = -3.15       ;後方ジャンプの速度（Ｘ軸・[Statedef 40]に適用される）
+	jump.fwd     = 3.75        ;前方ジャンプの速度（Ｘ軸・[Statedef 40]に適用される）
+
+	runjump.back = -2.45,-10.5  ;後方に走ってからのジャンプ速度（Ｘ軸,Ｙ軸・[Statedef 40]に適用される）
+	runjump.fwd  = 3.05,-10.5      ;前方に走ってからのジャンプ速度（Ｘ軸,Ｙ軸・[Statedef 40]に適用される）
+
+	airjump.neu  = 0,-10      ;空中垂直ジャンプ速度（Ｘ軸,Ｙ軸・[Statedef 45]に適用される）
+	airjump.back = -5.0       ;空中後方ジャンプ速度（Ｘ軸・[Statedef 45]に適用される）
+	airjump.fwd  = 5.0         ;空中前方ジャンプ速度（Ｘ軸・[Statedef 45]に適用される）
+
+;---------------------------------------------------------------------------
+; 運動関係
+;---------------------------------------------------------------------------
+[Movement]
+	airjump.num     = 0        ;空中ジャンプが出来る回数
+	airjump.height  = 80       ;空中ジャンプが出来る最低の高度（Ｙ軸）
+	yaccel          = .475      ;Ｙ軸加速度（重力）
+	stand.friction  = .85      ;立っている時の摩擦係数（ステートのPhysicsが「S」の時）
+	crouch.friction = .82      ;しゃがんでいる時の摩擦係数（ステートのPhysicsが「C」の時）
+
+;---------------------------------------------------------------------------
+; タイムオーバー
+;---------------------------------------------------------------------------
+[Statedef 170,タイムオーバー]
+	Type=S
+	Ctrl=0
+	Anim=170
+	velset=0,0
+	sprpriority = 4
+
+	[State 170,NotHit]
+		Type=NotHitBy
+		Trigger1=1
+		value=SCA
+		Time=1
+
+	[State 170,ボイス]
+		Type=playSnd
+		Trigger1=AnimElem=5
+		value=11,4
+		channel = 4
+
+	[State 170,効果音]
+		Type=playSnd
+		Trigger1=AnimElem=3
+		value=0,5
+		channel=-1
+
+	[State 170,Explod]
+		Type=Explod
+		Trigger1=AnimElem=3
+		Anim=6025
+		Pos=0,0
+		SuperMove=1
+		sprPriority=5
+		Ownpal=1
+		RemoveonGetHit=1
+		IgnoreHitPause=1
+		Scale=const(Size.xScale),const(Size.yScale)
+
+;---------------------------------------------------------------------------
+; 勝利ポーズ
+;---------------------------------------------------------------------------
+[Statedef 180,勝利ポーズ分岐]
+	Type=S
+
+[State 0, LifeSet]
+type = LifeSet
+trigger1 = enemy,teammode = turns
+value = lifemax
+
+	[State 180,最弱勝利]
+		Type=ChangeState
+		Trigger1=1
+		Trigger1=var(42)=3
+		value=187;184
+
+	[State 180,高笑い]
+		Type=ChangeState
+		Trigger1=1
+		Trigger1=var(42)=2
+		value=186
+
+	[State 180,最弱勝利]
+		Type=ChangeState
+		Trigger1=1
+		Trigger1=var(42)=1
+		value=184
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(42) = 4+random%4
+
+	[State 180,不幸だ…]
+		Type=ChangeState
+		Trigger1=1
+		value=ifelse(var(42) = 4,181,ifelse(var(42) = 5,182,ifelse(var(42) = 6,183,185)))
+
+;---------------------------------------------------------------------------
+[Statedef 181,不幸だ…]
+	Type=S
+	Ctrl=0
+	Anim=180
+	velset=0,0
+	sprpriority = 4
+
+	[State 181,NotHit]
+		Type=NotHitBy
+		Trigger1=1
+		value=SCA
+		Time=1
+
+	[State 181,ボイス]
+		Type=playSnd
+		Trigger1=Time=1
+		value=180,0
+		channel = 4
+
+	[State 181,Explod]
+		Type=Explod
+		Trigger1=AnimElem=3
+		Anim=182
+		sprPriority=5
+		Pos=10,-90
+		PosType=P1
+		bindTime=-1
+		Scale=const(Size.xScale),const(Size.yScale)
+		RemoveonGetHit=1
+		IgnoreHitPause=0
+
+	[State 181,Round not over]
+		Type=assertSpecial
+		Trigger1=Time <=110
+		flag=Roundnotover
+
+;---------------------------------------------------------------------------
+[Statedef 182,通常勝利_1]
+	Type=S
+	Ctrl=0
+	Anim=183
+	velset=0,0
+
+	[State 181,NotHit]
+		Type=NotHitBy
+		Trigger1=1
+		value=SCA
+		Time=1
+
+	[State 181,位置]
+		type = PosSet
+		trigger1 = 1
+		y = 1
+		
+	[State 181,ボイス]
+		Type=playSnd
+		Trigger1=AnimElemTime(5)=0
+		value=180,3+(Random%2)
+		channel = 4
+
+	[State 182,効果音]
+		Type=playSnd
+		Trigger1=AnimElemTime(4)=0
+		value=1,3
+		channel=-1
+
+	[State 181,Round not over]
+		Type=assertSpecial
+		Trigger1=Time <=210
+		flag=Roundnotover
+
+;---------------------------------------------------------------------------
+[Statedef 183,通常勝利_2]
+	Type=S
+	Ctrl=0
+	Anim=192
+	velset=0,0
+
+	[State 181,NotHit]
+		Type=NotHitBy
+		Trigger1=1
+		value=SCA
+		Time=1
+	
+	[State 181,位置]
+		type = Posset
+		trigger1 = time=0
+		y = 1
+
+	[State 181,ボイス]
+		Type=playSnd
+		trigger1 = Anim=192
+		Trigger1=AnimElemTime(17)=4
+		value=180,10
+		channel = 4
+		persistent=0
+
+	[State 181,口パク]
+type = ChangeAnim
+trigger1 = Anim=192
+trigger1 = AnimElemTime(17)=4
+value = 19200
+persistent=0
+
+	[State 181,口パク]
+type = ChangeAnim
+trigger1 = Anim=19200
+trigger1 = Time=250
+value = 192
+elem = 18
+persistent=0
+
+
+;	[State 181,口パク]
+;		type = Explod
+;		Trigger1=!NumExplod(19200)
+;		Trigger1=AnimElemTime(18)=0
+;		anim = 19200
+;		ID = 19200
+;		pos = 0,0
+;		postype = p1
+;		bindtime = -1
+;		removetime = -1
+;		supermovetime = 1
+;		pausemovetime = 1
+;		sprpriority = 5
+;		removeongethit = 1
+
+
+		
+;	[State 181,口パク消去]
+;		type = RemoveExplod
+;		Trigger1=NumExplod(19200)
+;		Trigger1=Time =250
+;		ID = 19200
+
+	[State 181,Round not over]
+		Type=assertSpecial
+		Trigger1=Time <=265
+		flag=Roundnotover
+
+;---------------------------------------------------------------------------
+[Statedef 184,高笑い]
+	Type=S
+	Ctrl=0
+	Anim=ifelse(anim=3505,184,484)
+	velset=0,0
+	sprpriority = 4
+
+[State 0, WinAdd]
+type = WinAdd
+trigger1 = enemy,teammode != turns
+p1 = 99*ifelse(teamside = 1,1,-1)
+p2 = 99*ifelse(teamside = 2,1,-1)
+
+	[State 182,NotHit]
+		Type=NotHitBy
+		Trigger1=1
+		value=SCA
+		Time=1
+
+	[State 182,ボイス];そげぶ勝利
+		Type=playSnd
+		Trigger1=AnimElem=1
+		value=3000,3
+		channel = 4
+
+	[State 182,ボイス];そげぶ勝利
+		Type=playSnd
+		Trigger1=AnimElem=43
+		value=3000,2
+		channel = 4
+
+	[State 6662,]
+		Type=PlaySnd
+		trigger1 = AnimElemtime(43) = 0
+		value=1,29
+		volume=255
+		channel=-1
+
+	[State 6661,]
+		type = Explod
+		trigger1 = AnimElemtime(43) = 0
+		anim = 13380
+		ID = 13380
+		pos = 0, 0
+		postype = p1
+		bindtime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		ownpal = 1
+		removeongethit = 1
+
+	[State 182,Round not over]
+		Type=assertSpecial
+		Trigger1=Time <=320
+		flag=Roundnotover
+
+;---------------------------------------------------------------------------
+[Statedef 185,そげぶ勝利]
+	Type=S
+	Ctrl=0
+	Anim=181
+	velset=0,0
+	sprpriority = 4
+
+	[State 182,NotHit]
+		Type=NotHitBy
+		Trigger1=1
+		value=SCA
+		Time=1
+
+	[State 182,ボイス];そげぶ勝利
+		Type=playSnd
+		Trigger1=AnimElem=7
+		value=180,1+(Random%2)
+		channel = 4
+
+	[State 182,効果音];そげぶ勝利
+		Type=playSnd
+		Trigger1=AnimElem=6
+		value=1,3
+		channel=-1
+
+	[State 182,Round not over]
+		Type=assertSpecial
+		Trigger1=Time <=220
+		flag=Roundnotover
+
+;---------------------------------------------------------------------------
+[Statedef 186,]
+	Type=S
+	Ctrl=0
+	Anim=189
+	velset=0,0
+	sprpriority = 4
+
+	[State 186,NotHit]
+		Type=NotHitBy
+		Trigger1=1
+		value=SCA
+		Time=1
+
+	[State 186,効果音];ドクン
+		Type=playSnd
+		Trigger1=AnimElemtime(4)=0
+		value=1,17
+		channel=-1
+
+	[State 186,エフェクト]
+		type = Explod
+		trigger1 = AnimElemtime(4) = 0
+		anim = 18900
+		ID = 18900
+		pos = 0, 0
+		postype = p1
+		bindtime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		ownpal = 1
+		removeongethit = 1
+
+	[State 186,エフェクト拡大]
+		type = ModifyExplod
+		trigger1 = AnimElemtime(4)>=1
+		ID = 18900
+		Scale = ((time)*0.0030)+1,((time)*0.0030)+1
+		IgnoreHitPause = 1
+		pausemovetime = -1
+supermovetime = -1
+
+	[State 181,Round not over]
+		Type=assertSpecial
+		Trigger1=Time <=200
+		flag=Roundnotover
+
+;---------------------------------------------------------------------------
+[Statedef 187,神浄勝利]
+	Type=S
+	Ctrl=0
+;	Anim=0;181
+	velset=0,0
+	sprpriority = 4
+
+[State 0, WinAdd]
+type = Null;WinAdd
+trigger1 = !time && enemy,teammode != turns
+p1 = 99*(teamside = 1)
+p2 = 99*(teamside = 2)
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = anim != 0 && time < 60
+value = 0
+
+	[State 182,ボイス];そげぶ勝利
+		type = ChangeAnim
+		trigger1 = time = 60
+		;trigger1 = time > 300
+		value = 181
+
+	[State 182,ボイス];そげぶ勝利
+		type = Turn
+		trigger1 = time = 60 && facing = -1
+
+	[State 182,NotHit]
+		Type=NotHitBy
+		Trigger1=1
+		value=SCA
+		Time=1
+
+	[State 182,ボイス];そげぶ勝利
+		Type=playSnd
+		Trigger1=time=150
+		value=3,34
+		channel = 4
+
+	[State 182,効果音]
+		type = ChangeAnim
+		trigger1 = anim = 181
+		trigger1 = animelemtime(5) >= 0
+		trigger1 = animelemtime(6) < 0
+		;trigger1 = time > 300
+		value = 181
+		elem = 5
+
+	[State 182,効果音]
+		type = ChangeAnim
+		trigger1 = time = 600
+		value = 181
+		elem = 6
+
+	[State 182,効果音];そげぶ勝利
+		Type=playSnd
+		trigger1 = anim = 181
+		Trigger1=AnimElem=6
+		value=1,3
+		channel=-1
+
+
+	[State 182,Round not over]
+		Type=assertSpecial
+		Trigger1=Time <=1070
+		flag=Roundnotover
+
+;---------------------------------------------------------------------------
+; イントロ分岐
+;---------------------------------------------------------------------------
+[Statedef 191,イントロ分岐]
+	Type=S
+
+[State 190, 1]
+type = AssertSpecial
+trigger1 = 1
+flag = intro
+
+	[State 191,特殊イントロ分岐]
+		Type=ChangeState
+		;自己犠牲1
+		Trigger1=P2Name="unkoman" && (var(10) := 0 || 1)
+		;自己犠牲2
+		Trigger2=P2Name="Madoka Kaname" && var(10) := 1
+		;絶望
+		Trigger3=(P2Name="Miki Sayaka"||P2Name="miki sayaka"||P2Name="Tomoe Mami") && var(10) := 2
+		;ループ
+		Trigger4=P2Name="Akemi-Homura" && var(10) := 3
+		;VS主人公（笑）
+		Trigger5=P2Name="Asagiri_Asagi" && var(10) := 4
+		;VS神様
+		Trigger6=P2Name="hanyu" && var(10) := 5
+		;VS神様（悪）
+		Trigger7=P2Name="" && var(10) := 6
+		;VS超能力者（レベル7、レベル5）
+		Trigger8=(P2Name="akashi_kaoru"||P2Name="nogami_aoi" ||P2Name="sannomiya_shiho" || P2Name="ONI-MIKO-REIMU")&& var(10) := 7
+		;VS魔術師
+		Trigger9=(P2Name="MARISA,K"||P2Name="Marisa Kirisame"||P2Name="Patchouli Knowledge"||P2Name="bernkastel") && var(10) := 8
+		;VS魔女
+		Trigger10=P2Name="beatrice" && var(10) := 9
+		;VS痴女
+		Trigger11=(P2Name="saber_Extra"||P2Name="caster_Extra") && var(10) := 10
+		;VS原作再現響
+		Trigger12=P2Name="Hibiki-SAN" && var(10) := 30
+		;VSイカ娘
+		Trigger13=P2Name="Ika musume" && var(10) := 31
+		;VSゴリ条
+		Trigger14=P2Name="gorijousan" && var(10) := 32
+		;VSゴリ条2
+		Trigger15=P2Name="Mr.gorijo" && var(10) := 33
+		;VSギルガメッシュ
+		Trigger16=P2Name="gilgamesh" && var(10) := 34
+		;インデックス
+		Trigger17=P2Name="INDEX" && var(10) := 50
+		;御坂美琴
+		Trigger18=P2Name="Misaka Mikoto" && var(10) := 51
+		;白井黒子
+		Trigger19=P2Name="kuroko_s" && var(10) := 52	
+		;一方通行
+		Trigger20=P2Name="Accelerator" && var(10) := 55	
+		;球磨川禊
+		Trigger21=P2Name="Kumagawa Misogi" && var(10) := 66	
+		value=193
+
+	[State 194,共闘イントロ分岐]
+		Type=ChangeState
+		triggerall = roundsexisted = 0
+		triggerall = TeamMode = Simul
+		Trigger1 = P3Name="Accelerator"
+		Trigger1 = NumPartner
+		Trigger1 = Partner,ID < ID		;相手が前
+		Trigger1 = var(20) := 1
+		Trigger2 = P3Name="Accelerator"
+		Trigger2 = NumPartner
+		Trigger2 = Partner,ID > ID		;相手が後
+		Trigger2 = var(20) := 2
+		value=194
+
+	[State 191,AAイントロ分岐]
+		Type=ChangeState
+		triggerall = roundsexisted = 0
+		Trigger1 =!(Random%20)
+		value=199
+
+	[State 191,汎用イントロ分岐]
+		Type=ChangeState
+		triggerall = roundsexisted = 0
+		Trigger1 = var(10) := Random%3 || 1
+		value=198
+
+	[State 191,ターンバトル初回時以外イントロ終了]
+		Type=ChangeState
+		trigger1 = roundsexisted != 0
+		value=0
+
+;---------------------------------------------------------------------------
+; 共闘イントロ
+;---------------------------------------------------------------------------
+[Statedef 194,共闘イントロ]
+	Type=S
+	Ctrl=0
+	velset=0,0
+
+	[State 194,一方前]
+		Type=ChangeAnim
+		Trigger1=var(20)=1
+		value=195
+		persistent = 0
+
+	[State 194,一方後ろ]
+		Type=ChangeAnim
+		Trigger1=var(20)=2
+		value=6662
+		persistent = 0
+
+	[State 191,Special];特殊効果
+		Type=AssertSpecial
+		Trigger1=1
+		flag=Intro
+;---------------------------------------------------------------------------
+; 共闘イントロ
+;---------------------------------------------------------------------------
+;---------------------------------------------------------------------------
+; 一方前
+;---------------------------------------------------------------------------
+	[State 194,時間判定]
+		Type = VarSet
+		Trigger1=Anim=195
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(20)=1
+		var(10) = 150
+		persistent = 0
+
+	[State 194,時間判定]
+		Type = VarSet
+		Trigger1=Anim=196
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(20)=1
+		var(10) = 250
+		persistent = 0
+
+	[State 195,ボイス]
+		Type=PlaySnd
+		Trigger1=Anim=196
+		Trigger1=var(20)=1
+		Trigger1=AnimElemTime(1)=1
+		value=192,1
+		volume=255
+		channel=1
+		persistent = 0
+
+	[State 195,口パク]
+		type = Explod
+		Trigger1=Anim=196
+		Trigger1=var(20)=1
+		Trigger1=animelemtime(2)=0
+		anim = 19600
+		ID = 19600
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		ontop = 1
+		removeongethit = 1
+		persistent = 0
+		
+	[State 195,口パク消去]
+		type = RemoveExplod
+		Trigger1=Anim=196
+		Trigger1=var(20)=1
+		Trigger1=animelemtime(1)>1
+		Trigger1=Time=var(10)-30
+		ID = 19600
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=195
+		Trigger1=var(20)=1
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time<var(10)
+		value=195
+		elem = 1
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=195
+		Trigger1=var(20)=1
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(10)
+		value=196
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=196
+		Trigger1=var(20)=1
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(10)
+		value=197
+
+	[State 195,end]
+		Type=ChangeState
+		Trigger1=Anim=197
+		Trigger1=var(20)=1
+		Trigger1=animtime=0
+		value=0
+
+;---------------------------------------------------------------------------
+; 一方後ろ
+;---------------------------------------------------------------------------
+
+	[State 195,時間判定]
+		Type = VarSet
+		Trigger1=Anim=6662
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(20)=2
+		var(10) = 10
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = VarAdd
+		Trigger1=Anim=6663
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(20)=2
+		var(10) = 50
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = VarAdd
+		Trigger1=Anim=6664
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(20)=2
+		var(10) = 20
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = VarAdd
+		Trigger1=Anim=6665
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(20)=2
+		var(10) = 80
+		persistent = 0
+
+	[State 195,ボイス]
+		Type=PlaySnd
+		Trigger1=Anim=6663
+		Trigger1=var(20)=2
+		Trigger1=AnimElemTime(1)=1
+		value=192,0
+		volume=255
+		channel=1
+		persistent = 0
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=Anim=6663
+		TriggerAll=var(20)=2
+		Trigger1=animelemtime(2)=0
+		Trigger2=Time=var(10)-60
+		anim = 6673
+		ID = 19600
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+	
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=6663
+		TriggerAll=var(20)=2
+		TriggerAll=animelemtime(1)>1
+		Trigger1=Time=var(10)-100
+		Trigger2=Time=var(10)-10
+		ID = 19600
+
+	[State 195,SE]
+		Type=PlaySnd
+		Trigger1=Anim=6665
+		Trigger1=var(20)=2
+		Trigger1=AnimElemTime(1)=1
+		value=1,3
+		volume=255
+		channel=-1
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6662
+		Trigger1=var(20)=2
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(10)
+		value=6663
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6663
+		Trigger1=var(20)=2
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(10)
+		value=6664
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6664
+		Trigger1=var(20)=2
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(10)
+		value=6665
+
+	[State 195,end]
+		Type=ChangeState
+		Trigger1=Anim=6665
+		Trigger1=var(20)=2
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(10)
+		value=0
+
+;---------------------------------------------------------------------------
+; 特殊イントロ
+;---------------------------------------------------------------------------
+[Statedef 193,特殊イントロ]
+	Type=S
+	Ctrl=0
+	velset=0,0
+	sprpriority = 4
+
+[State 190, 1]
+type = AssertSpecial
+trigger1 = 1
+flag = intro
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=RoundState=0
+		Trigger1=var(10)=0||var(10)=2
+		value=195
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=RoundState=0
+		Trigger1=var(10)=1
+		value=6662
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=RoundState=0
+		Trigger1=var(10)=2
+		value=195
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=RoundState=0
+		Trigger1=var(10)=3
+		value=6663
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=RoundState=0
+		Trigger1=var(10)=4
+		value=6663
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=RoundState=0
+		Trigger1=var(10)=5
+		value=6662
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=RoundState=0
+		Trigger1=var(10)=6
+		value=195
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=RoundState=0
+		Trigger1=var(10)=7
+		value=192
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=RoundState=0
+		Trigger1=var(10)=8
+		value=6662
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=RoundState=0
+		Trigger1=var(10)=9
+		value=185
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=RoundState=0
+		Trigger1=var(10)=10
+		value=193
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=RoundState=0
+		Trigger1=var(10)=30
+		value=185
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=RoundState=0
+		Trigger1=var(10)=31
+		value=193
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=RoundState=0
+		Trigger1=var(10)=32
+		value=6662
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=RoundState=0
+		Trigger1=var(10)=33
+		value=6662
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=RoundState=0
+		Trigger1=var(10)=34
+		value=0;6662
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=RoundState=0
+		Trigger1=var(10)=50
+		value=195
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=RoundState=0
+		Trigger1=var(10)=51
+		value=193
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=RoundState=0
+		Trigger1=var(10)=52
+		value=193
+		persistent = 0
+
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=RoundState=0
+		Trigger1=var(10)=55
+		value=6662
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=RoundState=0
+		Trigger1=var(10)=66
+		value=19112
+		persistent = 0
+
+	[State 195,特殊効果]
+		Type=AssertSpecial
+		Trigger1=1
+		flag=Intro
+
+;---------------------------------------------------------------------------
+;VS自己犠牲1
+;---------------------------------------------------------------------------
+	[State 195,時間判定]
+		Type = VarSet
+		Trigger1=Anim=195
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=0
+		var(20) = 230
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = VarAdd
+		Trigger1=Anim=196
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=0
+		var(20) = 510
+		persistent = 0
+
+	[State 195,ボイス]
+		Type=PlaySnd
+		Trigger1=Anim=195
+		Trigger1=var(10)=0	
+		Trigger1=AnimElemTime(1)=1
+		value=191,0
+		volume=255
+		channel=1
+		persistent = 0
+
+	[State 195,口パク]
+		type = Explod
+		Trigger1=Anim=195
+		Trigger1=var(10)=0
+		Trigger1=animelemtime(2)=0
+		anim = 19500
+		ID = 19500
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+		persistent = 0
+		
+	[State 195,口パク消去]
+		type = RemoveExplod
+		Trigger1=Anim=195
+		Trigger1=var(10)=0
+		Trigger1=animelemtime(1)>1
+		Trigger1=Time=var(20)
+		ID = 19500
+		persistent = 0
+
+	[State 195,口パク]
+		type = Explod
+		Trigger1=Anim=196
+		Trigger1=var(10)=0
+		Trigger1=animelemtime(2)=0
+		anim = 19600
+		ID = 19600
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		ontop = 1
+		removeongethit = 1
+		persistent = 0
+		
+	[State 195,口パク消去]
+		type = RemoveExplod
+		Trigger1=Anim=196
+		Trigger1=var(10)=0
+		Trigger1=animelemtime(1)>1
+		Trigger1=Time=var(20)-30
+		ID = 19600
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=195
+		Trigger1=var(10)=0
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=196
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=196
+		Trigger1=var(10)=0
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=197
+
+	[State 195,end]
+		Type=ChangeState
+		Trigger1=Anim=197
+		Trigger1=var(10)=0
+		Trigger1=animtime=0
+		value=0
+
+;---------------------------------------------------------------------------
+;VS自己犠牲2
+;---------------------------------------------------------------------------
+	[State 195,時間判定]
+		Type = VarSet
+		Trigger1=Anim=6662
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=1
+		var(20) = 230
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = VarAdd
+		Trigger1=Anim=6663
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=1
+		var(20) = 140
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = VarAdd
+		Trigger1=Anim=6664
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=1
+		var(20) = 20
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = VarAdd
+		Trigger1=Anim=6665
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=1
+		var(20) = 70
+		persistent = 0
+
+	[State 195,ボイス]
+		Type=PlaySnd
+		Trigger1=Anim=6662
+		Trigger1=var(10)=1
+		Trigger1=AnimElemTime(1)=1
+		value=191,1
+		volume=255
+		channel=1
+		persistent = 0
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=!(NumExplod(19500))
+		TriggerAll=Anim=6662
+		TriggerAll=var(10)=1
+		Trigger1=animelemtime(1)=1
+		Trigger2=Time=var(20)-100
+		anim = 6672
+		ID = 19500
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=6662
+		TriggerAll=var(10)=1
+		TriggerAll=animelemtime(1)>1
+		Trigger1=Time=var(20)-140
+		Trigger2=Time=var(20)-10
+		ID = 19500
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=Anim=6663
+		TriggerAll=var(10)=1
+		Trigger1=animelemtime(2)=0
+		Trigger2=Time=var(20)-60
+		anim = 6673
+		ID = 19600
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+	
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=6663
+		TriggerAll=var(10)=1
+		TriggerAll=animelemtime(1)>1
+		Trigger1=Time=var(20)-100
+		Trigger2=Time=var(20)-10
+		ID = 19600
+
+	[State 195,SE]
+		Type=PlaySnd
+		Trigger1=Anim=6665
+		Trigger1=var(10)=1
+		Trigger1=AnimElemTime(1)=1
+		value=1,3
+		volume=255
+		channel=-1
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6662
+		Trigger1=var(10)=1
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=6663
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6663
+		Trigger1=var(10)=1
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=6664
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6664
+		Trigger1=var(10)=1
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=6665
+
+	[State 195,end]
+		Type=ChangeState
+		Trigger1=Anim=6665
+		Trigger1=var(10)=1
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=0
+
+;---------------------------------------------------------------------------
+;VS絶望
+;---------------------------------------------------------------------------
+	[State 195,時間判定]
+		Type = VarSet
+		TriggerAll=Anim=195
+		TriggerAll=AnimElemTime(1)=1
+		Trigger1=var(10)=2
+		var(20) = 230
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = VarAdd
+		TriggerAll=Anim=196
+		TriggerAll=var(10)=2
+		Trigger1=AnimElemTime(1)=1
+		var(20) = 200
+		persistent = 0
+
+	[State 195,ボイス]
+		Type=PlaySnd
+		TriggerAll=Anim=195
+		TriggerAll=var(10)=2	
+		Trigger1=AnimElemTime(1)=1
+		value=191,2
+		volume=255
+		channel=1
+		persistent = 0
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=!(NumExplod(19500))
+		TriggerAll=Anim=195
+		TriggerAll=var(10)=2
+		Trigger1=Time=1
+		Trigger2=Time=var(20)-120
+		anim = 19500
+		ID = 19500
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+		
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=195
+		TriggerAll=var(10)=2
+		TriggerAll=animelemtime(1)>1
+		Trigger1=Time=var(20)-145
+		Trigger2=Time=var(20)-10
+		ID = 19500
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=Anim=196
+		TriggerAll=var(10)=2
+		Trigger1=animelemtime(2)=0
+		anim = 19600
+		ID = 19600
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		ontop = 1
+		removeongethit = 1
+		persistent = 0
+		
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=196
+		TriggerAll=var(10)=2
+		Trigger1=animelemtime(1)>1
+		Trigger1=Time=var(20)-60
+		ID = 19600
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		TriggerAll=Anim=195
+		TriggerAll=var(10)=2
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=196
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		TriggerAll=Anim=196
+		TriggerAll=var(10)=2
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=197
+
+	[State 195,end]
+		Type=ChangeState
+		TriggerAll=Anim=197
+		TriggerAll=var(10)=2
+		Trigger1=animtime=0
+		value=0
+
+;---------------------------------------------------------------------------
+;VSループ
+;---------------------------------------------------------------------------
+	[State 195,時間判定]
+		Type = VarSet
+		Trigger1=Anim=6663
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=3
+		var(20) = 580
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = VarAdd
+		Trigger1=Anim=6664
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=3
+		var(20) = 20
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = VarAdd
+		Trigger1=Anim=6665
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=3
+		var(20) = 70
+		persistent = 0
+
+	[State 195,ボイス]
+		Type=PlaySnd
+		Trigger1=Anim=6663
+		Trigger1=var(10)=3
+		Trigger1=AnimElemTime(1)=1
+		value=191,3
+		volume=255
+		channel=1
+		persistent = 0
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=Anim=6663
+		TriggerAll=var(10)=3
+		Trigger1=animelemtime(2)=0
+		Trigger2=Time=var(20)-350
+		Trigger3=Time=var(20)-280	
+		Trigger4=Time=var(20)-180
+		anim = 6673
+		ID = 19600
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+	
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=6663
+		TriggerAll=var(10)=3
+		TriggerAll=animelemtime(1)>1
+		Trigger1=Time=var(20)-385
+		Trigger2=Time=var(20)-300
+		Trigger3=Time=var(20)-220
+		Trigger4=Time=var(20)-60	
+		ID = 19600
+		
+	[State 195,SE]
+		Type=PlaySnd
+		Trigger1=Anim=6665
+		Trigger1=var(10)=3
+		Trigger1=AnimElemTime(1)=1
+		value=1,3
+		volume=255
+		channel=-1
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6663
+		Trigger1=var(10)=3
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=6664
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6664
+		Trigger1=var(10)=3
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=6665
+
+	[State 195,end]
+		Type=ChangeState
+		Trigger1=Anim=6665
+		Trigger1=var(10)=3
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=0
+
+;---------------------------------------------------------------------------
+;VS主人公（笑）
+;---------------------------------------------------------------------------
+	[State 195,時間判定]
+		Type = VarSet
+		Trigger1=Anim=6663
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=4
+		var(20) = 260
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = VarAdd
+		Trigger1=Anim=6664
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=4
+		var(20) = 20
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = VarAdd
+		Trigger1=Anim=6665
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=4
+		var(20) = 70
+		persistent = 0
+
+	[State 195,ボイス]
+		Type=PlaySnd
+		Trigger1=Anim=6663
+		Trigger1=var(10)=4
+		Trigger1=animelemtime(2)=10
+		value=191,4
+		volume=255
+		channel=1
+		persistent = 0
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=Anim=6663
+		TriggerAll=var(10)=4
+		Trigger1=animelemtime(2)=10
+		Trigger2=Time=var(20)-110
+		anim = 6673
+		ID = 19600
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+	
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=6663
+		TriggerAll=var(10)=4
+		TriggerAll=animelemtime(1)>1
+		Trigger1=Time=var(20)-130
+		Trigger2=Time=var(20)-1	
+		ID = 19600
+		
+	[State 195,SE]
+		Type=PlaySnd
+		Trigger1=Anim=6665
+		Trigger1=var(10)=4
+		Trigger1=AnimElemTime(1)=1
+		value=1,3
+		volume=255
+		channel=-1
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6663
+		Trigger1=var(10)=4
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=6664
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6664
+		Trigger1=var(10)=4
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=6665
+
+	[State 195,end]
+		Type=ChangeState
+		Trigger1=Anim=6665
+		Trigger1=var(10)=4
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=0
+;---------------------------------------------------------------------------
+;VS神様
+;---------------------------------------------------------------------------
+	[State 195,時間判定]
+		Type = VarSet
+		Trigger1=Anim=6662
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=5
+		var(20) = 320
+		persistent = 0
+		
+	[State 195,時間判定]
+		Type = VarAdd
+		Trigger1=Anim=6663
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=5
+		var(20) = 100
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = VarAdd
+		Trigger1=Anim=6664
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=5
+		var(20) = 40
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = VarAdd
+		Trigger1=Anim=6665
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=5
+		var(20) = 100
+		persistent = 0
+
+	[State 195,ボイス]
+		Type=PlaySnd
+		Trigger1=Anim=6662
+		Trigger1=var(10)=5
+		Trigger1=animelemtime(1)=10
+		value=191,5
+		volume=255
+		channel=1
+		persistent = 0
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=Anim=6662
+		TriggerAll=var(10)=5
+		Trigger1=animelemtime(1)=10
+		Trigger=Time=var(20)-220
+		Trigger2=Time=var(20)-150
+		anim = 6672
+		ID = 19600
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+	
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=6662
+		TriggerAll=var(10)=5
+		TriggerAll=animelemtime(1)>1
+		Trigger1=Time=var(20)-200	
+		Trigger2=Time=var(20)-165
+		Trigger3=Time=var(20)-1	
+		ID = 19600
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=Anim=6663
+		TriggerAll=var(10)=5
+		Trigger1=animelemtime(2)=10
+;		Trigger2=Time=var(20)-110
+		anim = 6673
+		ID = 19600
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+	
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=6663
+		TriggerAll=var(10)=5
+		TriggerAll=animelemtime(1)>1
+		Trigger1=Time=var(20)-50
+		Trigger2=Time=var(20)-1	
+		ID = 19600
+		
+	[State 195,SE]
+		Type=PlaySnd
+		Trigger1=Anim=6665
+		Trigger1=var(10)=5
+		Trigger1=AnimElemTime(1)=1
+		value=1,3
+		volume=255
+		channel=-1
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6662
+		Trigger1=var(10)=5
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=6663
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6663
+		Trigger1=var(10)=5
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=6664
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6664
+		Trigger1=var(10)=5
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=6665
+
+	[State 195,end]
+		Type=ChangeState
+		Trigger1=Anim=6665
+		Trigger1=var(10)=5
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=0
+;---------------------------------------------------------------------------
+;VS神様（悪）
+;---------------------------------------------------------------------------
+	[State 195,時間判定]
+		Type = VarSet
+		TriggerAll=Anim=195
+		TriggerAll=AnimElemTime(1)=1
+		Trigger1=var(10)=6
+		var(20) = 280
+		persistent = 0
+
+	[State 195,ボイス]
+		Type=PlaySnd
+		TriggerAll=Anim=195
+		TriggerAll=var(10)=6	
+		Trigger1=AnimElemTime(1)=1
+		value=191,6
+		volume=255
+		channel=1
+		persistent = 0
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=!(NumExplod(19500))
+		TriggerAll=Anim=195
+		TriggerAll=var(10)=6
+		Trigger1=Time=1
+		Trigger2=Time=var(20)-100
+		anim = 19500
+		ID = 19500
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=195
+		TriggerAll=var(10)=6
+		TriggerAll=animelemtime(1)>1
+		Trigger1=Time=var(20)-145
+		Trigger2=Time=var(20)-30
+		ID = 19500
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		TriggerAll=Anim=195
+		TriggerAll=var(10)=6
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=197
+
+	[State 195,end]
+		Type=ChangeState
+		TriggerAll=Anim=197
+		TriggerAll=var(10)=6
+		Trigger1=animtime=0
+		value=0
+
+;---------------------------------------------------------------------------
+;VS超能力者（レベル7、レベル5）
+;---------------------------------------------------------------------------
+	[State 195,時間判定]
+		Type = VarSet
+		TriggerAll=Anim=192
+		TriggerAll=var(10)=7	
+		Trigger1=AnimElemTime(1)=1
+		var(20) = 320
+
+	[State 195,ボイス]
+		Type=PlaySnd
+		TriggerAll=Anim=192
+		TriggerAll=var(10)=7
+		Trigger1=AnimElem=18
+		value=191,7
+		volume=255
+		channel=1
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=Anim=192
+		TriggerAll=var(10)=7
+		Trigger1=AnimElemTime(18)=7
+		Trigger2=AnimElemTime(18)=80
+		anim = 19200
+		ID = 19200
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+		
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=192
+		TriggerAll=var(10)=7
+		Trigger1=AnimElemTime(18)=61
+		Trigger2=Time=var(20)-40
+		ID = 19200
+
+	[State 195,End]
+		Type=ChangeState
+		TriggerAll=Anim=192
+		TriggerAll=var(10)=7
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=0
+
+;---------------------------------------------------------------------------
+;VS魔術師
+;---------------------------------------------------------------------------
+	[State 195,時間判定]
+		Type = VarSet
+		Trigger1=Anim=6662
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=8
+		var(20) = 20
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = VarAdd
+		Trigger1=Anim=6663
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=8
+		var(20) = 80
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = VarAdd
+		Trigger1=Anim=6664
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=8
+		var(20) = 20
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = VarAdd
+		Trigger1=Anim=6665
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=8
+		var(20) = 80
+		persistent = 0
+
+	[State 195,ボイス]
+		Type=PlaySnd
+		Trigger1=Anim=6663
+		Trigger1=var(10)=8
+		Trigger1=AnimElemTime(1)=1
+		value=191,8
+		volume=255
+		channel=1
+		persistent = 0
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=Anim=6663
+		TriggerAll=var(10)=8
+		Trigger1=animelemtime(2)=0
+		anim = 6673
+		ID = 19600
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+	
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=6663
+		TriggerAll=var(10)=8
+		TriggerAll=animelemtime(1)>1
+		Trigger1=Time=var(20)-30	
+		ID = 19600
+		
+	[State 195,SE]
+		Type=PlaySnd
+		Trigger1=Anim=6665
+		Trigger1=var(10)=8
+		Trigger1=AnimElemTime(1)=1
+		value=1,3
+		volume=255
+		channel=-1
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6662
+		Trigger1=var(10)=8
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=6663
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6663
+		Trigger1=var(10)=8
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=6664
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6664
+		Trigger1=var(10)=8
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=6665
+
+	[State 195,end]
+		Type=ChangeState
+		Trigger1=Anim=6665
+		Trigger1=var(10)=8
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=0
+;---------------------------------------------------------------------------
+;VS魔女
+;---------------------------------------------------------------------------
+	[State 195,時間判定]
+		Type = VarSet
+		Trigger1=Anim=185
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=9
+		var(20) = 15
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = VarAdd
+		Trigger1=Anim=187
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=9
+		var(20) = 150
+		persistent = 0
+
+	[State 195,ボイス]
+		Type=PlaySnd
+		Trigger1=Anim=187
+		Trigger1=var(10)=9
+		Trigger1=AnimElemTime(1)=1
+		value=191,9
+		volume=255
+		channel=1
+		persistent = 0
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=Anim=187
+		TriggerAll=var(10)=9
+		Trigger1=animelemtime(2)=0
+		Trigger2=Time=var(20)-60	
+		anim = 19700
+		ID = 19600
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+	
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=187
+		TriggerAll=var(10)=9
+		TriggerAll=animelemtime(1)>1
+		Trigger1=Time=var(20)-140
+		Trigger2=Time=var(20)-10		
+		ID = 19600
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=185
+		Trigger1=var(10)=9
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=187
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=187
+		Trigger1=var(10)=9
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=198
+
+	[State 195,end]
+		Type=ChangeState
+		Trigger1=Anim=198
+		Trigger1=var(10)=9
+		Trigger1=animtime=0
+		value=0
+;---------------------------------------------------------------------------
+;VS痴女
+;---------------------------------------------------------------------------
+	[State 195,時間判定]
+		Type = VarSet
+		TriggerAll=Anim=193
+		TriggerAll=var(10)=10		
+		Trigger1=AnimElemTime(1)=1
+		var(20) = 150
+
+	[State 195,ボイス]
+		Type=PlaySnd
+		TriggerAll=Anim=193
+		TriggerAll=var(10)=10
+		Trigger1=AnimElemTime(2)=10
+		value=191,10
+		volume=255
+		channel=1
+		persistent = 0
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=Anim=193
+		TriggerAll=var(10)=10
+		Trigger1=AnimElemTime(2)=10
+		anim = 19300
+		ID = 19300
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+		
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=193
+		TriggerAll=var(10)=10
+		Trigger1=AnimElemTime(2)=90
+		Trigger2=var(10)=1
+		Trigger2=AnimElemTime(2)=100
+		ID = 19300
+
+	[State 195,終了モーション]
+		Type=ChangeAnim
+		TriggerAll=Anim=193
+		TriggerAll=var(10)=10
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=194
+
+	[State 195,End]
+		Type=ChangeState
+		TriggerAll=Anim=194
+		TriggerAll=var(10)=10
+		Trigger1=AnimTime=0
+		value=0
+
+;---------------------------------------------------------------------------
+;VS原作再現響
+;---------------------------------------------------------------------------
+	[State 195,時間判定]
+		Type = VarSet
+		Trigger1=Anim=185
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=30
+		var(20) = 120
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = Varadd
+		Trigger1=Anim=186
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=30
+		var(20) = 60
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = Varadd
+		Trigger1=Anim=187
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=30
+		var(20) = 150
+		persistent = 0
+		
+	[State 195,ビックリエフェクト]
+		Type=Explod
+		TriggerAll=Anim=186
+		TriggerAll=var(10)=30
+		Trigger1=AnimElemTime(1)=1
+		Anim=188
+		sprPriority=3
+		Pos=10,-90
+		PosType=P1
+		bindTime=-1
+		Scale=const(Size.xScale),const(Size.yScale)
+		RemoveonGetHit=1
+		IgnoreHitPause=0
+
+	[State 195,ビックリSE]
+		Type=PlaySnd
+		TriggerAll=Anim=186
+		TriggerAll=var(10)=30
+		Trigger1=AnimElemTime(1)=1
+		value=1,34
+		volume=255
+		channel=1
+		persistent = 0
+	
+	[State 195,ボイス]
+		Type=PlaySnd
+		TriggerAll=Anim=187
+		TriggerAll=var(10)=30
+		Trigger1=AnimElemTime(2)=0
+		value=191,30
+		volume=255
+		channel=1
+		persistent = 0
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=Anim=187
+		TriggerAll=var(10)=30
+		Trigger1=animelemtime(2)=0
+		anim = 19700
+		ID = 19600
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+	
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=187
+		TriggerAll=var(10)=30
+		TriggerAll=animelemtime(1)>1
+		Trigger1=Time=var(20)-10		
+		ID = 19600
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=185
+		Trigger1=var(10)=30
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=186
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=186
+		Trigger1=var(10)=30
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=187
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=187
+		Trigger1=var(10)=30
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=198
+
+	[State 195,end]
+		Type=ChangeState
+		Trigger1=Anim=198
+		Trigger1=var(10)=30
+		Trigger1=animtime=0
+		value=0
+
+;---------------------------------------------------------------------------
+;VSイカ娘
+;---------------------------------------------------------------------------
+	[State 195,時間判定]
+		Type = VarSet
+		TriggerAll=Anim=193
+		TriggerAll=var(10)=31		
+		Trigger1=AnimElemTime(1)=1
+		var(20) = 300
+
+	[State 195,時間判定]
+		Type = Varadd
+		Trigger1=Anim=187
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=31
+		var(20) = 100
+		persistent = 0
+
+	[State 195,ボイス]
+		Type=PlaySnd
+		TriggerAll=Anim=193
+		TriggerAll=var(10)=31
+		Trigger1=AnimElemTime(2)=10
+		value=191,31
+		volume=255
+		channel=1
+		persistent = 0
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=Anim=193
+		TriggerAll=var(10)=31
+		Trigger1=AnimElemTime(2)=10
+		anim = 19300
+		ID = 19300
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+		
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=193
+		TriggerAll=var(10)=31
+		TriggerAll=animelemtime(1)>1
+		Trigger1=Time=var(20)-10
+		ID = 19300
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=Anim=187
+		TriggerAll=var(10)=31
+		Trigger1=animelemtime(2)=0
+		anim = 19700
+		ID = 19600
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+	
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=187
+		TriggerAll=var(10)=31
+		TriggerAll=animelemtime(1)>1
+		Trigger1=Time=var(20)-80		
+		ID = 19600
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		TriggerAll=Anim=193
+		TriggerAll=var(10)=31
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=187
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=187
+		Trigger1=var(10)=31
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=198
+
+	[State 195,end]
+		Type=ChangeState
+		Trigger1=Anim=198
+		Trigger1=var(10)=31
+		Trigger1=animtime=0
+		value=0
+		
+;---------------------------------------------------------------------------
+;VSゴリ条
+;---------------------------------------------------------------------------
+	[State 195,時間判定]
+		Type = VarSet
+		Trigger1=Anim=6662
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=32
+		var(20) = 15
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = VarAdd
+		Trigger1=Anim=6663
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=32
+		var(20) = 20
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = VarAdd
+		Trigger1=Anim=6664
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=32
+		var(20) = 20
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = VarAdd
+		Trigger1=Anim=6665
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=32
+		var(20) = 60
+		persistent = 0
+
+	[State 195,ボイス]
+		Type=PlaySnd
+		Trigger1=Anim=6663
+		Trigger1=var(10)=32
+		Trigger1=AnimElemTime(1)=1
+		value=191,32
+		volumescale=400
+		channel=1
+		persistent = 0
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=Anim=6663
+		TriggerAll=var(10)=32
+		Trigger1=animelemtime(2)=0
+		anim = 6673
+		ID = 19600
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+	
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=6663
+		TriggerAll=var(10)=32
+		TriggerAll=animelemtime(1)>1
+		Trigger1=Time=var(20)	
+		ID = 19600
+
+	[State 6662,]
+		Type=PlaySnd
+		Trigger1=Anim=6665
+		Trigger1=var(10)=32
+		Trigger1=AnimElemTime(1)=1
+		value=1,29
+		volume=255
+		channel=-1
+
+	[State 6661,]
+		type = Explod
+		Trigger1=Anim=6665
+		Trigger1=var(10)=32
+		Trigger1=AnimElemTime(1)=1
+		anim = 13380
+		ID = 13380
+		postype = p1
+		bindtime = -1
+		pausemovetime = -1
+supermovetime = -1
+		scale = 1, 1
+		sprpriority = 5
+		ownpal = 1
+		removeongethit = 1
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6662
+		Trigger1=var(10)=32
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=6663
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6663
+		Trigger1=var(10)=32
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=6664
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6664
+		Trigger1=var(10)=32
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=6665
+
+	[State 195,end]
+		Type=ChangeState
+		Trigger1=Anim=6665
+		Trigger1=var(10)=32
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=0
+
+;---------------------------------------------------------------------------
+;VSゴリ条2
+;---------------------------------------------------------------------------
+	[State 193,Anim];
+		type = Varset
+		Trigger1=var(10)=33
+		trigger1 = Time = 0
+		var(20) = 0
+		
+	[State 193,Anim];
+		type = VarAdd
+		Trigger1=var(10)=33
+		trigger1 = P2StateNo = 0
+		trigger1 = Time >= 0
+		var(20) = 1
+
+	[State 193,Snd]
+		Type=PlaySnd
+		Trigger1=var(10)=33
+		Trigger1=var(20) = 10
+		value=191,33
+		volume=255
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=var(10)=33
+		Trigger1=var(20) = 10
+		anim = 6672
+		ID = 19600
+		postype = p1
+		bindtime = -1
+		removetime = 20
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+
+	[State 193,Snd]
+		Type=PlaySnd
+		Trigger1=var(10)=33
+		Trigger1=var(20) = 120
+		value=191,34
+		volume=255
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=var(10)=33
+		Trigger1=var(20) = 120
+		anim = 6673
+		ID = 19600
+		postype = p1
+		bindtime = -1
+		removetime = 25
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+
+	[State 195,SE]
+		Type=PlaySnd
+		Trigger1=Anim=6665
+		Trigger1=var(10)=33
+		Trigger1=AnimElemTime(1)=1
+		value=1,3
+		volume=255
+		channel=-1
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=var(10)=33
+		Trigger1=var(20)=120
+		value=6663
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=var(10)=33
+		Trigger1=var(20)=150
+		value=6664
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=var(10)=33
+		Trigger1=var(20)=180
+		value=6665
+
+	[State 195,end]
+		Type=ChangeState
+		Trigger1=var(10)=33
+		Trigger1=var(20)=260
+		value=0
+
+;---------------------------------------------------------------------------
+;VSギルガメッシュ
+;---------------------------------------------------------------------------
+	[State 193,Anim];
+		type = Varset
+		Trigger1=var(10)=34
+		trigger1 = Time = 0
+		var(20) = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		TriggerAll=var(10)=34
+		TriggerAll=var(20)=0
+		trigger1 = Time = 60
+		value=6401
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		TriggerAll=var(10)=34
+		TriggerAll=var(20)=0
+		trigger1 = Time = 95
+		value=6450
+
+	[State 6402, 音を鳴らす]
+		type = PlaySnd
+		TriggerAll=var(10)=34
+		TriggerAll=var(20)=0
+		trigger1 = Time = 60
+		trigger2 = Time = 70
+		trigger3 = Time = 100
+		value = 0, 10
+
+	[State 6402,]
+		type = Explod
+		TriggerAll=var(10)=34
+		TriggerAll=var(20)=0
+		trigger1 = Time = 60
+		trigger2 = Time = 70
+		trigger3 = Time = 100
+		anim = 7002
+		ID = 7002
+		pos = 45, -77
+		postype = p1
+		bindtime = -1
+		pausemovetime = -1
+supermovetime = -1
+		scale = 1, 1
+		sprpriority = 5
+		ownpal = 1
+		removeongethit = 1
+
+	[State 6402, 時間停止];自分も相手も制限時間も一時的に止める（ポーズ）
+		type = Pause
+		TriggerAll=var(10)=34
+		TriggerAll=var(20)=0
+		trigger1 = Time = 60
+		trigger2 = Time = 70
+		trigger3 = Time = 100
+		time =  6   ;ポーズする時間（フレーム）
+		movetime = 0  ;ポーズ中に動ける時間。timeよりも多いとバグる（デフォルトは０）
+		IgnoreHitPause = 1
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		TriggerAll=var(10)=34
+		TriggerAll=var(20)=0
+		trigger1 = anim = 6450
+		trigger1 = animTime = 0
+		value=0
+	
+	[State 193,Anim];
+		type = VarAdd
+		Trigger1=var(10)=34
+		trigger1 = P2StateNo = 0
+		trigger1 = Time >= 0
+		var(20) = 1
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		TriggerAll=var(10)=34
+		Trigger1=var(20)=1
+		value=6662
+
+	[State 193,Snd]
+		Type=PlaySnd
+		Trigger1=var(10)=34
+		Trigger1=var(20) = 35
+		value=191,36
+		volume=255
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=var(10)=34
+		Trigger1=var(20) = 35
+		anim = 6672
+		ID = 19600
+		postype = p1
+		bindtime = -1
+		removetime = 30
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=var(10)=34
+		Trigger1=var(20) = 124
+		anim = 6673
+		ID = 19600
+		postype = p1
+		bindtime = -1
+		removetime = 50
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+
+	[State 195,SE]
+		Type=PlaySnd
+		Trigger1=Anim=6665
+		Trigger1=var(10)=34
+		Trigger1=AnimElemTime(1)=1
+		value=1,3
+		volume=255
+		channel=-1
+		persistent = 0
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=var(10)=34
+		Trigger1=var(20)=120
+		value=6663
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=var(10)=34
+		Trigger1=var(20)=180
+		value=6664
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=var(10)=34
+		Trigger1=var(20)=200
+		value=6665
+
+	[State 195,end]
+		Type=ChangeState
+		Trigger1=var(10)=34
+		Trigger1=var(20)=280
+		value=0
+
+
+;---------------------------------------------------------------------------
+;VS七夜志貴
+;---------------------------------------------------------------------------
+
+;---------------------------------------------------------------------------
+;VSインデックス
+;---------------------------------------------------------------------------
+	[State 195,時間判定]
+		Type = VarSet
+		TriggerAll=Anim=195
+		TriggerAll=AnimElemTime(1)=1
+		Trigger1=var(10)=50
+		var(20) = 240
+		persistent = 0
+
+	[State 195,ボイス]
+		Type=PlaySnd
+		TriggerAll=Anim=195
+		TriggerAll=var(10)=50	
+		Trigger1=AnimElemTime(1)=1
+		value=191,50
+		volume=255
+		channel=1
+		persistent = 0
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=!(NumExplod(19500))
+		TriggerAll=Anim=195
+		TriggerAll=var(10)=50
+		Trigger1=Time=1
+		anim = 19500
+		ID = 19500
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=195
+		TriggerAll=var(10)=50
+		TriggerAll=animelemtime(1)>1
+		Trigger1=Time=var(20)-60
+		ID = 19500
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		TriggerAll=Anim=195
+		TriggerAll=var(10)=50
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=197
+
+	[State 195,end]
+		Type=ChangeState
+		TriggerAll=Anim=197
+		TriggerAll=var(10)=50
+		Trigger1=animtime=0
+		value=0
+
+;---------------------------------------------------------------------------
+;VS御坂美琴
+;---------------------------------------------------------------------------
+	[State 195,時間判定]
+		Type = VarSet
+		TriggerAll=Anim=193
+		TriggerAll=var(10)=51		
+		Trigger1=AnimElemTime(1)=1
+		var(20) = 350
+
+	[State 195,時間判定]
+		Type = Varadd
+		Trigger1=Anim=186
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=51
+		var(20) = 260
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = Varadd
+		Trigger1=Anim=187
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=51
+		var(20) = 200
+		persistent = 0
+
+	[State 195,ボイス]
+		Type=PlaySnd
+		TriggerAll=Anim=193
+		TriggerAll=var(10)=51
+		Trigger1=AnimElemTime(2)=10
+		value=191,53
+		volume=255
+		channel=1
+		persistent = 0
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=Anim=193
+		TriggerAll=var(10)=51
+		Trigger1=AnimElemTime(2)=10
+		anim = 19300
+		ID = 19300
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+		
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=193
+		TriggerAll=var(10)=51
+		TriggerAll=animelemtime(1)>1
+		Trigger1=Time=var(20)-170
+		ID = 19300
+		
+	[State 195,声消し]
+		type = StopSnd
+		TriggerAll=Anim=193
+		TriggerAll=var(10)=51
+		TriggerAll=animelemtime(1)>1
+		Trigger1=Time=var(20)-10	
+		ID = 19300
+		channel = 1
+
+	[State 195,ビックリエフェクト]
+		Type=Explod
+		TriggerAll=Anim=186
+		TriggerAll=var(10)=51
+		Trigger1=AnimElemTime(1)=1
+		Anim=188
+		sprPriority=3
+		Pos=10,-90
+		PosType=P1
+		bindTime=-1
+		Scale=const(Size.xScale),const(Size.yScale)
+		RemoveonGetHit=1
+		IgnoreHitPause=0
+
+	[State 195,ビックリSE]
+		Type=PlaySnd
+		TriggerAll=Anim=186
+		TriggerAll=var(10)=51
+		Trigger1=AnimElemTime(1)=1
+		value=1,34
+		volume=255
+		channel=1
+		persistent = 0
+	
+	[State 195,ボイス]
+		Type=PlaySnd
+		TriggerAll=Anim=187
+		TriggerAll=var(10)=51
+		Trigger1=AnimElemTime(2)=0
+		value=191,51
+		volume=255
+		channel=1
+		persistent = 0
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=Anim=187
+		TriggerAll=var(10)=51
+		Trigger1=animelemtime(2)=0
+		anim = 19700
+		ID = 19600
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+	
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=187
+		TriggerAll=var(10)=51
+		TriggerAll=animelemtime(1)>1
+		Trigger1=Time=var(20)-30		
+		ID = 19600
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		TriggerAll=Anim=193
+		TriggerAll=var(10)=51
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=186
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=186
+		Trigger1=var(10)=51
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=187
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=187
+		Trigger1=var(10)=51
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=198
+
+	[State 195,end]
+		Type=ChangeState
+		Trigger1=Anim=198
+		Trigger1=var(10)=51
+		Trigger1=animtime=0
+		value=0
+;---------------------------------------------------------------------------
+;VS白井黒子
+;---------------------------------------------------------------------------
+	[State 195,時間判定]
+		Type = VarSet
+		TriggerAll=Anim=193
+		TriggerAll=var(10)=52		
+		Trigger1=AnimElemTime(1)=1
+		var(20) = 60
+
+	[State 195,時間判定]
+		Type = Varadd
+		Trigger1=Anim=186
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=52
+		var(20) = 370
+		persistent = 0
+
+	[State 195,時間判定]
+		Type = Varadd
+		Trigger1=Anim=187
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=52
+		var(20) = 150
+		persistent = 0
+
+	[State 195,ボイス]
+		Type=PlaySnd
+		TriggerAll=Anim=193
+		TriggerAll=var(10)=52
+		Trigger1=AnimElemTime(2)=10
+		value=190,5
+		volume=255
+		channel=1
+		persistent = 0
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=Anim=193
+		TriggerAll=var(10)=52
+		Trigger1=AnimElemTime(2)=10
+		anim = 19300
+		ID = 19300
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+		
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=193
+		TriggerAll=var(10)=52
+		TriggerAll=animelemtime(1)>1
+		Trigger1=Time=var(20)-10
+		ID = 19300
+		
+	[State 195,声消し]
+		type = StopSnd
+		TriggerAll=Anim=193
+		TriggerAll=var(10)=52
+		TriggerAll=animelemtime(1)>1
+		Trigger1=Time=var(20)-10	
+		ID = 19300
+		channel = 1
+
+	[State 195,ビックリエフェクト]
+		Type=Explod
+		TriggerAll=Anim=186
+		TriggerAll=var(10)=52
+		Trigger1=AnimElemTime(1)=1
+		Anim=188
+		sprPriority=3
+		Pos=10,-90
+		PosType=P1
+		bindTime=-1
+		Scale=const(Size.xScale),const(Size.yScale)
+		RemoveonGetHit=1
+		IgnoreHitPause=0
+
+	[State 195,ビックリSE]
+		Type=PlaySnd
+		TriggerAll=Anim=186
+		TriggerAll=var(10)=52
+		Trigger1=AnimElemTime(1)=1
+		value=1,34
+		volume=255
+		channel=1
+		persistent = 0
+	
+	[State 195,ボイス]
+		Type=PlaySnd
+		TriggerAll=Anim=187
+		TriggerAll=var(10)=52
+		Trigger1=AnimElemTime(2)=0
+		value=191,52
+		volume=255
+		channel=1
+		persistent = 0
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=Anim=187
+		TriggerAll=var(10)=52
+		Trigger1=animelemtime(2)=0
+		anim = 19700
+		ID = 19600
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+	
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=187
+		TriggerAll=var(10)=52
+		TriggerAll=animelemtime(1)>1
+		Trigger1=Time=var(20)-30		
+		ID = 19600
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		TriggerAll=Anim=193
+		TriggerAll=var(10)=52
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=186
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=186
+		Trigger1=var(10)=52
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=187
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=187
+		Trigger1=var(10)=52
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=198
+
+	[State 195,end]
+		Type=ChangeState
+		Trigger1=Anim=198
+		Trigger1=var(10)=52
+		Trigger1=animtime=0
+		value=0
+
+;---------------------------------------------------------------------------
+;VS一方通行
+;---------------------------------------------------------------------------
+	[State 195,ボイス]
+		Type=PlaySnd
+		Trigger1=Anim=6663
+		Trigger1=var(10)=55
+		Trigger1=AnimElemTime(1)=1
+		value=191,55
+		volume=255
+		channel=1
+		persistent = 0
+
+	[State 195,SE]
+		Type=PlaySnd
+		Trigger1=Anim=6665
+		Trigger1=var(10)=55
+		Trigger1=AnimElemTime(1)=1
+		value=1,3
+		volume=255
+		channel=-1
+		persistent = 0
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=Anim=6663
+		TriggerAll=var(10)=55
+		Trigger1=animelemtime(2)=0
+		anim = 6673
+		ID = 19600
+		postype = p1
+		bindtime = -1
+		removetime = 45
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+
+	[State 195,ボイス]
+		Type=PlaySnd
+		Trigger1=Anim=19111
+		Trigger1=var(10)=55
+		Trigger1=AnimElemTime(1)=1
+		value=3,10
+		volume=255
+		channel=1
+		persistent = 0
+
+	[State 6662,]
+		Type=PlaySnd
+		Trigger1=Anim=19111
+		Trigger1=var(10)=55
+		Trigger1=AnimElemTime(4)=0
+		value=1,29
+		volume=255
+		channel=-1
+
+	[State 6661,]
+		type = Explod
+		Trigger1=Anim=19111
+		Trigger1=var(10)=55
+		Trigger1=AnimElemTime(4)=0
+		anim = 13380
+		ID = 13380
+		pos = 0, 40
+		postype = p1
+		bindtime = -1
+		pausemovetime = -1
+supermovetime = -1
+		scale = 1, 1
+		sprpriority = 5
+		ownpal = 1
+		removeongethit = 1
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6662
+		Trigger1=var(10)=55
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=200
+		value=6663
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6663
+		Trigger1=var(10)=55
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=250
+		value=6664
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6664
+		Trigger1=var(10)=55
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=270
+		value=6665
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=6665
+		Trigger1=var(10)=55
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=320
+		value=19111
+
+	[State 195,end]
+		Type=ChangeState
+		Trigger1=Anim=19111
+		Trigger1=var(10)=55
+		Trigger1=animTime=0
+		value=0
+
+;---------------------------------------------------------------------------
+;VS球磨川禊
+;---------------------------------------------------------------------------
+
+	[State 195,アニメ変更]
+		Type=ChangeAnim
+		Trigger1=Anim=19112
+		Trigger1=var(10)=66
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=130
+		value=19113
+	
+	[State 2900,暗転処理]
+		Type=envColor
+		Trigger1=Anim=19113
+		Trigger1=var(10)=66
+		Trigger1=AnimElemTime(1)>0
+		Trigger1=AnimElemTime(1)<120
+		value=0,0,0
+		Time=1
+
+
+	[State 195,ボイス]
+		Type=PlaySnd
+		Trigger1=Anim=19113
+		Trigger1=var(10)=66
+		Trigger1=AnimElemTime(3)=30
+		value=191,66
+		volume=255
+		channel=1
+		persistent = 0
+			
+	[State 2900,暗転処理]
+		Type=envColor
+		Trigger1=Anim=19113
+		Trigger1=var(10)=66
+		Trigger1=AnimElemTime(1)>=120
+		Trigger1=AnimElemTime(3)<0
+		value=0,0,0
+		Time=1
+		under=1
+
+	[State 6662,青ガラス1]
+		Type=Explod
+		Trigger1=Anim=19113
+		Trigger1=var(10)=66
+		Trigger1=AnimElemTime(1)=120
+		Anim=20027
+		ID=20020
+		pos = -35, -90
+		postype = p1
+		bindtime = -1
+		Ownpal=0
+		Scale=2,2
+		SprPriority=9999
+		OnTop=0
+		IgnoreHitPause=1
+		Persistent=0
+		pausemovetime = -1
+supermovetime = -1
+
+	[State 6662,ガラス音1]
+		Type=playSnd
+		Trigger1=Anim=19113
+		Trigger1=var(10)=66
+		Trigger1=AnimElemTime(1)=120
+		value=3000,8
+		channel=-1
+		persistent = 0
+		IgnoreHitPause=1
+
+	[State 6665,ガラス1消し]
+		type = RemoveExplod
+		Trigger1=Anim=19113
+		Trigger1=var(10)=66
+		Trigger1=AnimElemTime(3)=0
+		ID = 20020
+
+	[State 6665,青ガラス2]
+		Type=Explod
+		Trigger1=Anim=19113
+		Trigger1=var(10)=66
+		Trigger1=AnimElemTime(3)=0
+		Anim=20028
+		ID=20025
+		pos = -35, -90
+		postype = p1
+		bindtime = -1
+		Ownpal=0
+		Scale=2,2
+		SprPriority=6
+		OnTop=0
+		IgnoreHitPause=1
+		Persistent=0
+		pausemovetime = -1
+supermovetime = -1
+
+	[State 6665,ガラス音2]
+		Type=playSnd
+		Trigger1=Anim=19113
+		Trigger1=var(10)=66
+		Trigger1=AnimElemTime(3)=0
+		value=0,14
+		channel=-1
+		persistent = 0
+		IgnoreHitPause=1
+
+
+	[State 195,end]
+		Type=ChangeState
+		Trigger1=Anim=19113
+		Trigger1=var(10)=66
+		Trigger1=animTime=0
+		value=0
+
+;---------------------------------------------------------------------------
+; 汎用イントロ
+;---------------------------------------------------------------------------
+[Statedef 198,汎用イントロ]
+	Type=S
+	Ctrl=0
+	velset=0,0
+	sprpriority = 4
+
+	[State 198,アニメ変更]
+		Type=ChangeAnim
+		Trigger1 = !Time
+		value=191+var(10)
+
+	[State 198,特殊効果]
+		Type=AssertSpecial
+		Trigger1=1
+		flag=Intro
+
+;---------------------------------------------------------------------------
+	[State 191,ボイス]
+		Type=PlaySnd
+		Trigger1=AnimElem=4
+		Trigger1=Anim=191
+		value=190,0
+		volume=255
+		channel=1
+		
+	[State 191,End]
+		Type=ChangeState
+		Trigger1=Anim=191
+		Trigger1=AnimTime=0
+		value=0
+;---------------------------------------------------------------------------
+	[State 192,ボイス判定]
+		Type = VarSet
+		Trigger1=Anim=192		
+		Trigger1=AnimElemTime(1)=1
+		var(10) = Random%3
+
+	[State 192,時間判定1]
+		Type = VarSet
+		Trigger1=Anim=192		
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=0
+		var(20) = 280
+
+	[State 192,時間判定2]
+		Type = VarSet
+		Trigger1=Anim=192		
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=1
+		var(20) = 235
+
+	[State 192,時間判定3]
+		Type = VarSet
+		Trigger1=Anim=192		
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=2
+		var(20) = 206
+
+	[State 192,ボイス]
+		Type=PlaySnd
+		Trigger1=AnimElem=18
+		Trigger1=Anim=192
+		value=190,1+var(10)
+		volume=255
+		channel=1
+
+	[State 192,口パク]
+		type = Explod
+		TriggerAll=Anim=192
+		Trigger1=AnimElemTime(18)=7
+		Trigger2=var(10)=0 && AnimElemTime(18)=81
+		anim = 19200
+		ID = 19200
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+		
+	[State 192,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=192
+		Trigger1=var(10)=0
+		Trigger1=AnimElemTime(18)=61||AnimElemTime(18)=145
+		Trigger2=var(10)=1
+		Trigger2=AnimElemTime(18)=92
+		Trigger3=var(10)=2
+		Trigger3=AnimElemTime(18)=68
+		ID = 19200
+
+	[State 192,End]
+		Type=ChangeState
+		Trigger1=Anim=192
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=0
+		
+;---------------------------------------------------------------------------
+	[State 193,ボイス判定]
+		Type = VarSet
+		Trigger1=Anim=193		
+		Trigger1=AnimElemTime(1)=1
+		var(10) = Random%2
+
+	[State 193,時間判定1]
+		Type = VarSet
+		Trigger1=Anim=193		
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=0
+		var(20) = 190
+
+	[State 193,時間判定2]
+		Type = VarSet
+		Trigger1=Anim=193	
+		Trigger1=AnimElemTime(1)=1
+		Trigger1=var(10)=1
+		var(20) = 200
+
+	[State 193,ボイス]
+		Type=PlaySnd
+		Trigger1=Anim=193
+		Trigger1=AnimElemTime(2)=10
+		value=190,4+var(10)
+		volume=255
+		channel=1
+		persistent = 0
+
+	[State 193,口パク]
+		type = Explod
+		TriggerAll=Anim=193
+		Trigger1=AnimElemTime(2)=10
+		anim = 19300
+		ID = 19300
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		pausemovetime = -1
+supermovetime = -1
+		sprpriority = 5
+		removeongethit = 1
+		
+	[State 193,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=193
+		Trigger1=var(10)=0
+		Trigger1=AnimElemTime(2)=90
+		Trigger2=var(10)=1
+		Trigger2=AnimElemTime(2)=100
+		ID = 19300
+
+	[State 193,終了モーション]
+		Type=ChangeAnim
+		Trigger1=Anim=193
+		Trigger1=animelemtime(1)>0
+		Trigger1=Time=var(20)
+		value=194
+
+	[State 193,End]
+		Type=ChangeState
+		Trigger1=Anim=194
+		Trigger1=AnimTime=0
+		value=0
+;---------------------------------------------------------------------------
+; AAイントロ
+;---------------------------------------------------------------------------
+[Statedef 199,AAイントロ]
+	Type=S
+	Ctrl=0
+	Anim=199
+	velset=0,0
+	sprpriority = 4
+
+	[State 199,Special];特殊効果
+		Type=AssertSpecial
+		Trigger1=1
+		flag=Intro
+
+	[State 199,ボイス]
+		Type=PlaySnd
+		Trigger1=Time=0
+		value=190,6
+		volume=255
+		channel=1
+
+	[State 199,Pos];軸位置移動
+		Type=PosAdd
+		Trigger1=AnimElem=2
+		x=11
+
+	[State 199,vel]
+		Type=velSet
+		Trigger1=AnimElem=3
+		x=-0.11
+
+	[State 199,veladd]
+		Type=velSet
+		Trigger1=AnimElem=4
+		x=0
+
+	[State 199,Pos];軸位置移動
+		Type=PosAdd
+		Trigger1=AnimElem=4
+		x=11
+
+	[State 199,End]
+		Type=ChangeState
+		Trigger1=Time=550
+		value=0
+

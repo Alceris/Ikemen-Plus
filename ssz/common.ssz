@@ -10,11 +10,14 @@ lib file = <file.ssz>;
 lib se = <alpha/sdlevent.ssz>;
 
 
-public int roundTime = 999 * 6;
+public int roundTime = -1;
 public float life = 1.0;
 public float team1VS2Life = 1.0;
 public float turnsRecoveryRate = 1.0 / 300.0;
 public bool sharedLife = true;
+public int pause = -1, pausetime = 0, pausebg = 0, pauseendcmdbuftime = 0;
+public int super = -1, supertime = 0, superpausebg = 0, superendcmdbuftime = 0;
+public int total = -1, totaltime = 0, totalpausebg = 0;
 
 //チームモードの種類
 |TeamMode
@@ -56,7 +59,7 @@ public void resetRemapInput()
 }
 resetRemapInput();
 
-public bool pause = false, step = false;
+public bool dpause = false, step = false;
 public bool statusDraw = true;
 public float accel = 1.0;
 
@@ -141,7 +144,7 @@ public float drawscale = 0.0/0.0;
 public float zoomposx = 0.0, zoomposy = 0.0;
 public float turbo = Speed;
 public int gametime = 0, time = 0;
-public int intro = 20;
+public int intro = 10;
 
 //ホームチーム 1P:0, 2P:1
 public int home = 0;
@@ -328,13 +331,14 @@ public &Camera
   {
     public int startx;
     public int boundleft, boundright;
-    public int boundhigh;
+    public int boundhigh, boundlow;
     public float verticalfollow;
     public int tension, floortension;
     public int overdrawlow;
     public int localw, localh;
     public float localscl, drawOffsetY;
-    public int zoffset;
+    public float zoffset;
+	public float zoomin, zoomout, startzoom;
     public float ztopscale;
     public void clear()
     {
@@ -342,6 +346,7 @@ public &Camera
       `boundleft = 0;
       `boundright = 0;
       `boundhigh = 0;
+      `boundlow = 0;
       `verticalfollow = 0.2;
       `tension = 50;
       `floortension = 0;
@@ -350,7 +355,10 @@ public &Camera
       `localh = 240;
       `localscl = (float).GameWidth / (float)`localw;
       `drawOffsetY = 0.0;
-      `zoffset = 0;
+      `zoffset = 0.0;
+	  `zoomin = 1.0;
+	  `zoomout = 1.0;
+	  `startzoom = 1.0;
       `ztopscale = 1.0;
     }
   }
@@ -366,7 +374,7 @@ public &Camera
   /float xMin, xMax;
   float zoff;
   /float screenZoff;
-  /float boundL, boundR, boundH;
+  public float boundL, boundR, boundH, boundLO;
   float zoomdelay;
   float halfWidth;
   public void init()
@@ -376,33 +384,36 @@ public &Camera
     `halfWidth = (float).GameWidth / 2.0;
     `xMin = `boundL - `halfWidth / `baseScale();
     `xMax = `boundR + `halfWidth / `baseScale();
-    branch{
-    cond `stg.verticalfollow > 0.0:
       `boundH =
         .m.min!float?(
           0.0,
           (float)`stg.boundhigh * `stg.localscl
           + (float).GameHeight - `stg.drawOffsetY
           - (float).GameWidth * (float)`stg.localh / (float)`stg.localw);
-    else:
-      `boundH = 0.0;
-    }
+      `boundLO =
+        .m.max!float?(
+          0.0,
+          (float)`stg.boundlow * `stg.localscl
+          + (float).GameHeight - `stg.drawOffsetY
+          - (float).GameWidth * (float)`stg.localh / (float)`stg.localw);
     if(`stg.boundhigh > 0) `boundH += (float)`stg.boundhigh * `stg.localscl;
-    float xminscl = (float).GameWidth/((float).GameWidth - `boundL + `boundR);
-    float yminscl = (float).GameHeight / (240.0 - .m.min!float?(0.0, `boundH));
-    `minScale =
-      .m.max!float?(`zoomMin)<, .m.min!float?(`zoomMax)<,
-      .m.max!float?(xminscl, yminscl);
     `screenZoff =
-      (float)`stg.zoffset * `stg.localscl - `stg.drawOffsetY + 240.0 
+      `stg.zoffset * `stg.localscl - `stg.drawOffsetY + 240.0 
       - (float).GameWidth * (float)`stg.localh / (float)`stg.localw;
   }
   public void update<stg_t>(float scl, float x, float y, stg_t stg=)
   {
+	`zoomMin = `stg.zoomout;
+	`zoomMax = `stg.zoomin;
+    float xminscl = (float).GameWidth/((float).GameWidth - `boundL + `boundR);
+    float yminscl = (float).GameHeight / (240.0 - `boundLO + `boundH);
+    `minScale =
+      .m.max!float?(`zoomMin)<, .m.min!float?(`zoomMax)<,
+      .m.max!float?(xminscl, yminscl);
     `scale = `baseScale() * scl;
     `zoff =
       scl * (
-        (float)`stg.zoffset * `stg.localscl - `stg.drawOffsetY
+        `stg.zoffset * `stg.localscl - `stg.drawOffsetY
         + (240.0 - (float).GameWidth*(float)`stg.localh / (float)`stg.localw)
         + (float)(.GameHeight - 240))
       + (1.0 - scl) * (float).GameHeight;
@@ -430,7 +441,7 @@ public &Camera
     if(`stg.verticalfollow <= 0.0) ret 0.0;
     float tmp = .m.max!float?(0.0, 240.0 - `screenZoff);
     ret
-      .m.max!float?(0.0, `boundH) + .m.min!float?(0.0)<,
+      .m.max!float?(0.0, `boundH) + .m.min!float?(`boundLO)<,
       .m.min!float?(tmp * (1.0 / scl - 1.0))<,
       .m.max!float?(
         `boundH - 240.0 + .m.max!float?((float).GameHeight / scl)<,
@@ -500,16 +511,10 @@ public &Camera
       foobar * `scale / .m.max!float?(`scale)<, (
         (400.0 - 80.0 * .m.max!float?(1.0, `scale))
         * 2.0**(`zoomSpeed - 2.0));
-    branch{
-    cond sclmul >= 3.0/2.0**`zoomSpeed:
-      sclmul =
-        .m.max!float?(3.0/4.0)<, (67.0/64.0 - sclmul*2.0**(`zoomSpeed - 6.0));
-    else:
       sclmul =
         .m.min!float?(4.0/3.0)<,
         ((2.0**`zoomSpeed + 3.0)/2.0**`zoomSpeed - sclmul)**64.0;
-    }
-    branch{
+/*    branch{
     cond pause:
       sclmul = 1.0;
     cond sclmul > 1.0:
@@ -522,7 +527,7 @@ public &Camera
       }
     else:
       `zoomdelay = 0.0;
-    }
+    }*/
     ret sclmul;
   }
 }
@@ -601,7 +606,7 @@ public &Layout
   public int displaytime = -2;
   public byte facing = 1;
   public byte vfacing = 1;
-  public short layerno = 0;
+  public short layerno = 1;
   public &.FXY scale;
   new()
   {
@@ -759,7 +764,7 @@ public &PalFX
   }
   public void clear2(int negType)
   {
-    `time = 0;
+    `time = -1;
     `mulr = 256;
     `mulg = 256;
     `mulb = 256;
@@ -818,6 +823,7 @@ public &PalFX
       if(`cycletime > 0) `sintime = (`sintime+1) % `cycletime;
     }
     if(`time > 0) `time--;
+	if(`time == 0) `clear();
   }
   public ^uint getFxPal(^uint pal, bool nega)
   {

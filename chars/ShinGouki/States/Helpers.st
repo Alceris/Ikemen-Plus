@@ -19,14 +19,14 @@ sprpriority = 4
 type = hitoverride
 trigger1 = 1
 time = -1
-attr = SCA, AA, AP, AT
+attr = , AA, AP, AT
 stateno = 1006
 ignorehitpause = 1
 [State 1005, HB]
-type = hitby
+type = nothitby
 trigger1 = 1
 time = -1
-value = SCA, NP, SP, HP
+value = SCA,AA,AT
 ignorehitpause = 1
 
 [State 1005, Strength]
@@ -173,14 +173,14 @@ value = 1025
 type = hitoverride
 trigger1 = 1
 time = -1
-attr = SCA, AA, AP, AT
+attr = , AA, AP, AT
 stateno = ifelse(var(2) < var(10), 1025, 1026)
 ignorehitpause = 1
 [State 1025, hitby]
-type = hitby
+type = nothitby
 trigger1 = 1
 time = -1
-value = SCA, NP, SP, HP
+value = SCA,AA,AT
 ignorehitpause = 1
 
 [State 1025, hitvar]
@@ -334,14 +334,14 @@ sprpriority = 4
 type = hitoverride
 trigger1 = 1
 time = -1
-attr = SCA, AA, AP, AT
+attr = , AA, AP, AT
 stateno = 1056
 ignorehitpause = 1
 [State 1055, hitby]
-type = hitby
+type = nothitby
 trigger1 = 1
 time = -1
-value = SCA, NP, SP, HP
+value = SCA,AA,AT
 ignorehitpause = 1
 
 [State 1055, Strength]
@@ -525,14 +525,14 @@ sprpriority = 4
 type = hitoverride
 trigger1 = 1
 time = -1
-attr = SCA, AA, AP, AT
+attr = , AA, AP, AT
 stateno = ifelse(var(2) < 8, 3005, 3006)
 ignorehitpause = 1
 [State 3005, hitby]
-type = hitby
+type = nothitby
 trigger1 = 1
 time = -1
-value = SCA, NP, SP, HP
+value = SCA,AA,AT
 ignorehitpause = 1
 
 [State 3005, Strength]
@@ -693,14 +693,14 @@ sprpriority = 4
 type = hitoverride
 trigger1 = 1
 time = -1
-attr = SCA, AA, AP, AT
+attr = , AA, AP, AT
 stateno = ifelse(var(2) < 8, 3055, 3056)
 ignorehitpause = 1
 [State 3055, hitby]
-type = hitby
+type = nothitby
 trigger1 = 1
 time = -1
-value = SCA, NP, SP, HP
+value = SCA,AA,AT
 ignorehitpause = 1
 
 [State 3055, Strength]
@@ -909,14 +909,14 @@ sprpriority = 4
 type = hitoverride
 trigger1 = 1
 time = -1
-attr = SCA, AA, AP, AT
+attr = , AA, AP, AT
 stateno = 1056
 ignorehitpause = 1
 [State 3075, hitby]
-type = hitby
+type = nothitby
 trigger1 = 1
 time = -1
-value = SCA, NP, SP, HP
+value = SCA,AA,AT
 ignorehitpause = 1
 
 [State 3075, Strength]
@@ -1043,7 +1043,7 @@ sprpriority = 4
 type = hitoverride
 trigger1 = 1
 time = -1
-attr = SCA, AT
+attr = , AT
 stateno = 5000
 ignorehitpause = 1
 
@@ -1165,14 +1165,14 @@ sprpriority = 5
 type = hitoverride
 trigger1 = 1
 time = -1
-attr = SCA, AA, AP, AT
+attr = , AA, AP, AT
 stateno = 4206
 ignorehitpause = 1
 [State 4206, hitby]
-type = hitby
+type = nothitby
 trigger1 = 1
 time = -1
-value = SCA, NP, SP, HP
+value = SCA,AA,AT
 ignorehitpause = 1
 
 [State 4206, Trans]
@@ -1309,14 +1309,14 @@ sprpriority = 5
 type = hitoverride
 trigger1 = 1
 time = -1
-attr = SCA, AA, AP, AT
+attr = , AA, AP, AT
 stateno = 4305
 ignorehitpause = 1
 [State 4305, hitby]
-type = hitby
+type = nothitby
 trigger1 = 1
 time = -1
-value = SCA, NP, SP, HP
+value = SCA,AA,AT
 ignorehitpause = 1
 
 [State 4305, Trans]

@@ -1,0 +1,1317 @@
+[Statedef 8000]; ÉGÉtÉFÉNÉgèàóù
+type = S
+movetype = H
+physics = N
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+sysvar(46) = 2
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+sysvar(47) = 2
+
+[State 0, AttackDist]
+type = AttackDist
+trigger1 = 1
+value = 0
+
+[State 0, PosSet]
+type = PosSet
+trigger1 = 1
+x = Parent,Pos X
+y = Parent,Pos Y
+
+[State 0, Turn]
+type = Turn
+trigger1 = facing != parent,facing
+
+[State 0, AssertSpecial]
+type = AssertSpecial
+trigger1 = 1
+flag = invisible
+flag2 = noshadow
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = 1
+value = parent,anim
+elem = parent,animelemno(0)
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 8000
+ignorehitpause = 1
+
+[State 0, NotHitBy]
+type = NotHitBy
+triggerall = enemynear,name != "Kumagawa Misogi" && enemynear,name != "Labyrinth"
+trigger1 = parent,stateno != [6400,6425]
+value = SCA,AA,AT
+time = 999
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+ignorehitpause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301)))
+attr = ,AA,AP,AT
+slot = 0
+stateno = 8001
+time = 1
+ignorehitpause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State 0, DestroySelf]
+type = DestroySelf
+trigger1 = 1
+ignorehitpause = 1
+
+;------------------------------------------------------
+[Statedef 8001]; ÉGÉtÉFÉNÉgèàóù
+type = U
+movetype = U
+physics = N
+movehitpersist = 1
+hitdefpersist = 1
+hitcountpersist = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = prevstateno != 8001
+var(59) = prevstateno
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = Null;VarSet
+triggerall = !ishelper
+trigger1 = sysvar(51)
+sysvar(2) = sysvar(51)
+ignorehitpause = 1
+
+[State 8001]
+type = PowerAdd
+trigger1 = 1
+value = 100+ifelse(gethitvar(damage) > 0,gethitvar(damage)*7,0)
+ignorehitpause = 1
+
+[State -1];ÇªÇ∞Ç‘âπ
+Type=PlaySnd
+trigger1= !var(52)
+value=0,10
+volume=255
+channel=-1
+ignorehitpause = 1
+
+[State -1];ë≈Çøè¡ÇµÉGÉtÉFÉNÉg
+type = Explod
+trigger1= 1
+anim = 7002
+ID = 7002
+pos = 15, -65
+random = 50,35
+postype = p1
+bindtime = 0;1
+supermovetime = -1
+pausemovetime = -1
+scale = 1, 1
+sprpriority = 3
+ontop = 1
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(52) = 10
+ignorehitpause = 1
+
+[State 0, HitOverride]
+type = Null;HitOverride
+trigger1 = 1
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+ignorehitpause = 1
+
+[State 8000]
+Type=SelfState
+Trigger1=1
+value=var(59);prevstateno;8000
+ctrl = var(59) = 0
+ignorehitpause = 1
+
+;===========================================================================
+; ÉAÅ[É}Å[îªíËÉwÉãÉpÅ[
+;===========================================================================
+[Statedef 9000]
+type = A
+movetype = I
+physics = N
+
+[State 9000, 0]; ïsãÔçáëŒçÙ
+type = ChangeState
+trigger1 = !IsHelper
+value = 0
+ctrl = 1
+
+[State 9000, 0]; ìäÇ∞ñ≥ìG
+type = NotHitBy
+trigger1 = 1
+value = SCA,AT
+time = 2
+
+[State 9000, 0]; ìßñæÅ{âeè¡Çµ
+type = AssertSpecial
+trigger1 = 1
+flag = Invisible
+flag2 = NoShadow
+
+[State 9000, 0]; ñ{ëÃÇ…í«è]
+type = BindToParent
+trigger1 = 1
+time = 1
+facing = 1
+pos = 0,0
+
+[State 9000, 0]; îªíËÇëµÇ¶ÇÈ
+type = ChangeAnim
+trigger1 = SelfAnimExist(Parent,Anim)
+value = Parent,Anim
+elem = Parent,AnimElemNo(0)
+
+[State 9000, 0]; ë≈åÇÅ^îÚÇ—ìπãÔÇéÛÇØÇΩÇÁÉXÉeÅ[ÉgÇåJÇËï‘Ç∑
+type = HitOverRide
+trigger1 = Parent,var(13) = 1
+trigger1 = IsHelper(9000)
+attr = ,AA,AP
+stateno = 9000
+
+[State 9000, 0]; ë≈åÇÅ^îÚÇ—ìπãÔÇéÛÇØÇΩÇÁÉXÉeÅ[ÉgÇåJÇËï‘Ç∑
+type = HitOverRide
+trigger1 = Parent,var(13) != 1
+trigger1 = IsHelper(9000)
+attr = ,AA,AP
+stateno = 9001
+
+[State 9000, 0]
+type = DestroySelf
+triggerAll = Parent,var(13) != 1
+trigger1 = Parent,StateNo != 2300; ñ{ëÃÇ™ÉAÅ[É}Å[ÉpÅ[ÉgÇâﬂÇ¨ÇΩÇÁè¡ñ≈
+trigger2 = Parent,var(8) = 2; ìÒâÒÉqÉbÉgÇµÇΩÇÁè¡ñ≈
+
+;------------------------------------------------------
+[Statedef 9001]; ÉqÉbÉgêîèàóù
+type = A
+movetype = I
+physics = N
+
+[State 9001]
+type = ParentVarAdd
+trigger1= 1
+var(8) = 1
+persistent = 0
+ignorehitpause = 1
+
+[State 9000]
+Type=ChangeState
+Trigger1=1
+value=9000
+
+;===========================================================================
+;ÉQÅ[ÉWï\é¶ÉwÉãÉpÅ[
+;===========================================================================
+[Statedef 30000]
+anim = 29999;ÉAÉjÉÅÇ»Çµ
+
+[State 30000];
+type = ScreenBound
+trigger1 = 1
+value = 0
+movecamera = 0,0
+
+;--------------------------------------------------------
+[State 30000];ÉQÅ[ÉWòg
+type = RemoveExplod
+triggerAll = numexplod(11600)
+trigger1 = Parent,var(12) = 0
+ID = 11600
+
+[State 30000];ÉQÅ[ÉWâ∫ín
+type = RemoveExplod
+triggerAll = numexplod(11103)
+trigger1 = Parent,var(12) = 0
+ID = 11103
+
+[State 30000];ÉQÅ[ÉWó ê¬
+type = RemoveExplod
+triggerAll = numexplod(11100)
+trigger1 = Parent,var(12) != 1
+ID = 11100
+
+[State 30000];ÉQÅ[ÉWó â©êF
+type = RemoveExplod
+triggerAll = numexplod(11101)
+trigger1 = Parent,var(12) != 2
+ID = 11101
+
+[State 30000];ÉQÅ[ÉWåıëÚ
+type = RemoveExplod
+triggerAll = numexplod(11200)
+trigger1 = Parent,var(12) = 0
+ID = 11200
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerAll = numexplod(11600) = 0
+trigger1 = Parent,var(12) != 0
+anim = 11600
+ID = 11600
+pos = ifelse(teamside=1,8-Parent,Var(32),205+Parent,Var(32)), 197+Parent,Var(31)
+postype = left
+bindtime = -1
+removetime = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 5
+scale = .5,.5
+ownpal = 1
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWâ∫ín
+type = Explod
+triggerAll = numexplod(11103) = 0
+trigger1 = Parent,var(12) != 0
+anim = 11103
+ID = 11103
+pos = ifelse(teamside=1,16-Parent,Var(32),213+Parent,Var(32)), 208+Parent,Var(31)
+postype = left
+bindtime = -1
+removetime = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 9999
+scale = .5,.5
+;ontop = 1
+ownpal = 1
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWó 1ê¬
+type = Explod
+triggerAll = numexplod(11103)
+trigger1 = numexplod(11100) = 0
+trigger1 = Parent,var(12) = 1
+trigger1 = teamside=1
+anim = 11100
+ID = 11100
+pos = 16-Parent,Var(32), 208+Parent,Var(31)
+postype = left
+bindtime = -1
+removetime = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 9999
+scale = .5,.5
+ontop = 1
+ownpal = 1
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWó 2pê¬
+type = Explod
+triggerAll = numexplod(11103)
+trigger1 = numexplod(11100) = 0
+trigger1 = Parent,var(12) = 1
+trigger1 = teamside=2
+anim = 11100
+ID = 11100
+pos = 305+Parent,Var(32), 208+Parent,Var(31)
+postype = left
+bindtime = -1
+removetime = -1
+facing = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 9999
+scale = .5,.5
+ontop = 1
+ownpal = 1
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWó 1pâ©
+type = Explod
+triggerAll = numexplod(11103)
+trigger1 = numexplod(11101) = 0
+trigger1 = Parent,var(12) = 2
+trigger1 = teamside=1
+anim = 11101
+ID = 11101
+pos = 16-Parent,Var(32), 208+Parent,Var(31)
+postype = left
+bindtime = -1
+removetime = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 9999
+scale = .5,.5
+ontop = 1
+ownpal = 1
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWó 2pâ©
+type = Explod
+triggerAll = numexplod(11103)
+trigger1 = numexplod(11101) = 0
+trigger1 = Parent,var(12) = 2
+trigger1 = teamside=2
+anim = 11101
+ID = 11101
+pos = 305+Parent,Var(32), 208+Parent,Var(31)
+postype = left
+bindtime = -1
+removetime = -1
+facing = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 9999
+scale = .5,.5
+ontop = 1
+ownpal = 1
+ignorehitpause = 1
+
+[State 30000]
+type = ModifyExplod
+trigger1 = numexplod(11100) = 1
+scale = Parent,var(21)/14000.0,.5
+ID = 11100
+
+[State 30000]
+type = ModifyExplod
+trigger1 = numexplod(11101) = 1
+scale = Parent,var(21)/14000.0,.5
+ID = 11101
+
+[State 30000];ÉQÅ[ÉWåıëÚ
+type = Explod
+triggerAll = numexplod(11200) = 0
+triggerAll = teamside=1
+trigger1 = Parent,var(12) != 0
+anim = 11200
+ID = 11200
+pos = 16-Parent,Var(32), 208+Parent,Var(31)
+postype = left
+bindtime = -1
+removetime = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 9999
+scale = .5,.5
+ontop = 1
+ownpal = 1
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWåıëÚ2p
+type = Explod
+triggerAll = numexplod(11200) = 0
+triggerAll = teamside=2
+trigger1 = Parent,var(12) != 0
+anim = 11200
+ID = 11200
+pos = 305+Parent,Var(32), 208+Parent,Var(31)
+postype = left
+bindtime = -1
+removetime = -1
+facing = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 9999
+scale = .5,.5
+ontop = 1
+ownpal = 1
+ignorehitpause = 1
+
+[State 30000]
+type = ModifyExplod
+trigger1 = numexplod(11200) = 1
+scale = Parent,var(21)/14000.0,.5
+ID = 11200
+
+;--------------------------------------------------------
+[State 30000];ÉQÅ[ÉWòg
+type = RemoveExplod
+triggerAll = numexplod(11610)
+trigger1 = Parent,var(13) = 0
+ID = 11610
+
+[State 30000];ÉQÅ[ÉWâ∫ín
+type = RemoveExplod
+triggerAll = numexplod(11113)
+trigger1 = Parent,var(13) = 0
+ID = 11113
+
+[State 30000];ÉQÅ[ÉWó 
+type = RemoveExplod
+triggerAll = numexplod(11110)
+trigger1 = Parent,var(13) = 0
+ID = 11110
+
+[State 30000];ÉQÅ[ÉWåıëÚ
+type = RemoveExplod
+triggerAll = numexplod(11210)
+trigger1 = Parent,var(13) = 0
+ID = 11210
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerAll = numexplod(11610) = 0
+trigger1 = Parent,var(13) != 0
+anim = 11600
+ID = 11610
+pos = ifelse(teamside=1,8-Parent,Var(32),205+Parent,Var(32)), 197+Parent,Var(31)
+postype = left
+bindtime = -1
+removetime = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 5
+scale = .5,.5
+ownpal = 1
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWâ∫ín
+type = Explod
+triggerAll = numexplod(11103) = 0
+trigger1 = Parent,var(13) != 0
+anim = 11103
+ID = 11103
+pos = ifelse(teamside=1,16-Parent,Var(32),213+Parent,Var(32)), 208+Parent,Var(31)
+postype = left
+bindtime = -1
+removetime = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 9999
+scale = .5,.5
+ontop = 1
+ownpal = 1
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWó 1pê‘
+type = Explod
+trigger1 = numexplod(11110) = 0
+trigger1 = Parent,var(13) != 0
+trigger1 = teamside=1
+anim = 11102
+ID = 11110
+pos = 16-Parent,Var(32), 208+Parent,Var(31)
+postype = left
+bindtime = -1
+removetime = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 9999
+scale = .5,.5
+ontop = 1
+ownpal = 1
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWó 2pê‘
+type = Explod
+trigger1 = numexplod(11110) = 0
+trigger1 = Parent,var(13) != 0
+trigger1 = teamside=2
+anim = 11102
+ID = 11110
+pos = 305+Parent,Var(32), 208+Parent,Var(31)
+postype = left
+bindtime = -1
+removetime = -1
+facing = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 9999
+scale = .5,.5
+ontop = 1
+ownpal = 1
+ignorehitpause = 1
+
+[State 30000]
+type = ModifyExplod
+trigger1 = numexplod(11110) = 1
+scale = Parent,var(21)/14000.0,.5
+ID = 11110
+
+[State 30000];ÉQÅ[ÉWåıëÚ
+type = Explod
+triggerAll = numexplod(11210) = 0
+triggerAll = teamside=1
+trigger1 = Parent,var(13) != 0
+anim = 11200
+ID = 11210
+pos = 16-Parent,Var(32), 208+Parent,Var(31)
+postype = left
+bindtime = -1
+removetime = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 9999
+scale = .5,.5
+ontop = 1
+ownpal = 1
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWåıëÚ2p
+type = Explod
+triggerAll = numexplod(11210) = 0
+triggerAll = teamside=2
+trigger1 = Parent,var(13) != 0
+anim = 11200
+ID = 11210
+pos = 305+Parent,Var(32), 208+Parent,Var(31)
+postype = left
+bindtime = -1
+removetime = -1
+facing = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 9999
+scale = .5,.5
+ontop = 1
+ownpal = 1
+ignorehitpause = 1
+
+[State 30000]
+type = ModifyExplod
+trigger1 = numexplod(11210) = 1
+scale = Parent,var(21)/14000.0,.5
+ID = 11210
+
+[State 30000];ÉQÅ[ÉWâ∫ín
+type = Null;Explod
+trigger1 = numexplod(21103) = 0
+anim = 11103
+ID = 21103
+pos = ifelse(teamside=1,16-Parent,Var(32),213+Parent,Var(32)), 208+Parent,Var(31)
+postype = left
+bindtime = -1
+removetime = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 9999
+scale = .5,.5
+;ontop = 1
+ownpal = 1
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWó 1ê¬
+type = Null;Explod
+trigger1 = numexplod(21102) = 0
+trigger1 = Parent,LifeMax > 0
+trigger1 = teamside=1
+anim = 11102
+ID = 21102
+pos = 16-Parent,Var(32), 208+Parent,Var(31)
+postype = left
+bindtime = -1
+removetime = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 9999
+scale = .5,.5
+ontop = 1
+ownpal = 1
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWó 1ê¬
+type = Null;Explod
+trigger1 = numexplod(21100) = 0
+trigger1 = Parent,Life > 0
+trigger1 = teamside=1
+anim = 11100
+ID = 21100
+pos = 16-Parent,Var(32), 208+Parent,Var(31)
+postype = left
+bindtime = -1
+removetime = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 9999
+scale = .5,.5
+ontop = 1
+ownpal = 1
+ignorehitpause = 1
+
+[State 30000]
+type = Null;ModifyExplod
+trigger1 = numexplod(21100) = 1
+scale = Parent,Life/2000.0,.5
+ID = 21100
+
+[State 30000]
+type = Null;ModifyExplod
+trigger1 = numexplod(21102) = 1
+scale = Parent,LifeMax/2000.0,.5
+ID = 21102
+
+[State 30000];ÉQÅ[ÉWó 1ê¬
+type = Null;Explod
+trigger1 = var(11) > Parent,LifeMax
+trigger1 = teamside=1
+anim = 11102
+ID = 21105
+pos = (16-Parent,Var(32))+(92*(Parent,LifeMax/1000.0)), 208+Parent,Var(31)
+postype = left
+bindtime = -1
+vel = 0,-2
+accel = 0,.22
+removetime = 20
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 9999
+scale = (var(11)-parent,lifemax)/2000.0,.5
+ontop = 1
+ownpal = 1
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWó 1ê¬
+type = Null;Explod
+trigger1 = var(10) > Parent,Life
+trigger1 = teamside=1
+anim = 11100
+ID = 21104
+pos = (16-Parent,Var(32))+(92*(Parent,Life/1000.0)), 208+Parent,Var(31)
+postype = left
+bindtime = -1
+vel = 0,-2
+accel = 0,.22
+removetime = 20
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 9999
+scale = (var(10)-parent,life)/2000.0,.5
+ontop = 1
+ownpal = 1
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = Null;VarSet
+trigger1 = 1
+var(10) = Parent,Life
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = Null;VarSet
+trigger1 = 1
+var(11) = Parent,LifeMax
+ignorehitpause = 1
+
+;===========================================================================
+;É^ÉCÉ}Å[ÉwÉãÉpÅ[
+;===========================================================================
+[Statedef 30001]
+anim = 29999;ÉAÉjÉÅÇ»Çµ
+ctrl = 0
+
+[State 30001];
+type = ScreenBound
+trigger1 = 1
+value = 0
+movecamera = 0,0
+
+[State 30001,É^ÉCÉ}Å[1]
+ 	type = ParentVaradd
+	triggerall = !super
+	triggerall = parent,hitpausetime = 0
+	triggerall = parent,hitshakeover
+	triggerall = parent,stateno != 2501 || parent,anim > 2501
+	triggerall = RoundState = 2
+	trigger1 = Parent,var(12) != 0
+;	trigger1 = (GameTime%5)=0
+	var(21) = -6
+	ignorehitpause = 1
+
+[state 30001 , É^ÉCÉ}Å[ç≈í·íl]
+type = ParentVarSet
+trigger1 = Parent,var(21) < 0
+var(21) = 0
+
+[State 0, PowerSet]
+type = PowerSet
+trigger1 = Parent,var(12) != 0
+trigger1 = Parent,var(21) = 0
+value = 0
+
+[state 30001 , GoodLuckèâä˙âª]
+type = ParentVarSet
+triggerall = RoundState <= 2
+trigger1 = Parent,var(12) != 0
+trigger1 = Parent,var(21) = 0
+var(12) = 0
+
+[state 30001 , ÉAÅ[É}Å[èâä˙âª]
+type = ParentVarSet
+trigger1 = Parent,var(13) != 0
+trigger1 = Parent,var(21) = 0
+var(13) = 0
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerall = teamside = 1 && playerno = 1
+triggerall = power < 1000
+trigger1 = var(10) > 999
+anim = 77700
+ID = 77700
+pos = 30.0+(20.0*sin((360.0/7.0)*(pi/180.0))),210.0-(20.0*cos((360.0/7.0)*(pi/180.0)))
+postype = left
+bindtime = -1
+removetime = -2
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 298
+scale = .2,.2
+ownpal = 1
+ontop = 1
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerall = teamside = 1 && playerno = 1
+triggerall = power < 1000
+trigger1 = var(10) > power
+anim = 77701
+ID = 77701
+pos = 30.0+(20.0*sin((360.0/7.0)*(pi/180.0))),210.0-(20.0*cos((360.0/7.0)*(pi/180.0)))
+postype = left
+bindtime = -1
+removetime = -2
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 298
+scale = ifelse(var(10) < 1000,var(10)/5000.0,.2),ifelse(var(10) < 1000,var(10)/5000.0,.2)
+ownpal = 1
+ontop = 1
+ignorehitpause = 1
+
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 = power < 1000 && numexplod(7770) > 0
+id = 7770
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerall = teamside = 1 && playerno = 1
+triggerall = power > 0
+trigger1 = numexplod(7770) = 0
+anim = 7770
+ID = 7770
+pos = 30.0+(20.0*sin((360.0/7.0)*(pi/180.0))),210.0-(20.0*cos((360.0/7.0)*(pi/180.0)))
+postype = left
+bindtime = -1
+removetime = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 298
+scale = ifelse(power < 1000,power/5000.0,.2),ifelse(power < 1000,power/5000.0,.2)
+ownpal = 1
+ontop = 1
+ignorehitpause = 1
+
+[State 0, ModifyExplod]
+type = ModifyExplod
+trigger1 = power > 999
+ID = 7770
+scale = .2,.2
+sprpriority = 298
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerall = teamside = 1 && playerno = 1
+trigger1 = power < 2000 && var(10) > 1999
+anim = 77710
+ID = 77710
+pos = 30.0+(20.0*sin((360.0/7.0)*(pi/180.0)*2.0)),210.0-(20.0*cos((360.0/7.0)*(pi/180.0)*2.0))
+postype = left
+bindtime = -1
+removetime = -2
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 299
+scale = .2,.2
+ownpal = 1
+ontop = 1
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerall = teamside = 1 && playerno = 1
+triggerall = power < 2000 && var(10) > 1000
+trigger1 = var(10) > power
+anim = 77711
+ID = 77711
+pos = 30.0+(20.0*sin((360.0/7.0)*(pi/180.0)*2.0)),210.0-(20.0*cos((360.0/7.0)*(pi/180.0)*2.0))
+postype = left
+bindtime = -1
+removetime = -2
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 299
+scale = ifelse(var(10) < 2000,(var(10)-1000)/5000.0,.2),ifelse(var(10) < 2000,(var(10)-1000)/5000.0,.2)
+ownpal = 1
+ontop = 1
+ignorehitpause = 1
+
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 = power < 2000 && numexplod(7771) > 0
+id = 7771
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerall = teamside = 1 && playerno = 1
+triggerall = power > 1000
+trigger1 = numexplod(7771) = 0
+anim = 7771
+ID = 7771
+pos = 30.0+(20.0*sin((360.0/7.0)*(pi/180.0)*2.0)),210.0-(20.0*cos((360.0/7.0)*(pi/180.0)*2.0))
+postype = left
+bindtime = -1
+removetime = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 299
+scale = ifelse(power < 2000,(power-1000)/5000.0,.2),ifelse(power < 2000,(power-1000)/5000.0,.2)
+ownpal = 1
+ontop = 1
+ignorehitpause = 1
+
+[State 0, ModifyExplod]
+type = ModifyExplod
+trigger1 = power > 1999
+ID = 7771
+scale = .2,.2
+sprpriority = 299
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerall = teamside = 1 && playerno = 1
+trigger1 = power < 3000 && var(10) > 2999
+anim = 77720
+ID = 77720
+pos = 30.0+(20.0*sin((360.0/7.0)*(pi/180.0)*3.0)),210.0-(20.0*cos((360.0/7.0)*(pi/180.0)*3.0))
+postype = left
+bindtime = -1
+removetime = -2
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 300
+scale = .2,.2
+ownpal = 1
+ontop = 1
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerall = teamside = 1 && playerno = 1
+triggerall = power < 3000 && var(10) > 2000
+trigger1 = var(10) > power
+anim = 77721
+ID = 77721
+pos = 30.0+(20.0*sin((360.0/7.0)*(pi/180.0)*3.0)),210.0-(20.0*cos((360.0/7.0)*(pi/180.0)*3.0))
+postype = left
+bindtime = -1
+removetime = -2
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 300
+scale = ifelse(var(10) < 3000,(var(10)-2000)/5000.0,.2),ifelse(var(10) < 3000,(var(10)-2000)/5000.0,.2)
+ownpal = 1
+ontop = 1
+ignorehitpause = 1
+
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 = power < 3000 && numexplod(7772) > 0
+id = 7772
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerall = teamside = 1 && playerno = 1
+triggerall = power > 2000
+trigger1 = numexplod(7772) = 0
+anim = 7772
+ID = 7772
+pos = 30.0+(20.0*sin((360.0/7.0)*(pi/180.0)*3.0)),210.0-(20.0*cos((360.0/7.0)*(pi/180.0)*3.0))
+postype = left
+bindtime = -1
+removetime = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 300
+scale = ifelse(power < 3000,(power-2000)/5000.0,.2),ifelse(power < 3000,(power-2000)/5000.0,.2)
+ownpal = 1
+ontop = 1
+ignorehitpause = 1
+
+[State 0, ModifyExplod]
+type = ModifyExplod
+trigger1 = power > 2999
+ID = 7772
+scale = .2,.2
+sprpriority = 300
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerall = teamside = 1 && playerno = 1
+trigger1 = power < 4000 && var(10) > 3999
+anim = 77730
+ID = 77730
+pos = 30.0+(20.0*sin((360.0/7.0)*(pi/180.0)*4.0)),210.0-(20.0*cos((360.0/7.0)*(pi/180.0)*4.0))
+postype = left
+bindtime = -1
+removetime = -2
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 300
+scale = .2,.2
+ownpal = 1
+ontop = 1
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerall = teamside = 1 && playerno = 1
+triggerall = power < 4000 && var(10) > 3000
+trigger1 = var(10) > power
+anim = 77731
+ID = 77731
+pos = 30.0+(20.0*sin((360.0/7.0)*(pi/180.0)*4.0)),210.0-(20.0*cos((360.0/7.0)*(pi/180.0)*4.0))
+postype = left
+bindtime = -1
+removetime = -2
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 300
+scale = ifelse(var(10) < 4000,(var(10)-3000)/5000.0,.2),ifelse(var(10) < 4000,(var(10)-3000)/5000.0,.2)
+ownpal = 1
+ontop = 1
+ignorehitpause = 1
+
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 = power < 4000 && numexplod(7773) > 0
+id = 7773
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerall = teamside = 1 && playerno = 1
+triggerall = power > 3000
+trigger1 = numexplod(7773) = 0
+anim = 7773
+ID = 7773
+pos = 30.0+(20.0*sin((360.0/7.0)*(pi/180.0)*4.0)),210.0-(20.0*cos((360.0/7.0)*(pi/180.0)*4.0))
+postype = left
+bindtime = -1
+removetime = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 300
+scale = ifelse(power < 4000,(power-3000)/5000.0,.2),ifelse(power < 4000,(power-3000)/5000.0,.2)
+ownpal = 1
+ontop = 1
+ignorehitpause = 1
+
+[State 0, ModifyExplod]
+type = ModifyExplod
+trigger1 = power > 3999
+ID = 7773
+scale = .2,.2
+sprpriority = 300
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerall = teamside = 1 && playerno = 1
+trigger1 = power < 5000 && var(10) > 4999
+anim = 77740
+ID = 77740
+pos = 30.0+(20.0*sin((360.0/7.0)*(pi/180.0)*5.0)),210.0-(20.0*cos((360.0/7.0)*(pi/180.0)*5.0))
+postype = left
+bindtime = -1
+removetime = -2
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 299
+scale = .2,.2
+ownpal = 1
+ontop = 1
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerall = teamside = 1 && playerno = 1
+triggerall = power < 5000 && var(10) > 4000
+trigger1 = var(10) > power
+anim = 77741
+ID = 77741
+pos = 30.0+(20.0*sin((360.0/7.0)*(pi/180.0)*5.0)),210.0-(20.0*cos((360.0/7.0)*(pi/180.0)*5.0))
+postype = left
+bindtime = -1
+removetime = -2
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 299
+scale = ifelse(var(10) < 5000,(var(10)-4000)/5000.0,.2),ifelse(var(10) < 5000,(var(10)-4000)/5000.0,.2)
+ownpal = 1
+ontop = 1
+ignorehitpause = 1
+
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 = power < 5000 && numexplod(7774) > 0
+id = 7774
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerall = teamside = 1 && playerno = 1
+triggerall = power > 4000
+trigger1 = numexplod(7774) = 0
+anim = 7774
+ID = 7774
+pos = 30.0+(20.0*sin((360.0/7.0)*(pi/180.0)*5.0)),210.0-(20.0*cos((360.0/7.0)*(pi/180.0)*5.0))
+postype = left
+bindtime = -1
+removetime = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 299
+scale = ifelse(power < 5000,(power-4000)/5000.0,.2),ifelse(power < 5000,(power-4000)/5000.0,.2)
+ownpal = 1
+ontop = 1
+ignorehitpause = 1
+
+[State 0, ModifyExplod]
+type = ModifyExplod
+trigger1 = power > 4999
+ID = 7774
+scale = .2,.2
+sprpriority = 299
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerall = teamside = 1 && playerno = 1
+trigger1 = power < 6000 && var(10) > 5999
+anim = 77750
+ID = 77750
+pos = 30.0+(20.0*sin((360.0/7.0)*(pi/180.0)*6.0)),210.0-(20.0*cos((360.0/7.0)*(pi/180.0)*6.0))
+postype = left
+bindtime = -1
+removetime = -2
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 298
+scale = .2,.2
+ownpal = 1
+ontop = 1
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerall = teamside = 1 && playerno = 1
+triggerall = power < 6000 && var(10) > 5000
+trigger1 = var(10) > power
+anim = 77751
+ID = 77751
+pos = 30.0+(20.0*sin((360.0/7.0)*(pi/180.0)*6.0)),210.0-(20.0*cos((360.0/7.0)*(pi/180.0)*6.0))
+postype = left
+bindtime = -1
+removetime = -2
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 298
+scale = ifelse(var(10) < 6000,(var(10)-5000)/5000.0,.2),ifelse(var(10) < 6000,(var(10)-5000)/5000.0,.2)
+ownpal = 1
+ontop = 1
+ignorehitpause = 1
+
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 = power < 6000 && numexplod(7775) > 0
+id = 7775
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerall = teamside = 1 && playerno = 1
+triggerall = power > 5000
+trigger1 = numexplod(7775) = 0
+anim = 7775
+ID = 7775
+pos = 30.0+(20.0*sin((360.0/7.0)*(pi/180.0)*6.0)),210.0-(20.0*cos((360.0/7.0)*(pi/180.0)*6.0))
+postype = left
+bindtime = -1
+removetime = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 298
+scale = ifelse(power < 6000,(power-5000)/5000.0,.2),ifelse(power < 6000,(power-5000)/5000.0,.2)
+ownpal = 1
+ontop = 1
+ignorehitpause = 1
+
+[State 0, ModifyExplod]
+type = ModifyExplod
+trigger1 = power > 5999
+ID = 7775
+scale = .2,.2
+sprpriority = 298
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerall = teamside = 1 && playerno = 1
+trigger1 = power < 7000 && var(10) > 6999
+anim = 77760
+ID = 77760
+pos = 30,190
+postype = left
+bindtime = -1
+removetime = -2
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 297
+scale = .2,.2
+ownpal = 1
+ontop = 1
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerall = teamside = 1 && playerno = 1
+triggerall = power < 7000 && var(10) > 6000
+trigger1 = var(10) > power
+anim = 77761
+ID = 77761
+pos = 30,190
+postype = left
+bindtime = -1
+removetime = -2
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 297
+scale = ifelse(var(10) < 7000,(var(10)-6000)/5000.0,.2),ifelse(var(10) < 7000,(var(10)-6000)/5000.0,.2)
+ownpal = 1
+ontop = 1
+ignorehitpause = 1
+
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 = power < 7000 && numexplod(7776) > 0
+id = 7776
+ignorehitpause = 1
+
+[State 30000];ÉQÅ[ÉWòg
+type = Explod
+triggerall = teamside = 1 && playerno = 1
+triggerall = power > 6000
+trigger1 = numexplod(7776) = 0
+anim = 7776
+ID = 7776
+pos = 30,190
+postype = left
+bindtime = -1
+removetime = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 297
+scale = ifelse(power < 7000,(power-6000)/5000.0,.2),ifelse(power < 7000,(power-6000)/5000.0,.2)
+ownpal = 1
+ontop = 1
+ignorehitpause = 1
+
+[State 0, ModifyExplod]
+type = ModifyExplod
+trigger1 = power > 6999
+ID = 7776
+scale = .2,.2
+sprpriority = 297
+ignorehitpause = 1
+
+[State 0, Explod]
+type = Explod
+trigger1 = !numexplod(7777) && parent,var(12) > 0 && parent,var(12) < 6000
+anim = 7777
+ID = 7777
+pos = 30,210
+postype = left
+bindtime = -1
+removetime = -1
+supermovetime = -1
+pausemovetime = -1
+sprpriority = 299
+scale = .5,.5
+ownpal = 1
+ontop = 1
+ignorehitpause = 1
+
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 = parent,var(21) <= 0
+id = 7777
+ignorehitpause = 1
+
+[State 0, ModifyExplod]
+type = ModifyExplod
+trigger1 = numexplod(7777)
+ID = 7777
+scale = (parent,var(21)*1.0/parent,var(12)*1.0)*.5,(parent,var(21)*1.0/parent,var(12)*1.0)*.5
+sprpriority = 299
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(10) = power
+ignorehitpause = 1
+
+[Statedef 30006]
+Type = A
+Physics = N
+Anim = 3217
+
+[State 0, PlaySnd]
+type = PlaySnd
+triggerall = parent,stateno != [3000,3501]
+trigger1 = time = 0
+value = S0,14
+volumescale = 200
+ignorehitpause = 1

@@ -1,0 +1,3730 @@
+
+[Statedef 700]
+Type = S
+MoveType = I
+Physics = N
+anim = 700
+velset = 0,0
+ctrl = 0
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = !time
+value = S180,0
+channel = 4
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = enemynear,power > 0
+trigger1 = time = 45
+value = S700,0
+pan = p2dist X
+
+[State 0, Explod]
+type = Explod
+trigger1 = enemynear,power > 0
+trigger1 = time = 45
+anim = 7880
+ID = 7880
+pos = 0,enemynear,const(size.mid.pos.y)
+postype = p2
+bindtime = -1
+vfacing = -1
+removetime = -2
+scale = .5,1
+sprpriority = 4
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+[State 0, PowerAdd]
+type = EnemyPowerAdd
+trigger1 = time = 45
+value = -1000
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = !AnimTime
+value = 0
+ctrl = 1
+
+;---------------------------------------------------------------------------
+; サキスパ
+;---------------------------------------------------------------------------
+[Statedef 6300,]
+	Type=S
+	MoveType=I
+	physics=N
+	velset=0,0
+	Ctrl=0
+;	faceP2=1
+;	Anim=6300
+	sprPriority=2
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 6300
+ignorehitpause = 1
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = Anim != 6300
+value = 6300
+elem = 1
+
+[State 0, LifeAdd]
+type = LifeAdd
+trigger1 = animelem = 1
+value = -gethitvar(damage)
+kill = 1
+absolute = 1
+
+[State 0, PowerAdd]
+type = PowerAdd
+TriggerAll = !var(12)
+trigger1 = animelem = 1
+value = -3000
+
+[State 0, VarSet]
+type = Null;VarSet
+trigger1 = animelem = 1
+trigger1 = var(12) = 3
+var(12) = 2
+ignorehitpause = 1
+
+	[State タイマー減少]
+		type = varadd
+		trigger1 = animelem = 1
+		trigger1 = var(12)
+		var(21) = -1000
+		persistent = 0
+ 		ignorehitpause = 1
+
+	[State 6300, ]
+		type = NotHitBy
+		trigger1 = 1
+		value = SCA,AA,AP,AT
+		time = 1
+
+	[State 6300, ]
+		type = PlaySnd
+		trigger1 = animelem = 1
+		value = 11,7
+		channel = 4
+		
+	[State 6300,Hitdef]
+		type = StateTypeSet
+		trigger1 = animelemtime(5) = 0
+		movetype = A
+
+	[State 6300,Hitdef]
+		type = StateTypeSet
+		trigger1 = animelemtime(6) = 0
+		movetype = I
+
+	[State 6300,Hitdef]
+		Type=HitDef
+		Trigger1=!MoveContact
+		attr = , NA                     ;立ち状態で、通常の攻撃(ｓは立ち、ｎは通常、aは攻撃を表す)
+		ID=2300
+		damage = 0                  ;ダメージ量（左が当たった時、右はガードした時）
+		animtype = Light                 ;当てた時の相手のポーズ（light/midium/hard/back）から選択
+		guardflag =                    ;ガードできる状態（ｍaは全ての状態でガード可能）
+		hitflag = MAF                    ;当てる事のできる条件
+		priority = 3, Hit                ;攻撃の優先権（0弱い　4通常　7強い
+		pausetime = 0, 0                 ;攻撃が当たった時の硬直時間（左が自分、右が相手）
+		sparkno = -1                     ;ヒットエフェクトのスプライトステート（無ければ0）
+		sparkxy = -10, -56               ;ヒットエフェクトを表示する場所（相手の座標で）
+		hitsound =  -1                 ;ヒットした時の音（ｓ*,*にすると自分の音を使う）
+		ground.type = High               ;相手のくらった場所（High：頭、体, Low：足, Trip：足払い）
+		ground.slidetime = 5             ;相手が後にすべる時間
+		ground.hittime  = 12             ;コンボが繋がる時間（高くしすぎない事）
+		ground.velocity = -18.4,-5             ;地上で攻撃をくらった場合の相手の移動状況（ｘとｙで小数点可）
+		airguard.velocity = -18.9,-.8     ;空中で攻撃をくらった場合の相手の移動状況（ｘとｙで小数点可）
+		air.type = High                  ;空中で相手がくらった場所（上と同じ）
+		air.velocity = -18.4,-4           ;空中で攻撃をくらった場合の相手の移動状況（ｘとｙで小数点可）
+		air.hittime = 12                 ;空中でコンボが繋がる時間
+		fall=1
+		fall.recover=0
+		getpower =0
+		givepower =0
+		ground.cornerpush.veloff = 0
+
+	[State 6662,]
+		Type=PlaySnd
+		trigger1 = AnimElemtime(5) = 0
+		value=1,29
+		volume=255
+		channel=-1
+
+	[State 6661,]
+		type = Explod
+		trigger1 = AnimElemtime(5) = 0
+		anim = 13380
+		ID = 13380
+		pos = 0, 0
+		postype = p1
+		bindtime = -1
+		supermovetime = 9999
+		pausemovetime = 9999
+		scale = 1, 1
+		sprpriority = 3
+		ownpal = 1
+		removeongethit = 1
+
+[State 0, VarSet]
+type = VarSet
+Trigger1=AnimElemTime(8)>=0
+var(59) = 0
+
+	[State 6300,End]
+		Type=ChangeState
+		Trigger1=AnimElemTime(8)>=0
+		value=0
+		Ctrl=1
+		
+;---------------------------------------------------------------------------
+[Statedef 6350,]
+	Type=A
+	MoveType=I
+	physics=N
+;	velset=0,0
+	Ctrl=0
+;	faceP2=1
+;	Anim=6350
+	sprPriority=2
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 6350
+ignorehitpause = 1
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = Anim != 6350
+value = 6350
+elem = 1
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = 1
+x = 0
+y = ifelse(animelemtime(6) < 0 || vel Y <= 0,0,vel Y)
+
+[State 0, LifeAdd]
+type = LifeAdd
+trigger1 = animelem = 1
+value = -gethitvar(damage)
+kill = 1
+absolute = 1
+
+[State 0, PowerAdd]
+type = PowerAdd
+TriggerAll = !var(12)
+trigger1 = animelem = 1
+value = -3000
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = animelem = 1
+trigger1 = var(12) = 3
+var(12) = 2
+ignorehitpause = 1
+
+	[State タイマー減少]
+		type = varadd
+		trigger1 = animelem = 1
+		trigger1 = var(12)
+		var(21) = -1000
+		persistent = 0
+ 		ignorehitpause = 1
+
+	[State 6300, ]
+		type = NotHitBy
+		trigger1 = 1
+		value = SCA,AA,AP,AT
+		time = 1
+
+	[State 6300, ]
+		type = PlaySnd
+		trigger1 = animelem = 1
+		value = 11,7
+		channel = 4
+
+	[State 6300,Hitdef]
+		type = StateTypeSet
+		trigger1 = animelemtime(4) = 0
+		movetype = A
+
+	[State 6300,Hitdef]
+		type = StateTypeSet
+		trigger1 = animelemtime(5) = 0
+		movetype = I
+
+	[State 6300,Hitdef]
+		Type=HitDef
+		Trigger1=!MoveContact
+		attr = , NA                     ;立ち状態で、通常の攻撃(ｓは立ち、ｎは通常、aは攻撃を表す)
+		ID=2300
+		damage = 0                  ;ダメージ量（左が当たった時、右はガードした時）
+		animtype = Light                 ;当てた時の相手のポーズ（light/midium/hard/back）から選択
+		guardflag =                    ;ガードできる状態（ｍaは全ての状態でガード可能）
+		hitflag = MAF                    ;当てる事のできる条件
+		priority = 3, Hit                ;攻撃の優先権（0弱い　4通常　7強い
+		pausetime = 0, 0                 ;攻撃が当たった時の硬直時間（左が自分、右が相手）
+		sparkno = -1                     ;ヒットエフェクトのスプライトステート（無ければ0）
+		sparkxy = -10, -56               ;ヒットエフェクトを表示する場所（相手の座標で）
+		hitsound =  -1                 ;ヒットした時の音（ｓ*,*にすると自分の音を使う）
+		ground.type = High               ;相手のくらった場所（High：頭、体, Low：足, Trip：足払い）
+		ground.slidetime = 5             ;相手が後にすべる時間
+		ground.hittime  = 12             ;コンボが繋がる時間（高くしすぎない事）
+		ground.velocity = -18.4,-5             ;地上で攻撃をくらった場合の相手の移動状況（ｘとｙで小数点可）
+		airguard.velocity = -18.9,-.8     ;空中で攻撃をくらった場合の相手の移動状況（ｘとｙで小数点可）
+		air.type = High                  ;空中で相手がくらった場所（上と同じ）
+		air.velocity = -18.4,-4           ;空中で攻撃をくらった場合の相手の移動状況（ｘとｙで小数点可）
+		air.hittime = 12                 ;空中でコンボが繋がる時間
+		fall=1
+		fall.recover=0
+		getpower =0
+		givepower =0
+		ground.cornerpush.veloff =0
+
+	[State 6300,]
+		Type=PlaySnd
+		trigger1 = AnimElemtime(4) = 0
+		value=1,29
+		volume=255
+		channel=-1
+
+	[State 6661,]
+		type = Explod
+		trigger1 = AnimElemtime(4) = 0
+		anim = 13390
+		ID = 13390
+		pos = 0, -50
+		postype = p1
+		bindtime = -1
+		supermovetime = 9999
+		pausemovetime = 9999
+		scale = 1, 1
+		sprpriority = 3
+		ownpal = 1
+		removeongethit = 1
+
+	[State 2000,vel]
+		Type=velAdd
+		Trigger1=AnimElemTime(6)>=0
+		y=0.47
+
+[State 0, VarSet]
+type = VarSet
+Trigger1=AnimElemTime(6)>=0
+Trigger1=Pos Y>=0
+var(59) = 53
+
+	[State 2000,land]
+		Type=ChangeState
+		Trigger1=AnimElemTime(6)>=0
+		Trigger1=Pos Y>=0
+		value=53
+		Ctrl=1
+
+;---------------------------------------------------------------------------
+; 同人格闘ゲーム『メルティブラッド』よりボタン１個で出せる、
+; 相手の攻撃を受け流す防御システム。初代無印版に近い仕様にしてます。
+; 複数のテクニックの組み合わせで再現出来る。
+;
+; これを応用して、ストリートファイター?の『ブロッキング』、
+; 餓狼MOTWの『ジャストディフェンス（ＥＦＺのリコイルガード）』も再現出来る。
+;---------------------------------------------------------------------------
+;立ちシールド
+[Statedef 6400]
+type     = S
+movetype = I
+physics  = S
+ctrl     = 0
+;anim     = 6400
+sprpriority = 0
+movehitpersist = 1
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = anim != [6400,6403]
+value = 6400
+elem = 1
+
+[State 6402,]
+type = Explod
+trigger1 = anim = 6400 && animelem = 1
+anim = 7000
+ID = 7000
+pos = 35, -71
+postype = p1
+bindtime = -1
+pausemovetime = -1
+scale = 1, 1
+sprpriority = 1
+ownpal = 1
+removeongethit = 1
+
+[State 0, Turn]
+type = Turn
+trigger1 = p2dist X < 0
+
+[State 6412]
+type = NotHitBy
+trigger1 = command != "hold_z" && (prevstateno = 6402 || prevstateno = 6405 || movehit) && time < 27
+value = SCA,AA,AP,AT
+time = 27-time
+
+[State 6400, アニメ変更]
+type = ChangeAnim
+triggerall = anim != 6403
+triggerall = command != "hold_z"
+trigger1 = (Anim = 6400 && AnimElemTime(2) >= 3) || PrevStateNo = 6405 || PrevStateNo = 6402 || Anim = 6401
+value = 6403
+elem = 1
+
+[State 0, CtrlSet]
+type = CtrlSet
+trigger1 = anim = 6403 && (PrevStateNo = 6405 || PrevStateNo = 6402)
+value = 1
+
+[State 6400, 受け止め定義];（※８）
+type = ReversalDef
+triggerall = !(enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301))) || (enemynear,name = "bernkastel" && (enemynear,stateno = 2500 || enemynear,stateno = 2300)) || enemynear,name = "ONI-MIKO-REIMU")
+trigger1 = anim = 6400
+reversal.attr = SA, AA            ;受け止める相手の攻撃属性を指定
+pausetime     = 0,0;14
+numhits       = 0
+sparkno       = -1
+sparkxy       = 0,0
+hitsound      = -1
+P1StateNo     = 6402
+nohelper = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6400, 食らい上書き];（※９）
+type = HitOverRide
+trigger1 = anim = 6400 || anim = 6401
+time = 1
+attr = ,AP            ;上書き出来る相手の攻撃属性を指定
+stateno = 6405                  ;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6400, 食らい上書き];（※９）
+type = HitOverRide
+triggerall = enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301))) || (enemynear,name = "bernkastel" && (enemynear,stateno = 2500 || enemynear,stateno = 2300)) || enemynear,name = "ONI-MIKO-REIMU"
+trigger1 = anim = 6400 || anim = 6401
+time = 1
+attr = ,AA,AP,AT            ;上書き出来る相手の攻撃属性を指定
+stateno = 6405                  ;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 0, HitDef]
+type = ChangeAnim
+trigger1 = Anim = 6400 && AnimElemTime(2) >= 3 && command = "hold_z"
+value = 6401
+elem = 1
+
+[State 0, HitDefClear]
+type = HitDefClear
+trigger1 = Anim != 6400
+ignorehitpause = 1
+
+[State 6400, ステート変更]
+type = ChangeState
+trigger1 = Anim = 6403 && !AnimTime
+value = 0
+ctrl = 1
+
+;---------------------------------------------------------------------------
+;立ちシールド持続(飛び道具のみ)
+[Statedef 6401]
+type     = S
+movetype = I
+physics  = S
+ctrl     = 0
+;anim     = 6401
+sprpriority = 0
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = anim != [6400,6403]
+value = 6401
+elem = 1
+
+[State 53,1]
+Type=VelSet
+Trigger1=Time=0
+y=0
+
+[State 53,2]
+Type=PosSet
+Trigger1=Time=0
+y=0
+
+[State 6401]
+type = Null;Explod
+trigger1 = Anim = 6401
+trigger1 = Time = 0
+anim = 7000
+ID = 7000
+pos = 47, -77
+postype = p1
+bindtime = -1
+removetime =-1
+supermovetime = 9999
+pausemovetime = 9999
+scale = .5, .5
+sprpriority = 1
+ownpal = 1
+removeongethit = 1
+
+[State 6401]		
+type = RemoveExplod
+triggerall = NumExplod(7000)
+trigger1 = command != "hold_z"
+trigger2 = stateno !=6401
+ID = 7000
+
+[State 6401]
+type = Explod
+triggerall = NumExplod(7000)
+trigger1 = Anim = 6401
+trigger1 = Time = 0
+anim = 7003
+pos = 47, -77
+postype = p1
+bindtime = -1
+supermovetime = 9999
+pausemovetime = 9999
+scale = .5, .5
+sprpriority = 1
+ownpal = 1
+removeongethit = 1
+
+[State 6401, 食らい上書き]
+type = HitOverRide
+trigger1 = 1
+time = 1
+attr = ,AP             ;上書き出来る相手の攻撃属性を指定
+stateno = 6405;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6401, 食らい上書き]
+type = HitOverRide
+trigger1 = enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301)))
+time = 1
+attr = ,AA,AP,AT             ;上書き出来る相手の攻撃属性を指定
+stateno = 6405;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6401, アニメ変更]
+type = ChangeAnim
+trigger1 = Anim = 6401 && command != "hold_z"
+value = 6403
+
+[State 6401, ステート変更]
+type = ChangeState
+trigger1 = Anim = 6403 && AnimTime = 0
+value = 0
+ctrl = 1
+
+;---------------------------------------------------------------------------
+;---------------------------------------------------------------------------
+;立ちシールド成功（飛び道具以外）
+[Statedef 6402]
+type     = U
+movetype = I
+physics  = N
+ctrl     = 0
+velset   = 0,0
+Poweradd = 100
+anim     = 6400
+movehitpersist = 1
+
+[State 6412]
+type = NotHitBy
+trigger1 = !(enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301))) || (enemynear,name = "bernkastel" && (enemynear,stateno = 2500 || enemynear,stateno = 2300)) || enemynear,name = "ONI-MIKO-REIMU")
+value = SCA,AA,AT
+time = 27
+ignoreproj = 1
+ignorehelper = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6412]
+type = NotHitBy
+trigger1 = command != "hold_z"
+value = SCA,AA,AP,AT
+time = 27
+
+[State 6402, 音を鳴らす]
+type = PlaySnd
+trigger1 = !var(52)
+value = 0, 10
+
+[State 6402,]
+type = Explod
+trigger1 = 1
+anim = 7001
+ID = 7001
+pos = 35, -71
+postype = p1
+bindtime = -1
+supermovetime = 9999
+pausemovetime = 9999
+scale = 1, 1
+sprpriority = 3
+ownpal = 1
+removeongethit = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(52) = 10
+ignorehitpause = 1
+
+[State 6402, 時間停止];自分も相手も制限時間も一時的に止める（ポーズ）
+type = Null;Pause
+trigger1 = Time = 0
+time =  3   ;ポーズする時間（フレーム）
+movetime = 3  ;ポーズ中に動ける時間。timeよりも多いとバグる（デフォルトは０）
+IgnoreHitPause = 1
+
+[State 6401, 食らい上書き]
+type = HitOverRide
+trigger1 = 1
+time = 1
+attr = ,AP             ;上書き出来る相手の攻撃属性を指定
+stateno = 6405;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6401, 食らい上書き]
+type = HitOverRide
+trigger1 = enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301)))
+time = 1
+attr = ,AA,AP,AT             ;上書き出来る相手の攻撃属性を指定
+stateno = 6405;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6402, 画面全体の色]
+type = Null;EnvColor
+trigger1 = Time = 0
+value = 255,255,255 ;画面全体を塗り潰す色合い（赤,緑,青）
+time = 1
+
+[State 6401, ステート変更]
+type = ChangeState
+trigger1 = 1;Anim = 6402 && AnimTime = 0
+value = 6400
+
+;---------------------------------------------------------------------------
+;立ちシールド成功（飛び道具）
+[Statedef 6405]
+type     = U
+movetype = I
+physics  = N
+ctrl     = 0
+velset   = 0,0
+;Poweradd = 100
+;anim     = 6402
+
+[State 6412]
+type = NotHitBy
+trigger1 = !(enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301))) || (enemynear,name = "bernkastel" && (enemynear,stateno = 2500 || enemynear,stateno = 2300)) || enemynear,name = "ONI-MIKO-REIMU")
+value = SCA,AA,AT
+time = 27
+ignoreproj = 1
+ignorehelper = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6412]
+type = NotHitBy
+trigger1 = command != "hold_z"
+value = SCA,AA,AP,AT
+time = 27
+
+[State 8001]
+type = PowerAdd
+trigger1 = 1
+value = 100+ifelse(gethitvar(damage) > 0,gethitvar(damage)*7,0)
+persistent=0
+ignorehitpause = 1
+
+[State 6402, 音を鳴らす]
+type = PlaySnd
+trigger1 = !var(52)
+value = 0, 10
+
+[State 6402,]
+type = Explod
+trigger1 = 1
+anim = 7002
+ID = 7002
+pos = 35, -71
+postype = p1
+bindtime = 0
+supermovetime = -1
+pausemovetime = -1
+scale = 1, 1
+sprpriority = 3
+ownpal = 1
+removeongethit = 0
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(52) = 10
+ignorehitpause = 1
+
+[State 6402, 時間停止];自分も相手も制限時間も一時的に止める（ポーズ）
+type = Null;Pause
+trigger1 = Time = 0
+time =  9   ;ポーズする時間（フレーム）
+movetime = 9  ;ポーズ中に動ける時間。timeよりも多いとバグる（デフォルトは０）
+IgnoreHitPause = 1
+
+[State 6401, 食らい上書き]
+type = HitOverRide
+trigger1 = 1
+time = 1
+attr = ,AP             ;上書き出来る相手の攻撃属性を指定
+stateno = 6405;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6401, 食らい上書き]
+type = HitOverRide
+trigger1 = enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301)))
+time = 1
+attr = ,AA,AP,AT             ;上書き出来る相手の攻撃属性を指定
+stateno = 6405;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6402, 画面全体の色]
+type = Null;EnvColor
+trigger1 = Time = 0
+value = 255,255,255 ;画面全体を塗り潰す色合い（赤,緑,青）
+time = 1
+
+[State 6401, ステート変更]
+type = ChangeState
+trigger1 = 1;Anim = 6402 && AnimTime = 0
+value = 6400
+
+;---------------------------------------------------------------------------
+;屈シールド
+[Statedef 6410]
+type     = C
+movetype = I
+physics  = C
+ctrl     = 0
+;anim     = 6410
+sprpriority = 0
+movehitpersist = 1
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = anim != [6410,6413]
+value = 6410
+elem = 1
+
+[State 0, Turn]
+type = Turn
+trigger1 = p2dist X < 0
+
+[State 6412]
+type = NotHitBy
+trigger1 = command != "hold_z" && (prevstateno = 6412 || prevstateno = 6415 || movehit) && time < 27
+value = SCA,AA,AP,AT
+time = 27-time
+
+[State 6400, アニメ変更]
+type = ChangeAnim
+triggerall = anim != 6413
+triggerall = command != "hold_z"
+trigger1 = (Anim = 6410 && AnimElemTime(1) >= 6) || PrevStateNo = 6415 || PrevStateNo = 6412 || Anim = 6411
+value = 6413
+elem = 1
+
+[State 0, CtrlSet]
+type = CtrlSet
+trigger1 = anim = 6413 && (PrevStateNo = 6415 || PrevStateNo = 6412)
+value = 1
+
+[State 6400, 受け止め定義];（※８）
+type = ReversalDef
+triggerall = !(enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301))) || (enemynear,name = "bernkastel" && (enemynear,stateno = 2500 || enemynear,stateno = 2300)) || enemynear,name = "ONI-MIKO-REIMU")
+trigger1 = anim = 6410
+reversal.attr = SC, AA            ;受け止める相手の攻撃属性を指定
+pausetime     = 0,0;14
+numhits       = 0
+sparkno       = -1
+sparkxy       = 0,0
+hitsound      = -1
+P1StateNo     = 6412
+nohelper = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6400, 食らい上書き];（※９）
+type = HitOverRide
+trigger1 = anim = 6410 || anim = 6411
+time = 1
+attr = ,AP            ;上書き出来る相手の攻撃属性を指定
+stateno = 6415                  ;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6400, 食らい上書き];（※９）
+type = HitOverRide
+triggerall = enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301))) || (enemynear,name = "bernkastel" && (enemynear,stateno = 2500 || enemynear,stateno = 2300)) || enemynear,name = "ONI-MIKO-REIMU"
+trigger1 = anim = 6410 || anim = 6411
+time = 1
+attr = ,AA,AP,AT            ;上書き出来る相手の攻撃属性を指定
+stateno = 6415                  ;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 0, HitDef]
+type = ChangeState
+trigger1 = Anim = 6410 && AnimElemTime(1) >= 6 && command = "hold_z"
+value = 6410
+anim = 6411
+
+[State 6400, ステート変更]
+type = ChangeState
+trigger1 = Anim = 6413 && !AnimTime
+value = 11
+ctrl = 1
+
+;---------------------------------------------------------------------------
+;屈シールド持続（飛び道具のみ）
+[Statedef 6411]
+type     = C
+movetype = I
+physics  = C
+ctrl     = 0
+anim     = 6411
+sprpriority = 0
+
+[State 6411]
+type = Null;Explod
+trigger1 = Anim = 6411
+trigger1 = Time = 0
+anim = 7000
+ID = 7000
+pos = 52, -38
+postype = p1
+bindtime = -1
+removetime =-1
+supermovetime = 9999
+pausemovetime = 9999
+scale = .5, .5
+sprpriority = 1
+ownpal = 1
+removeongethit = 1
+
+[State 6411]		
+type = RemoveExplod
+triggerall = NumExplod(7000)
+trigger1 = command != "hold_z"
+trigger2 = stateno !=6411
+ID = 7000
+
+[State 6411]
+type = Explod
+triggerall = NumExplod(7000)
+trigger1 = Anim = 6411
+trigger1 = Time = 0
+anim = 7003
+pos = 52, -38
+postype = p1
+bindtime = -1
+supermovetime = 9999
+pausemovetime = 9999
+scale = .5, .5
+sprpriority = 1
+ownpal = 1
+removeongethit = 1
+
+[State 6411, 食らい上書き]
+type = HitOverRide
+trigger1 = 1
+time = 1
+attr = ,AP             ;上書き出来る相手の攻撃属性を指定
+stateno = 6415;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6411, 食らい上書き]
+type = HitOverRide
+trigger1 = enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301)))
+time = 1
+attr = ,AA,AP,AT             ;上書き出来る相手の攻撃属性を指定
+stateno = 6415;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6411, アニメ変更]
+type = ChangeAnim
+trigger1 = Anim = 6411 && command != "hold_z"
+value = 6413
+
+[State 6411, ステート変更]
+type = ChangeState
+trigger1 = Anim = 6413 && AnimTime = 0
+value = 11
+ctrl = 1
+
+;---------------------------------------------------------------------------
+;屈シールド成功（飛び道具以外）
+[Statedef 6412]
+type     = U
+movetype = I
+physics  = N
+ctrl     = 0
+velset   = 0,0
+Poweradd = 100
+anim     = 6410
+movehitpersist = 1
+
+[State 6412]
+type = NotHitBy
+trigger1 = !(enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301))) || (enemynear,name = "bernkastel" && (enemynear,stateno = 2500 || enemynear,stateno = 2300)) || enemynear,name = "ONI-MIKO-REIMU")
+value = SCA,AA,AT
+time = 27
+ignoreproj = 1
+ignorehelper = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6412]
+type = NotHitBy
+trigger1 = command != "hold_z"
+value = SCA,AA,AP,AT
+time = 27
+
+[State 6402, 音を鳴らす]
+type = PlaySnd
+trigger1 = !var(52)
+value = 0, 10
+
+[State 6402,]
+type = Explod
+trigger1 = 1
+anim = 7001
+ID = 7001
+pos = 52, -38
+postype = p1
+bindtime = -1
+supermovetime = 9999
+pausemovetime = 9999
+scale = 1, 1
+sprpriority = 3
+ownpal = 1
+removeongethit = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(52) = 10
+ignorehitpause = 1
+
+[State 6401, 食らい上書き]
+type = HitOverRide
+trigger1 = 1
+time = 1
+attr = ,AP             ;上書き出来る相手の攻撃属性を指定
+stateno = 6415;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6401, 食らい上書き]
+type = HitOverRide
+trigger1 = enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301)))
+time = 1
+attr = ,AA,AP,AT             ;上書き出来る相手の攻撃属性を指定
+stateno = 6415;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6402, 画面全体の色]
+type = Null;EnvColor
+trigger1 = Time = 0
+value = 255,255,255 ;画面全体を塗り潰す色合い（赤,緑,青）
+time = 1
+
+[State 6401, ステート変更]
+type = ChangeState
+trigger1 = 1;Anim = 6402 && AnimTime = 0
+value = 6410
+
+;---------------------------------------------------------------------------
+;屈シールド成功（飛び道具）
+[Statedef 6415]
+type     = U
+movetype = I
+physics  = N
+ctrl     = 0
+velset   = 0,0
+;Poweradd = 100
+;anim     = 6412
+
+[State 6412]
+type = NotHitBy
+trigger1 = !(enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301))) || (enemynear,name = "bernkastel" && (enemynear,stateno = 2500 || enemynear,stateno = 2300)) || enemynear,name = "ONI-MIKO-REIMU")
+value = SCA,AA,AT
+time = 27
+ignoreproj = 1
+ignorehelper = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6412]
+type = NotHitBy
+trigger1 = command != "hold_z"
+value = SCA,AA,AP,AT
+time = 27
+
+[State 8001]
+type = PowerAdd
+trigger1 = 1
+value = 100+ifelse(gethitvar(damage) > 0,gethitvar(damage)*7,0)
+persistent=0
+ignorehitpause = 1
+
+[State 6402, 音を鳴らす]
+type = PlaySnd
+trigger1 = !var(52)
+value = 0, 10
+
+[State 6402,]
+type = Explod
+trigger1 = 1
+anim = 7002
+ID = 7002
+pos = 52, -38
+postype = p1
+bindtime = 0
+supermovetime = -1
+pausemovetime = -1
+scale = 1, 1
+sprpriority = 3
+ownpal = 1
+removeongethit = 0
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(52) = 10
+ignorehitpause = 1
+
+[State 6401, 食らい上書き]
+type = HitOverRide
+trigger1 = 1
+time = 1
+attr = ,AP             ;上書き出来る相手の攻撃属性を指定
+stateno = 6415;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6401, 食らい上書き]
+type = HitOverRide
+trigger1 = enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301)))
+time = 1
+attr = ,AA,AP,AT             ;上書き出来る相手の攻撃属性を指定
+stateno = 6415;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6402, 画面全体の色]
+type = Null;EnvColor
+trigger1 = Time = 0
+value = 255,255,255 ;画面全体を塗り潰す色合い（赤,緑,青）
+time = 1
+
+[State 6401, ステート変更]
+type = ChangeState
+trigger1 = 1;Anim = 6402 && AnimTime = 0
+value = 6410
+
+;---------------------------------------------------------------------------
+;空中シールド
+[Statedef 6420]
+type     = A
+movetype = I
+physics  = N
+ctrl     = 0
+;anim     = 6420
+sprpriority = 0
+movehitpersist = 1
+
+[State 50, 重力付加]
+type = VelAdd
+trigger1 = 1
+y = ifelse(-vel Y/6 <= .5,.5,-vel Y/6)
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = anim != [6420,6423]
+value = 6420
+elem = 1
+
+[State 6412]
+type = NotHitBy
+trigger1 = command != "hold_z" && (prevstateno = 6422 || prevstateno = 6425 || movehit) && time < 27
+value = SCA,AA,AP,AT
+time = 27-time
+
+[State 6400, アニメ変更]
+type = ChangeAnim
+triggerall = anim != 6423
+triggerall = command != "hold_z"
+trigger1 = (Anim = 6420 && AnimElemTime(1) >= 6) || PrevStateNo = 6425 || PrevStateNo = 6422 || Anim = 6421
+value = 6423
+elem = 1
+
+[State 0, CtrlSet]
+type = CtrlSet
+trigger1 = anim = 6423 && animelem = 3
+value = 1
+
+[State 6400, 受け止め定義];（※８）
+type = ReversalDef
+triggerall = !(enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301))) || (enemynear,name = "bernkastel" && (enemynear,stateno = 2500 || enemynear,stateno = 2300)) || enemynear,name = "ONI-MIKO-REIMU")
+trigger1 = anim = 6420
+reversal.attr = SA, AA            ;受け止める相手の攻撃属性を指定
+pausetime     = 0,0;14
+numhits       = 0
+sparkno       = -1
+sparkxy       = 0,0
+hitsound      = -1
+P1StateNo     = 6422
+nohelper = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6400, 食らい上書き];（※９）
+type = HitOverRide
+trigger1 = anim = 6420 || anim = 6421
+time = 1
+attr = ,AP            ;上書き出来る相手の攻撃属性を指定
+stateno = 6425                  ;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6400, 食らい上書き];（※９）
+type = HitOverRide
+triggerall = enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301))) || (enemynear,name = "bernkastel" && (enemynear,stateno = 2500 || enemynear,stateno = 2300)) || enemynear,name = "ONI-MIKO-REIMU"
+trigger1 = anim = 6420 || anim = 6421
+time = 1
+attr = ,AA,AP,AT            ;上書き出来る相手の攻撃属性を指定
+stateno = 6425                  ;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 0, HitDef]
+type = ChangeState
+trigger1 = Anim = 6420 && (AnimElemTime(1) >= 6 || prevstateno = 6425) && command = "hold_z"
+value = 6420
+anim = 6421
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = Vel Y > 0 && Pos Y >= 0
+y = 0
+
+[State 0, PosSet]
+type = PosSet
+trigger1 = Vel Y = 0 && Pos Y > 0
+y = 0
+
+[State 6400, ステート変更]
+type = ChangeState
+trigger1 = Vel Y = 0 && Pos Y = 0
+value = ifelse(command = "hold_z",6400+10*(command = "holddown"),53)
+ctrl = 1
+
+;---------------------------------------------------------------------------
+;空中シールド持続（飛び道具のみ）
+[Statedef 6421]
+type     = A
+movetype = I
+physics  = N
+ctrl     = 0
+anim     = 6421
+sprpriority = 0
+
+[State 50, 重力付加]
+type = VelAdd
+trigger1 = 1
+y = ifelse(-vel Y/6 <= .5,.5,-vel Y/6)
+
+[State 6421]
+type = Null;Explod
+trigger1 = Anim = 6421
+trigger1 = Time = 0
+anim = 7000
+ID = 7000
+pos = 55, -65
+postype = p1
+bindtime = -1
+removetime =-1
+supermovetime = 9999
+pausemovetime = 9999
+scale = .5, .5
+sprpriority = 1
+ownpal = 1
+removeongethit = 1
+
+[State 6421]		
+type = RemoveExplod
+triggerall = NumExplod(7000)
+trigger1 = command != "hold_z"
+Trigger2=Pos Y>=-10
+ID = 7000
+
+[State 6421]
+type = Explod
+triggerall = NumExplod(7000)
+trigger1 = Anim = 6421
+trigger1 = Time = 0
+anim = 7003
+pos = 55, -65
+postype = p1
+bindtime = -1
+supermovetime = 9999
+pausemovetime = 9999
+scale = .5, .5
+sprpriority = 1
+ownpal = 1
+removeongethit = 1
+
+[State 6421, 食らい上書き]
+type = HitOverRide
+trigger1 = 1
+time = 1
+attr = ,AP             ;上書き出来る相手の攻撃属性を指定
+stateno = 6425;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6421, 食らい上書き]
+type = HitOverRide
+trigger1 = enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301)))
+time = 1
+attr = ,AA,AP,AT             ;上書き出来る相手の攻撃属性を指定
+stateno = 6425;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6421, アニメ変更]
+type = ChangeAnim
+trigger1 = Anim = 6421 && command != "hold_z"
+value = 6423
+
+[State 6420, ステート変更]
+type = ChangeState
+trigger1 = command = "hold_z"
+Trigger1=Pos Y>=0
+value = 6401
+
+[State 6421, ステート変更]
+type = ChangeState
+Trigger1=Pos Y>=0
+value = 53
+;---------------------------------------------------------------------------
+;空中シールド成功（飛び道具以外）
+[Statedef 6422]
+type     = A
+movetype = I
+physics  = N
+ctrl     = 0
+;velset   = 0,0
+Poweradd = 100
+anim     = 6420
+movehitpersist = 1
+
+[State 6412]
+type = NotHitBy
+trigger1 = !(enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301))) || (enemynear,name = "bernkastel" && (enemynear,stateno = 2500 || enemynear,stateno = 2300)) || enemynear,name = "ONI-MIKO-REIMU")
+value = SCA,AA,AT
+time = 27
+ignoreproj = 1
+ignorehelper = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6412]
+type = NotHitBy
+trigger1 = command != "hold_z"
+value = SCA,AA,AP,AT
+time = 27
+
+[State 6402, 音を鳴らす]
+type = PlaySnd
+trigger1 = !var(52)
+value = 0, 10
+
+[State 6402,]
+type = Explod
+trigger1 = 1
+anim = 7001
+ID = 7001
+pos = 47, -77
+postype = p1
+bindtime = -1
+supermovetime = 9999
+pausemovetime = 9999
+scale = 1, 1
+sprpriority = 3
+ownpal = 1
+removeongethit = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(52) = 10
+ignorehitpause = 1
+
+[State 6401, 食らい上書き]
+type = HitOverRide
+trigger1 = 1
+time = 1
+attr = ,AP             ;上書き出来る相手の攻撃属性を指定
+stateno = 6425;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6401, 食らい上書き]
+type = HitOverRide
+trigger1 = enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301)))
+time = 1
+attr = ,AA,AP,AT             ;上書き出来る相手の攻撃属性を指定
+stateno = 6425;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6402, 画面全体の色]
+type = Null;EnvColor
+trigger1 = Time = 0
+value = 255,255,255 ;画面全体を塗り潰す色合い（赤,緑,青）
+time = 1
+
+[State 6401, ステート変更]
+type = ChangeState
+trigger1 = 1;Anim = 6402 && AnimTime = 0
+value = 6420
+
+;---------------------------------------------------------------------------
+;空中シールド成功（飛び道具）
+[Statedef 6425]
+type     = A
+movetype = I
+physics  = N
+ctrl     = 0
+;velset   = 0,0
+;Poweradd = 100
+;anim     = 6422
+
+[State 6412]
+type = NotHitBy
+trigger1 = !(enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301))) || (enemynear,name = "bernkastel" && (enemynear,stateno = 2500 || enemynear,stateno = 2300)) || enemynear,name = "ONI-MIKO-REIMU")
+value = SCA,AA,AT
+time = 27
+ignoreproj = 1
+ignorehelper = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6412]
+type = NotHitBy
+trigger1 = command != "hold_z"
+value = SCA,AA,AP,AT
+time = 27
+
+[State 8001]
+type = PowerAdd
+trigger1 = 1
+value = 100+ifelse(gethitvar(damage) > 0,gethitvar(damage)*7,0)
+persistent=0
+ignorehitpause = 1
+
+[State 6402, 音を鳴らす]
+type = PlaySnd
+trigger1 = !var(52)
+value = 0, 10
+
+[State 6402,]
+type = Explod
+trigger1 = 1
+anim = 7002
+ID = 7002
+pos = 56, -64
+postype = p1
+bindtime = 0
+supermovetime = -1
+pausemovetime = -1
+scale = 1, 1
+sprpriority = 3
+ownpal = 1
+removeongethit = 0
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(52) = 10
+ignorehitpause = 1
+
+[State 6401, 食らい上書き]
+type = HitOverRide
+trigger1 = 1
+time = 1
+attr = ,AP             ;上書き出来る相手の攻撃属性を指定
+stateno = 6425;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6401, 食らい上書き]
+type = HitOverRide
+trigger1 = enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301)))
+time = 1
+attr = ,AA,AP,AT             ;上書き出来る相手の攻撃属性を指定
+stateno = 6425;上書き先のステート
+IgnoreHitPause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 6402, 画面全体の色]
+type = Null;EnvColor
+trigger1 = Time = 0
+value = 255,255,255 ;画面全体を塗り潰す色合い（赤,緑,青）
+time = 1
+
+[State 6401, ステート変更]
+type = ChangeState
+trigger1 = 1;Anim = 6402 && AnimTime = 0
+value = 6420
+
+;---------------------------------------------------------------------------
+[Statedef 6430];そげぶカウンター
+	Type=S
+	MoveType=A
+	physics=N
+	velset=0,0
+	Ctrl=0
+	faceP2=1
+	Anim=6430
+	Poweradd=ifelse(prevstateno = 6405||prevstateno = 6415,0,-1000)
+	sprPriority=2
+
+	[State 6430,v1=0]
+		Type=varSet
+		Trigger1=Time=0
+		var(1) = var(1)
+
+	[State 6430,無敵]
+		Type=notHitBy
+		Trigger1=AnimElemTime(7)<0
+		value = SCA,AA,AP,AT
+		Time=1
+
+	[State 6430, ボイス]
+		type = PlaySnd
+		trigger1 = AnimElem=1
+		value = 3, 17
+
+	[State 3400,時間停止]
+		Type=SuperPause
+		Trigger1=Time=0
+		Time=12
+		sound =-1
+		MoveTime=12
+		darken=0
+		P2defmul=1
+		Anim=-1
+
+	[State 6430,vel]
+		Type=velSet
+		Trigger1=AnimElem=1
+		x=3
+
+	[State 6430,vel]
+		Type=velSet
+		Trigger1=AnimElem=3
+		x=0
+
+	[State 6430,vel]
+		Type=velSet
+		Trigger1=AnimElem=4
+		x=3
+
+	[State 6430,Width]
+		Type=Width
+		Trigger1=(AnimElemTime (1)>=0)&&(AnimElemTime (6)<0)
+		value=12,0
+
+	[State 6430,vel]
+		Type=velSet
+		Trigger1=AnimElem=6
+		x=0
+
+	[State 6430,Snd2]
+		Type=playSnd
+		Trigger1=AnimElemTime(4)=0
+		value=1,16
+		channel=1
+
+	[State 6430,Explod]
+		Type=Explod
+		Trigger1=AnimElemTime(4)=0
+		Anim=1151
+		sprPriority=3
+		Pos=5,0
+		PosType=P1
+		bindTime=-1
+		Scale=const(Size.xScale),const(Size.yScale)
+		RemoveonGetHit=1
+		supermovetime =9999
+		PauseMoveTime = -1
+		Persistent=0
+ 		ignorehitpause = 1
+;		trans=add
+
+	[State 6430,Hitdef]
+		Type=HitDef
+		Trigger1=!MoveContact
+		Trigger1=!MoveReversed
+		Trigger1=AnimElemTime(6)>=0
+		Trigger1=AnimElemTime(7)<0
+		Attr=S,NA
+		AnimType=hard
+		Air.AnimType=back
+		Hitflag=MAF
+		Guardflag=HA
+		Ground.Type=high
+		SparkNo=S6015
+		Guard.SparkNo=S6105
+		Sparkxy=-15,floor(-60*const(Size.yScale))
+		HitSound=S0,14
+		GuardSound=S1,1
+		Damage=floor(100),9
+		Priority=5,Hit
+		GetPower=0,0
+		GivePower=-1000,0
+		PauseTime=15,10
+		Ground.SlideTime=28
+		Ground.HitTime=32
+		air.SlideTime=32
+		Air.HitTime=32
+		Guard.SlideTime=27
+		Guard.HitTime=26
+		Ground.velocity=-1.25
+		Guard.velocity=-2
+		Air.velocity=-.5,-8
+		AirGuard.velocity=-2.5,-5
+		Yaccel=0.45
+		fall=0
+		Air.fall=1
+		fall.recover=1
+		fall.recoverTime=7+26
+
+	[State 3501,Hit Explod]
+		Type=Explod
+		trigger1 = MoveHit = 1
+		Trigger1=AnimElemTime(6)>=0
+		Trigger1=AnimElemTime(7)<0
+		Anim=20026
+		Pos=0,0
+		bindTime=-1
+		PosType=back
+		sprPriority=-1
+		SuperMoveTime=30
+		PauseMoveTime = -1
+		Persistent=0
+ 		ignorehitpause = 1
+
+	[State 3000,暗転処理]
+		Type=envColor
+		trigger1 = MoveHit = 1
+		Trigger1=AnimElemTime(6)>=0
+		Trigger1=AnimElemTime(7)<0
+		value=0,0,0
+		Time=13
+		under=1
+		Persistent=0
+ 		ignorehitpause = 1
+
+	[State 6430,v1=1]
+		Type=VarSet
+		Trigger1=MoveContact
+		var(1)=1
+
+	[State 6430,end of State]
+		Type=ChangeState
+		Trigger1=AnimTime=0
+		value=0
+		Ctrl=1
+
+;---------------------------------------------------------------------------
+[Statedef 6450];そげぶ弾き
+	Type=S
+	MoveType=A
+	physics=N
+	velset=0,0
+	Ctrl=0
+;	faceP2=1
+;	Anim=6450
+	Poweradd=0
+	sprPriority=2
+
+[State 0, AttackDist]
+type = AttackDist
+trigger1 = 1
+value = 0
+ignorehitpause = 1
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = anim != 6450
+value = 6450
+elem = 1
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = MoveHit && AnimElemTime(3) < 0
+value = 6450
+elem = 3
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = animelem = 1
+var(6) = 0
+ignorehitpause = 1
+
+[State 0, PalFX]
+type = PalFX
+trigger1 = animelemtime(6) < 0
+time = 1
+add = (256/13)*-animelemtime(6),(256/13)*-animelemtime(6),0
+ignorehitpause = 1
+
+[State 0, Turn]
+type = Turn
+trigger1 = p2dist X < 0 && animelem = 1
+
+	[State 6430,v1=0]
+		Type=varSet
+		Trigger1=AnimElem = 1
+		var(1) = var(1)
+
+	[State 6430, ボイス]
+		type = PlaySnd
+		trigger1 = AnimElem=1
+		value = 2, 10
+		channel = 4
+
+	[State 6430,Snd2]
+		Type=playSnd
+		Trigger1=AnimElemTime(3)=0
+		value=1,23
+
+	[State 6450, 弾き]
+		Type = ReversalDef
+		Trigger1=1
+		Reversal.Attr = ,AA,AP ;攻撃属性指定：立ちと空中全ての打撃
+		PauseTime = 0,0 ;一時停止(30/60)秒
+		SparkNo = S7002 ;ヒットエフェクト無し
+		HitSound = S0,10 ;ヒット音声無し
+		sparkxy = 40,-20
+		P1StateNo = -1
+		P2StateNo = 6451
+		nohelper = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = AnimElemTime(6)<0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+ignorehitpause = 1
+
+[State 0, HitOverride]
+type = HitOverride
+triggerall = enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301))) || (enemynear,name = "bernkastel" && (enemynear,stateno = 2500 || enemynear,stateno = 2300)) || enemynear,name = "ONI-MIKO-REIMU"
+trigger1 = AnimElemTime(6)<0
+attr = ,AA,AP,AT
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+ignorehitpause = 1
+
+[State 0, NotHitBy]
+type = NotHitBy
+trigger1 = MoveHit || AnimElemTime(1) != time
+value = SCA,AA,AP,AT
+time = 10
+ignoreproj = (AnimElemTime(6)<0)
+ignorehelper = (AnimElemTime(6)<0)
+ignorehitpause = 1
+
+	[State 2500,相手やられ移行]
+		type = TargetBind
+		Trigger1=numtarget(0)
+		Trigger1=movehit
+		time = 1
+		ID = 0
+		pos = 40, 0
+ 		ignorehitpause = 1
+
+	[State 2500,相手やられ移行]
+		type = Targetstate
+		Trigger1=numtarget(0)
+		Trigger1=movehit
+		value = 6451
+ 		ignorehitpause = 1
+
+[State 0, VarAdd]
+type = VarAdd
+trigger1 = movehit = 1
+fvar(0) = 2.25
+
+	[State 6430,v1=1]
+		Type=VarSet
+		Trigger1=numtarget(0)
+		Trigger1 = Movehit
+		var(1) = 40
+
+	[State 2500,相手やられ移行]
+		type = Null;Targetstate
+		Trigger1=numtarget(0)
+		Trigger1 = Movehit
+		Trigger1=AnimElemTime(10)>=4
+		value = 6452
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = animelem = 1
+
+	[State 6430,end of State]
+		Type=ChangeState
+		Trigger1=!AnimTime
+		value=0
+		Ctrl=1
+
+;---------------------------------------------------------------------------
+;弾きやられステート
+[Statedef 6451]
+	Type=S
+	MoveType=H
+	physics=N
+	velset=0,0
+
+[State 0, StateTypeSet]
+type = StateTypeSet
+trigger1 = 1
+movetype = H
+ignorehitpause = 1
+
+[State 0, DestroySelf]
+type = DestroySelf
+trigger1 = ishelper
+recursive = 1
+removeexplods = 1
+ignorehitpause = 1
+
+		[State 3502,Anim2]
+		Type=ChangeAnim
+;		Trigger1=Const(size.head.pos.y)<-75
+		Trigger1=Anim != 5000 && Anim != 5005
+		value=5000
+		ignorehitpause = 1
+		
+		[State 3502,Anim2]
+		Type=ChangeAnim
+		Trigger1=anim = 5000
+		Trigger1=animTime=0
+		value=5005
+
+		[State 3502,カメラ]
+		type = ScreenBound
+		trigger1 = 1
+		value = 1
+		movecamera = 0,0
+	
+		[State 3502,End]
+		Type=SelfState
+		trigger1 =  Time >= 30
+		value = 0
+		Ctrl=1
+;---------------------------------------------------------------------------
+;弾きやられステート開放
+[Statedef 6452]
+	Type=S
+	MoveType=H
+	physics=N
+	velset=0,0
+	
+		[State 3502,End]
+		Type=SelfState
+		trigger1 =  Time = 20
+		value = 0
+		Ctrl=1
+
+;---------------------------------------------------------------------------
+;パワー溜め（特殊行動）
+;---------------------------------------------------------------------------
+[Statedef 6500]
+	type     = S
+	movetype = I
+	physics  = S
+	ctrl     = 0
+	velset   = 0,0
+	anim     = 6500
+	sprpriority = 2
+
+[State 0, StopSnd]
+type = StopSnd
+trigger1 = animelem = 1
+channel = 4
+
+	[State 6500,Snd2]
+		Type=playSnd
+		Trigger1=AnimElemTime(1)=0
+		value=2,6
+		channel = 4
+
+	[State 6500, パワーゲージ増減]
+		type = PowerAdd
+		trigger1 = animelemtime(2)>=0
+		value = ((power < 1000)*9)+((power < 2000)*5)+((power < 3000)*5)+((power < 4000)*3)+((power < 5000)*2)+((power < 6000)*3)
+
+	[State 6500, エフェクト]
+		Type=Explod
+		trigger1 = animelemtime(2)=0
+		anim = 13370
+		postype = p1
+		pos = 0,0
+		sprpriority = 3
+		ownpal = 1
+		scale = .75, .75
+		removetime = -1
+		bindtime=-1
+		removeongethit = 1
+		ID = 13370
+		PauseMoveTime = -1
+		
+	[State 6500, エフェクト消し]
+		Type=RemoveExplod
+		Trigger1 = command != "hold_a" && command !="hold_c"
+		Trigger2 = Power >= 6000
+		ID = 13370
+
+	[State 6500, エフェクト]
+		Type=Explod
+		Trigger1 = command != "hold_a" && command !="hold_c"
+		Trigger2 = Power >= 6000
+		anim = 13371
+		postype = p1
+		pos = 0,0
+		sprpriority = 3
+		ownpal = 1
+		scale = .75, .75
+		bindtime=-1
+		removeongethit = 1
+		ID = 13371
+		PauseMoveTime = -1
+
+	[State 6500, 音消し]
+		type = StopSnd
+		Trigger1 = command != "hold_a" && command !="hold_c"
+		Trigger2 = Power >= 6000
+		channel = 4
+	
+	[State 6500, ステート変更]
+		type = ChangeState
+		trigger1 = command != "hold_a" && command !="hold_c"
+		trigger2 = Power >= 6000
+		value = 0
+		ctrl = 1
+
+;---------------------------------------------------------------------------
+; ハードラック
+;---------------------------------------------------------------------------
+[Statedef 6660,ハードラック分岐]
+	Type=S
+
+	[State 6660,不幸]
+		Type=ChangeState
+		Triggerall=Time=0
+		Trigger1= 0
+		value=6661
+
+;---------------------------------------------------------------------------
+[Statedef 6661,不幸]
+	Type=S
+	MoveType=I
+	physics=N
+	Ctrl=0
+	Anim=6661
+	velset=0,0
+	sprPriority=2
+
+	[State 6661,時間停止]
+		type = Width
+		trigger1 = 1
+	 	value = 0,16
+
+	[State 6661,ボイス]
+		Type=PlaySnd
+		Trigger1= 0
+		trigger1 = AnimElemtime(1) = 0
+		value=6,IfElse(Random%5, 0, 1)
+		volume=255
+		channel = 4
+
+	[State 6661,ボイス]
+		Type=PlaySnd
+		Trigger1= 0
+		trigger1 = AnimElemtime(1) = 0
+		value=180,0
+		volume=255
+		channel = 4	
+
+	[State 6700,]
+		type = Explod
+		trigger1 = AnimElemtime(2) = 60
+		anim = 16200
+		pos = 5, -60
+		postype = p1
+		bindtime = -1
+		supermovetime = 9999
+		pausemovetime = 9999
+		scale = 1, 1
+		sprpriority = 3
+		ownpal = 1
+		removeongethit = 1
+		PauseMoveTime = -1
+
+	[State 6661,]
+		Type=PlaySnd
+		trigger1 = AnimElemtime(2) = 60
+		value=1,26+0
+		volume=255
+		channel = 4
+
+	[State 6661,]
+		type = CtrlSet
+		trigger1 = AnimElemtime(3) = 2
+		value = 1
+
+	[State 6661,End]
+		Type=ChangeState
+		Trigger1=AnimTime=0
+		value=0
+		Ctrl=1
+
+;---------------------------------------------------------------------------
+[Statedef 6662,強運]
+	Type=S
+	MoveType=I
+	physics=N
+	Ctrl=0
+;	Anim=6662
+	velset=0,0
+	sprPriority=11
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = Anim < 6662
+value = 6662
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = Anim != 6665
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 0, HitOverride]
+type = HitOverride
+triggerall = enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301))) || (enemynear,name = "bernkastel" && (enemynear,stateno = 2500 || enemynear,stateno = 2300)) || enemynear,name = "ONI-MIKO-REIMU"
+trigger1 = Anim != 6665
+attr = ,AA,AP,AT
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+	[State 6662,エンハンス失敗フラグ]
+		type = Varset
+		Trigger1=Anim = 6662 && animelem = 1
+		var(7) = 1
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State 6662,セリフ判定]
+		type = Varset
+		Trigger1=Anim = 6662 && animelem = 1
+		var(20) = (Random%4)
+		IgnoreHitPause=1
+		persistent = 0
+
+[State 0, VarAdd]
+type = VarAdd
+trigger1 = var(10) > 0
+var(10) = -1
+
+	[State 6662,時間設定1];共通
+		type = Varset
+		Trigger1=Anim = 6662 && animelem = 1
+		var(10) = 90;固定
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State 6662,ボイス1_1];
+		Type=PlaySnd
+		Trigger1=var(20)=0
+		Trigger1=Anim = 6662 && AnimElemtime(1) = 10
+		value=6,10
+		channel=4
+
+	[State 6662,口パク]
+		type = Explod
+		TriggerAll=!(NumExplod(19500))
+		TriggerAll=Anim=6662
+		Trigger1=var(20)=0
+		Trigger1=animelemtime(1)=10
+		Trigger2=var(20)=1||var(20)=2||var(20)=3
+		Trigger2=animelem = 1
+		anim = 6672
+		ID = 19500
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		supermovetime = 9999
+		pausemovetime = 9999
+		sprpriority = 12
+		removeongethit = 1
+
+	[State 6662,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=6662
+		TriggerAll=animelemtime(1)>1
+		Trigger1=var(20)=0||var(20)=1||var(20)=2||var(20)=3
+		Trigger1=var(10) = 0
+		ID = 19500
+
+	[State 195,口パク]
+		type = Explod
+		TriggerAll=Anim=6663
+		Trigger1=var(20)=0||var(20) = 3
+		Trigger1=animelemtime(2)=0
+		Trigger2=var(20)=1
+		Trigger2=animelemtime(2)=0||var(10) = 10
+		Trigger3=var(20)=2
+		Trigger3 = animelemtime(2) = 6
+		Trigger4 = var(20) = 3
+		Trigger4=animelemtime(2)=30 || var(10) = 15
+		anim = 6673
+		ID = 19600
+		postype = p1
+		bindtime = -1
+		removetime = -1
+		supermovetime = 9999
+		pausemovetime = 9999
+		sprpriority = 12
+		removeongethit = 1
+	
+	[State 195,口パク消去]
+		type = RemoveExplod
+		TriggerAll=Anim=6663
+		TriggerAll=animelemtime(1)>1
+		Trigger1=var(20)=0
+		Trigger1=var(10) = 50
+		Trigger2=var(20)=1
+		Trigger2=var(10) = 30||var(10) = 0
+		Trigger3=var(20)=2
+		Trigger3=var(10) = 0
+		Trigger4=var(20)=3
+		Trigger4=var(10) = 30 || animelemtime(2) = 24 || var(10) = 0
+		ID = 19600
+
+	[State 6662,ボイス2];
+		Type=PlaySnd
+		Trigger1=var(20)=1
+		trigger1 = AnimElemtime(1) = 0
+		Trigger1=Anim=6662
+		value=6,11
+		channel=4
+
+	[State 6662,ボイス3];
+		Type=PlaySnd
+		Trigger1=var(20)=2
+		trigger1 = AnimElemtime(1) = 0
+		Trigger1=Anim=6662
+		value=6,12
+		channel=4
+
+	[State 6662,ボイス3];
+		Type=PlaySnd
+		Trigger1=var(20)=3
+		trigger1 = AnimElemtime(1) = 0
+		Trigger1=Anim=6662
+		value=6,13
+		channel=4
+
+	[State 6662,アニメ変更1];共通
+		Type=Changeanim
+		Trigger1=Anim=6662
+		Trigger1=animelemtime(1)>0
+		Trigger1=var(10) = 0
+		value=6663
+
+;---------------------------------------------------------------------------
+	[State 6663,時間設定2_1];
+		type = VarAdd
+		Trigger1=var(20)=0
+		Trigger1=animelemtime(1)=0
+		Trigger1=Anim=6663
+		var(10) = 85
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State 6663,時間設定2_2];
+		type = VarAdd
+		Trigger1=var(20)=1
+		Trigger1=animelemtime(1)=0
+		Trigger1=Anim=6663
+		var(10) = 100
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State 6663,時間設定2_3];
+		type = VarAdd
+		Trigger1=var(20)=2
+		Trigger1=animelemtime(1)=0
+		Trigger1=Anim=6663
+		var(10) = 90
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State 6663,時間設定2_4];
+		type = VarAdd
+		Trigger1=var(20)=3
+		Trigger1=animelemtime(1)=0
+		Trigger1=Anim=6663
+		var(10) = 140
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State 6663,無敵]
+		Type=notHitBy
+		trigger1 = AnimElemtime(2) >= 0
+		Trigger1=Anim=6663
+		Trigger2=Anim=6664
+		Trigger3=Anim=6665
+		Trigger4=Anim=6670
+		value=SCA
+		Time=1
+		IgnoreHitPause=1
+
+	[State 6663,時間停止]
+		Type=SuperPause
+		trigger1 = AnimElemtime(2) = 0
+		Trigger1=Anim=6663
+		Time=9999
+		MoveTime=9999
+		Sound=S1,13
+		darken=0
+		P2defmul=1
+		Anim=-1
+		unhittable = 0
+
+	[State 6663,ボイス1_2];
+		Type=PlaySnd
+		Trigger1=var(20)=0
+		trigger1 = AnimElemtime(2) = 0
+		Trigger1=Anim=6663
+		value=6,2
+channel = 4
+
+	[State 6663,青エフェクト]
+		type = Explod
+		trigger1 = AnimElemtime(2) = 0
+		Trigger1=Anim=6663
+		anim = 16000
+		pos = 5, -70
+		postype = p1
+		bindtime = -1
+		supermovetime = 9999
+		pausemovetime = 9999
+		scale = 2, 2
+		ontop = 1
+		ownpal = 1
+		removeongethit = 0
+
+	[State 6662,青ガラス1]
+		Type=Explod
+		Trigger1=Anim=6663
+		Trigger1=animelemtime(1)>0
+		Trigger1=var(10) = 20
+		Anim=20010
+		ID=20020
+		pos = 0, 0
+		postype = back
+		bindtime = -1
+		Ownpal=0
+		Scale=1,1
+		SprPriority=11
+		OnTop=0
+		IgnoreHitPause=1
+		Persistent=0
+		SuperMoveTime=9999
+		PauseMoveTime=9999
+		removeongethit = 0
+
+	[State 6662,ガラス音1]
+		Type=playSnd
+		TriggerAll=Anim=6663
+		TriggerAll=animelemtime(1)>0
+		Trigger1=var(10) = 18
+		Trigger2=var(10) = 15
+		value=3000,8
+		channel=-1
+		persistent = 0
+		IgnoreHitPause=1
+
+	[State 6663,アニメ変更2]
+		Type=Changeanim
+		Trigger1=Anim=6663
+		Trigger1=animelemtime(1)>0
+		Trigger1=var(10) = 0
+		value=6664
+		
+;---------------------------------------------------------------------------
+	[State 6664,時間設定3_1]
+		type = VarAdd
+		Trigger1=var(20)=0
+		Trigger1=animelemtime(1)=0
+		Trigger1=Anim=6664
+		var(10) = 70
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State 6664,時間設定3_2]
+		type = VarAdd
+		Trigger1=var(20)=1
+		Trigger1=animelemtime(1)=0
+		Trigger1=Anim=6664
+		var(10) = 70
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State 6664,時間設定3_3]
+		type = VarAdd
+		Trigger1=var(20)=2
+		Trigger1=animelemtime(1)=0
+		Trigger1=Anim=6664
+		var(10) = 45
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State 6664,時間設定3_4]
+		type = VarAdd
+		Trigger1=var(20)=3
+		Trigger1=animelemtime(1)=0
+		Trigger1=Anim=6664
+		var(10) = 80
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State 6664,アニメ変更3]
+		Type=Changeanim
+		Trigger1=Anim=6664
+		Trigger1=animelemtime(1)>0
+		Trigger1=var(10) = 0
+		value=6665
+		
+;---------------------------------------------------------------------------
+	[State 6665,時間設定4_1]
+		type = VarAdd
+		Trigger1=var(20)=0
+		Trigger1=animelemtime(1)=0
+		Trigger1=Anim=6665
+		var(10) = 70
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State 6665,時間設定4_2]
+		type = VarAdd
+		Trigger1=var(20)=1
+		Trigger1=animelemtime(1)=0
+		Trigger1=Anim=6665
+		var(10) = 60
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State 6665,時間設定4_3]
+		type = VarAdd
+		Trigger1=var(20)=2
+		Trigger1=animelemtime(1)=0
+		Trigger1=Anim=6665
+		var(10) = 60
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State 6665,時間設定4_4]
+		type = VarAdd
+		Trigger1=var(20)=3
+		Trigger1=animelemtime(1)=0
+		Trigger1=Anim=6665
+		var(10) = 60
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State 6665,ガラス1消し]
+		type = RemoveExplod
+		Trigger1=animelemtime(3)=0
+		Trigger1=Anim=6665
+		ID = 20020
+
+	[State 6665,青ガラス2]
+		Type=Explod
+		Trigger1=animelemtime(3)=0
+		Trigger1=Anim=6665
+		Anim=20015
+		ID=20025
+		pos = 0, 0
+		postype = back
+		bindtime = -1
+		Ownpal=0
+		Scale=1,1
+		SprPriority=11
+		OnTop=0
+		IgnoreHitPause=1
+		Persistent=0
+		SuperMoveTime=9999
+		PauseMoveTime=9999
+		removeongethit = 0
+
+	[State 6665,ガラス音2]
+		Type=playSnd
+		Trigger1=animelemtime(3)=0
+		Trigger1=Anim=6665
+		value=0,14
+		channel=-1
+		persistent = 0
+		IgnoreHitPause=1
+		
+	[State 6665,口パク]
+		type = Explod
+		TriggerAll=!(NumExplod(19500))
+		TriggerAll=Anim=6665
+		Trigger1=var(20)=0
+		Trigger1=animelemtime(1)=13
+		Trigger2 = var(20) = 1 || var(20) = 2
+		Trigger2 = animelemtime(3) >= 0 && animelemtime(3)%9 = 3
+		Trigger3 = var(20) = 3
+		Trigger3 = animelem = 3 || animelemtime(3) > 45 && animelemtime(3)%9 = 6
+		anim = 6674
+		ID = 19500
+		postype = p1
+		bindtime = -1
+		removetime = ifelse(var(20) = 3&&animelemtime(3) = 0,45,3)
+		supermovetime = 9999
+		pausemovetime = 9999
+		sprpriority = 12
+		removeongethit = 0
+
+	[State 6665,アニメ変更4]
+		Type=Changeanim
+		Trigger1=Anim=6665
+		Trigger1=animelemtime(1)>0
+		Trigger1=var(10) = 0
+		value=6670
+
+;---------------------------------------------------------------------------
+	[State 6670,時間停止リセット]
+		Type=SuperPause
+		Trigger1=Anim=6670
+		Time=0
+		MoveTime=0
+		Sound=-1
+		darken=0
+		P2defmul=1
+		Anim=-1
+		unhittable = 0
+		
+[State 0, Explod]
+type = Explod
+trigger1 = AnimElemtime(2) >= 0
+trigger1 = Anim=6663
+anim = 3309
+ID = 666666
+pos = 0,0
+postype = back
+facing = 1
+vfacing = 1
+bindtime = -1
+vel = 0,0
+accel = 0,0
+random = 0,0
+removetime = -1
+pausemovetime = 0
+scale = 2,2
+sprpriority = 10
+ontop = 0
+shadow = 0,0,0
+ownpal = 0
+removeongethit = 0
+
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 = anim = 6670
+id = 666666
+
+;---------------------------------------------------------------------------
+	[State 6662,End]
+		Type=ChangeState
+		Trigger1=Anim=6670
+;		Trigger1=AnimTime=0
+		value=0
+		Ctrl=1
+				
+	[State 6663,暗転処理]
+		Type=envColor
+		trigger1 = AnimElemtime(2) >= 0
+		Trigger1=Anim=6663
+		Trigger2=Anim=6664
+		Trigger3=Anim=6665
+		value=0,0,0
+		Time=1
+		under=1
+
+	[State 6663,特殊処理]
+		type = AssertSpecial
+		trigger1 = AnimElemtime(2) >= 0
+		Trigger1=Anim=6663
+		Trigger2=Anim=6664
+		Trigger3=Anim=6665
+		flag = nobardisplay
+;		flag2 = nomusic
+		flag2 = timerfreeze
+
+[State 0, Zoom]
+type = Zoom
+trigger1 = AnimElemtime(2) >= 0
+trigger1 = Anim=6663
+trigger2 = Anim > 6663
+pos = 0,0
+scale = 1.5
+ignorehitpause = 1
+
+[State 0, Offset]
+type = Offset
+trigger1 = AnimElemtime(2) >= 0
+trigger1 = Anim=6663
+trigger2 = Anim > 6663
+x = -Pos X
+y = -Pos Y
+
+;---------------------------------------------------------------------------
+[Statedef 6666,凶運]
+	Type=S
+	MoveType=I
+	physics=N
+	Ctrl=0
+;	Anim=6666
+	velset=0,0
+	sprPriority=2
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = Anim < 6666
+value = 6666
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301)))
+attr = ,AA,AP,AT
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+	[State 6666,エンハンス失敗フラグ]
+		type = Varset
+		Trigger1=Anim = 6666 && AnimElem = 1
+		var(7) = 1
+		IgnoreHitPause=1
+		persistent = 0
+	
+	[State 6666,セリフ判定]
+		type = Varset
+		Trigger1=animelemtime(1)=0
+		Trigger1=Anim=6666
+		var(20) = (Random%2)
+		IgnoreHitPause=1
+		persistent = 0
+
+[State 0, VarAdd]
+type = VarAdd
+trigger1 = var(10) > 0
+var(10) = -1
+
+	[State 6666,時間設定1];共通
+		type = Varset
+		Trigger1=animelemtime(1)=0
+		Trigger1=Anim=6666
+		var(10) = 72;固定
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State 6666,幅]
+		type = Width
+		trigger1 = 1
+		value = 0,24
+
+	[State 6666,ボイス1_1];
+		Type=PlaySnd
+		Trigger1=var(20)=0
+		trigger1 = AnimElemtime(1) = 10
+		Trigger1=Anim=6666
+		value=6,40
+channel = 4
+
+	[State 6666,ボイス2];
+		Type=PlaySnd
+		Trigger1=var(20)=1
+		trigger1 = AnimElemtime(1) = 6
+		Trigger1=Anim=6666
+		value=6,41
+channel = 4
+
+	[State 6666,アニメ変更1];共通
+		Type=Changeanim
+		Trigger1=Anim=6666
+		Trigger1=var(10) = 0
+		value=6667
+;---------------------------------------------------------------------------
+	[State 6667,時間設定2_1];
+		type = VarAdd
+		Trigger1=var(20)=0
+		Trigger1=animelemtime(1)=0
+		Trigger1=Anim=6667
+		var(10) = 42
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State 6667,時間設定2_2];
+		type = VarAdd
+		Trigger1=var(20)=1
+		Trigger1=animelemtime(1)=0
+		Trigger1=Anim=6667
+		var(10) = 100
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State 6667,暗転処理]
+		Type=envColor
+		Trigger1=Anim=6667
+		Trigger2=Anim=6668
+		Trigger3=Anim=6669
+		value=0,0,0
+		Time=1
+		under=1
+		
+[State 0, Explod]
+type = Explod
+trigger1 = Anim=6667 && animelem = 1
+anim = 3309
+ID = 666666
+pos = 0,0
+postype = back
+facing = 1
+vfacing = 1
+bindtime = -1
+vel = 0,0
+accel = 0,0
+random = 0,0
+removetime = -1
+pausemovetime = 0
+scale = 2,2
+sprpriority = 10
+ontop = 0
+shadow = 0,0,0
+ownpal = 0
+removeongethit = 1
+
+[State 0, SprPriority]
+type = SprPriority
+trigger1 = Anim = 6667
+value = 11
+
+	[State 6663,特殊処理]
+		type = AssertSpecial
+		Trigger1=Anim=6667
+		Trigger2=Anim=6668
+		Trigger3=Anim=6669
+		flag = nobardisplay
+		flag2 = nomusic
+		flag3 = timerfreeze
+
+	[State 6663,特殊処理]
+		type = AssertSpecial
+		Trigger1=Anim=6667
+		Trigger2=Anim=6668
+		Trigger3=Anim=6669
+		flag = nobg
+		flag2 = nofg
+
+	[State 6663,無敵]
+		Type=notHitBy
+		Trigger1=Anim=6667
+		Trigger2=Anim=6668
+		Trigger3=Anim=6669
+		Trigger4=Anim=6671
+		value=SCA
+		Time=1
+		IgnoreHitPause=1
+
+	[State 6667,時間停止]
+		Type=SuperPause
+		trigger1 = AnimElemtime(1) = 0
+		Trigger1=Anim=6667
+		Time=9999
+		MoveTime=9999
+		Sound=S3000,0
+		darken=0
+		P2defmul=1
+		Anim=-1
+		unhittable = 0
+
+	[State 6667,赤エフェクト]
+		type = Explod
+		trigger1 = AnimElemtime(2) = 0
+		Trigger1=Anim=6667
+		anim = 4310;16100
+		pos = -30, -90
+		postype = p1
+		bindtime = -1
+		supermovetime = 9999
+		pausemovetime = 9999
+		scale = 2, 2
+		sprpriority = 9999;3
+		ownpal = 1
+		removeongethit = 1
+
+	[State 6667,アニメ変更2]
+		Type=Changeanim
+		Trigger1=Anim=6667
+		Trigger1=animelemtime(1)>0
+		Trigger1=var(10) = 0
+		value=6668
+		
+;---------------------------------------------------------------------------
+	[State 6668,時間設定3_1];
+		type = VarAdd
+		Trigger1=var(20)=0
+		Trigger1=animelemtime(1)=0
+		Trigger1=Anim=6668
+		var(10) = 34
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State 6668,時間設定3_2];
+		type = VarAdd
+		Trigger1=var(20)=1
+		Trigger1=animelemtime(1)=0
+		Trigger1=Anim=6668
+		var(10) = 45
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State 6668,赤ガラス1]
+		Type=Explod
+		trigger1 = AnimElemtime(3) = 0
+		Trigger1=Anim=6668
+		Anim=20006
+		ID=20020
+		pos = 0, 0
+		postype = back
+		bindtime = -1
+		Ownpal=0
+		Scale=1,1
+		SprPriority=11
+		OnTop=0
+		IgnoreHitPause=1
+		Persistent=0
+		SuperMoveTime=9999
+		PauseMoveTime=9999
+
+	[State 6668,ガラス音1]
+		Type=playSnd
+		Trigger1=animelemtime(3)=0
+		Trigger1=Anim=6668
+		value=3000,8
+		channel=-1
+		persistent = 0
+		IgnoreHitPause=1
+
+
+	[State 6668,アニメ変更3]
+		Type=Changeanim
+		Trigger1=Anim=6668
+		Trigger1=animelemtime(1)>0
+		Trigger1=var(10) = 0
+		value=6669
+
+;---------------------------------------------------------------------------
+	[State 6669,時間設定4_1];
+		type = VarAdd
+		Trigger1=var(20)=0
+		Trigger1=animelemtime(1)=0
+		Trigger1=Anim=6669
+		var(10) = 86
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State 6669,時間設定4_2];
+		type = VarAdd
+		Trigger1=var(20)=1
+		Trigger1=animelemtime(1)=0
+		Trigger1=Anim=6669
+		var(10) = 100
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State 6669,ガラス1消し]
+		type = RemoveExplod
+		Trigger1=animelemtime(3)=0
+		Trigger1=Anim=6669
+		ID = 20020
+
+	[State 6669,赤ガラス2]
+		Type=Explod
+		Trigger1=animelemtime(3)=0
+		Trigger1=Anim=6669
+		Anim=20007
+		ID=20025
+		pos = 0, 0
+		postype = back
+		bindtime = -1
+		Ownpal=0
+		Scale=1,1
+		SprPriority=9999
+		OnTop=0
+		IgnoreHitPause=1
+		Persistent=0
+		SuperMoveTime=9999
+		PauseMoveTime=9999
+
+	[State 6669,ガラス音2]
+		Type=playSnd
+		Trigger1=animelemtime(3)=0
+		Trigger1=Anim=6669
+		value=0,14
+		channel=-1
+		persistent = 0
+		IgnoreHitPause=1
+
+	[State 6669,時間停止リセット]
+		Type=SuperPause
+		Trigger1=Anim=6669
+		Trigger1=animelemtime(1)>0
+		Trigger1=var(10) = 0
+		Time=0
+		MoveTime=0
+		Sound=-1
+		darken=0
+		P2defmul=1
+		Anim=-1
+		unhittable = 0
+
+	[State 6669,アニメ変更4]
+		Type=Changeanim
+		Trigger1=Anim=6669
+		Trigger1=animelemtime(1)>0
+		Trigger1=var(10) = 0
+		value=6671
+
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 = anim = 6671
+id = 666666
+
+;---------------------------------------------------------------------------
+	[State 6670,幅]
+		type = Width
+		Trigger1=Anim=6671
+	 	value = 0,12
+
+;---------------------------------------------------------------------------
+	[State 6666,End]
+		Type=ChangeState
+		Trigger1=Anim=6671
+;		Trigger1=AnimTime=0
+		value=0
+		Ctrl=1
+
+[State 0, Zoom]
+type = Zoom
+trigger1 = Anim=[6667,6669]
+pos = 0,0
+scale = 1.5
+ignorehitpause = 1
+
+[State 0, Offset]
+type = Offset
+trigger1 = Anim=[6667,6669]
+x = -Pos X
+y = -Pos Y
+
+;---------------------------------------------------------------------------
+[Statedef 6667,ゲジマユ]
+	Type=S
+	MoveType=A
+	physics=N
+	Ctrl=0
+	Anim=6676
+	velset=0,0
+	sprPriority=2
+
+	[State 6669,汎用初期化];
+		type = Varset
+		Trigger1=time = 0
+		var(0) = 0
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State -2, 時間設定]
+		type = VarSet
+triggerall = roundstate = 2
+		trigger1 = time = 0
+		var(21) = Power
+[State -2];
+	type = Varset
+triggerall = roundstate = 2
+	trigger1 = AnimElem = 4
+	var(12) = power
+
+	[State -2, パワー初期化]
+		type = Null;PowerSet
+		trigger1 = animelem = 4
+		value = 0
+
+	[State 6661,ボイス]
+		Type=PlaySnd
+		trigger1 = AnimElemtime(1) = 0
+		value=3,16;33
+		volume=255
+		channel = 4
+
+	[State 6661,]
+		type = Explod
+		trigger1 = AnimElemtime(4) = 0
+		anim = 13380
+		ID = 13380
+		pos = 0, 0
+		postype = p1
+		bindtime = -1
+		supermovetime = 9999
+		pausemovetime = 9999
+		scale = 1, 1
+		sprpriority = 3
+		ownpal = 1
+		removeongethit = 1
+
+	[State 6300,Hitdef]
+		Type=HitDef
+		Trigger1=!MoveContact
+		Trigger1=!MoveReversed
+		attr = , HA                     ;立ち状態で、通常の攻撃(ｓは立ち、ｎは通常、aは攻撃を表す)
+		damage = 0                  ;ダメージ量（左が当たった時、右はガードした時）
+		animtype = Light                 ;当てた時の相手のポーズ（light/midium/hard/back）から選択
+		guardflag = MA                 ;ガードできる状態（ｍaは全ての状態でガード可能）
+		hitflag = MAFD                    ;当てる事のできる条件
+		priority = 7, Hit                ;攻撃の優先権（0弱い　4通常　7強い
+		pausetime = 0, 0                 ;攻撃が当たった時の硬直時間（左が自分、右が相手）
+		sparkno = -1                     ;ヒットエフェクトのスプライトステート（無ければ0）
+		sparkxy = -10, -56               ;ヒットエフェクトを表示する場所（相手の座標で）
+		hitsound =  -1                 ;ヒットした時の音（ｓ*,*にすると自分の音を使う）
+		ground.type = High               ;相手のくらった場所（High：頭、体, Low：足, Trip：足払い）
+		ground.slidetime = 5             ;相手が後にすべる時間
+		ground.hittime  = 12             ;コンボが繋がる時間（高くしすぎない事）
+		ground.velocity = -1.4,-8         ;地上で攻撃をくらった場合の相手の移動状況（ｘとｙで小数点可）
+		air.type = High                  ;空中で相手がくらった場所（上と同じ）
+		air.velocity = -1.4,-7           ;空中で攻撃をくらった場合の相手の移動状況（ｘとｙで小数点可）
+		air.hittime = 12                 ;空中でコンボが繋がる時間
+		fall=1
+		fall.recover=0
+		id = 2300
+		getpower =0
+		givepower =0
+		ground.cornerpush.veloff = 0
+		yaccel = .45
+
+	[State 6661,]
+		Type=PlaySnd
+		trigger1 = AnimElemtime(4) = 0
+		value=1,29
+		volume=255
+		channel=-1
+
+	[State -1,超必殺技カウント]
+		Type=Varadd
+		Trigger1=movehit
+		var(11) = 1
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State -1,キャンセル判定]
+		Type=VarSet
+		Trigger1=movehit
+		var(1) = 1
+		IgnoreHitPause=1
+		persistent = 0
+
+	[State 6661,End]
+		Type=ChangeState
+		Trigger1=AnimTime=0
+		value=0
+		Ctrl=1
+
+[Statedef 6669,ゲジマユ]
+	Type=S
+	MoveType=A
+	physics=N
+	Ctrl=0
+	Anim=6676
+	velset=0,0
+	sprPriority=2
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = 1
+value = 6667
+
+;---------------------------------------------------------------------------
+[Statedef 6668,アーマー]
+	Type=S
+	MoveType=I
+	physics=N
+	Ctrl=0
+;	Anim=6677
+	velset=0,0
+;	Poweradd=-3000
+	sprPriority=2
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = enemynear,name = "Kumagawa Misogi" || enemynear,name = "Labyrinth" || enemynear,name = "bernkastel" || (enemynear,name = "Nitori Kawashiro" && (enemynear,stateno >= 13000 || enemynear,numhelper(14400) || enemynear,numhelper(13301)))
+attr = ,AA,AP,AT
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = 1;(enemynear,name = "Vargskelethor" || (enemynear,name = "Fujiwara_no_Mokou" && enemynear,authorname = "isu"))
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = anim != 6677
+value = 6677
+
+	[State タイマー設置]
+		type = varset
+		trigger1 = AnimElemtime(4) = 0
+		var(21) = 1500
+
+[State 0, PowerAdd]
+type = PowerAdd
+trigger1 = AnimElemtime(4) = 0
+value = -3000
+
+	[State 6661,ボイス]
+		Type=PlaySnd
+		trigger1 = AnimElemtime(1) = 0
+		value=6,3;33
+channel = 4
+
+	[State -2];system(天)
+		type = Varset
+		trigger1 = AnimElemtime(4) = 0
+		var(13) = 1
+
+	[State 6661,]
+		type = Explod
+		trigger1 = AnimElemtime(4) = 0
+		anim = 13380
+		ID = 13380
+		pos = 0, 0
+		postype = p1
+		bindtime = -1
+		supermovetime = 9999
+		pausemovetime = 9999
+		scale = 1, 1
+		sprpriority = 3
+		ownpal = 1
+		removeongethit = 1
+
+	[State 6661,]
+		Type=PlaySnd
+		trigger1 = AnimElemtime(4) = 0
+		value=1,29
+		volume=255
+		channel=-1
+
+	[State 6661,End]
+		Type=ChangeState
+		Trigger1= AnimElemTime(6) >= 20
+		value=0
+		Ctrl=1
+;---------------------------------------------------------------------------
+; ロマキャン落下
+[Statedef 6750]
+type    = A
+movetype= I
+physics = A
+anim = 6750
+ctrl = 1
+sprpriority = 2
+
+[State 230, 3]
+type = Changeanim
+trigger1 = time=0
+trigger1 = statetype =A
+value = 6750
+ctrl = 1
+
+;---------------------------------------------------------------------------
+; FRC
+[Statedef 6700]
+type    = U
+movetype= I
+physics = U
+juggle  = 0
+poweradd= 0
+ctrl = 0
+sprpriority = 2
+
+[State 超必殺技キャンセルカウント増加]
+type = varAdd
+trigger1 = Time = 0
+trigger1 = var(11) || var(15)
+var(11) = 1
+
+[State 6700, ]
+type = PowerAdd
+trigger1 = Time = 0
+value = -1000
+
+[State ヒットバック補正,上書き]
+type = Varset
+Trigger1=Var(11) > 15
+var(11)= 15
+persistent = 0
+
+[State ロマキャン連続使用判定]
+type = varAdd
+trigger1 = Time = 0
+trigger1 = var(12)
+var(16) = 1
+
+[State タイマー減少]
+type = varAdd
+trigger1 = Time = 0
+trigger1 = var(12)
+var(21) = -100*ifelse(var(16)>1,var(16)/2,1)
+
+[State ループ判定]
+type = varAdd
+trigger1 = Time = 0
+var(15) = 1
+
+[State 6700,キャンセル]
+Type=varSet
+Trigger1=Time=0
+var(1)=1
+
+[State 6700, Blink Yellow]
+type = PalFX
+trigger1 = 1
+time = 2
+add = 255,255,255
+
+	[State 6700,]
+		type = Explod
+		trigger1 = time = 0
+		anim = 16000
+		pos = 5, -60
+		postype = p1
+		bindtime = -1
+		supermovetime = 9999
+		pausemovetime = 9999
+		scale = 1, 1
+		sprpriority = 3
+		ownpal = 1
+		removeongethit = 1
+
+
+[State 6700, 3]
+type = Changeanim
+trigger1 = time=0
+trigger1 = statetype =A
+value = 50
+
+[State 6700, 3]
+type = Changeanim
+trigger1 = time=0
+trigger1 = statetype !=A
+trigger1 = statetype = C
+value = 11
+
+[State 6700, 3]
+type = Changeanim
+trigger1 = time=0
+trigger1 = statetype !=A
+trigger1 = statetype = S
+value = 0
+
+[State 6700, 3]
+type = ChangeState
+trigger1 = time>0
+trigger1 = statetype !=A
+trigger1 = command = "holddown"
+value = 11
+ctrl = 1
+
+[State 6700, 3]
+type = ChangeState
+trigger1 = time>0
+trigger1 = statetype !=A
+trigger1 = command != "holddown"
+value = 0
+ctrl = 1
+
+[State 6700, 3]
+type = ChangeState
+trigger1 = time>0
+trigger1 = statetype =A
+value = 6750
+ctrl = 1
+
+		
+;---------------------------------------------------------------------------
+;---------------------------------------------------------------------------
+; ロマンキャンセル
+[Statedef 6710]
+type    = U
+movetype= I
+physics = U
+juggle  = 0
+poweradd= 0
+ctrl = 0
+sprpriority = 2
+
+[State 超必殺技キャンセルカウント増加]
+type = varAdd
+trigger1 = Time = 0
+trigger1 = var(11) || var(15)
+var(11) = 1
+
+[State 6710, ]
+type = PowerAdd
+trigger1 = time = 0
+value = -2000
+
+[State ヒットバック補正,上書き]
+type = Varset
+Trigger1=Var(11) > 15
+var(11)= 15
+persistent = 0
+
+[State ロマキャン連続使用判定]
+type = varAdd
+trigger1 = Time = 0
+trigger1 = var(12)
+var(16) = 1
+
+[State 6710,キャンセル]
+Type=varSet
+Trigger1=Time=0
+var(1)=1
+
+[State ループ判定]
+type = varAdd
+trigger1 = Time = 0
+var(15) = 1
+
+[State 6710, Blink Yellow]
+type = PalFX
+trigger1 = 1
+time = 2
+add = 255,255,255
+
+	[State 6710,]
+		type = Explod
+		trigger1 = time = 0
+		anim = 16100
+		pos = 5, -60
+		postype = p1
+		bindtime = -1
+		supermovetime = 9999
+		pausemovetime = 9999
+		scale = 1, 1
+		sprpriority = 3
+		ownpal = 1
+		removeongethit = 1
+
+[State 6700, 3]
+type = Changeanim
+trigger1 = time=0
+trigger1 = statetype =A
+value = 50
+
+[State 6700, 3]
+type = Changeanim
+trigger1 = time=0
+trigger1 = statetype !=A
+trigger1 = statetype = C
+value = 11
+
+[State 6700, 3]
+type = Changeanim
+trigger1 = time=0
+trigger1 = statetype !=A
+trigger1 = statetype = S
+value = 0
+
+[State 6700, 3]
+type = ChangeState
+trigger1 = time>0
+trigger1 = statetype !=A
+trigger1 = command = "holddown"
+value = 11
+ctrl = 1
+
+[State 6700, 3]
+type = ChangeState
+trigger1 = time>0
+trigger1 = statetype !=A
+trigger1 = command != "holddown"
+value = 0
+ctrl = 1
+
+[State 6700, 3]
+type = ChangeState
+trigger1 = time>0
+trigger1 = statetype =A
+value = 6750
+ctrl = 1
+
+;---------------------------------------------------------------------------
+;壁激突
+;---------------------------------------------------------------------------
+[Statedef 7000,硬直時間]
+	type = A
+	movetype = H
+	physics = N
+	velset = 0,0
+
+	[State 7000]
+		type = changeanim
+		trigger1 = 1
+		value = 5002
+
+	[State 7000]
+		type = changestate
+		trigger1 = hitshakeover
+		value = 7010
+
+	[State 7000,エラー用]
+		type = SelfState
+		trigger1 = Time >= 150
+		value = 5050
+
+;--------------------------------------
+[Statedef 7010,吹っ飛ぶ]
+	type = A
+	movetype = H
+	physics = N
+
+	[State 7010]
+		type = hitvelset
+		trigger1 = Time = 0
+		x = 20
+
+	[State 7010]
+		type = playerpush
+		trigger1 = 1
+		value = 0
+
+	[State 7010]
+		type = changeanim
+		trigger1 = Time = 0
+		value = 5030
+
+	[State 7010]
+		type = changestate
+		trigger1 = backedgebodydist<=10 || frontedgebodydist<=10
+		value = 7020
+
+	[State 7010,エラー用]
+		type = SelfState
+		trigger1 = Time >= 150
+		value = 5050
+
+;--------------------------------------
+[Statedef 7020,壁バウンド]
+	type = A
+	movetype = H
+	physics = N
+
+[State -2,床SE]
+type = PlaySnd
+triggerAll = stateno != 2500
+trigger1 = time = 0
+value = F7, 1
+volume = 255
+
+	[State 7020, 画面揺れ]
+		type = EnvShake
+		trigger1 = Time = 0
+		time = 20
+		freq = 50
+		ampl = -16
+		phase = 0
+	
+	[State 7020, 落下ダメージ]
+		type = HitFallDamage
+		trigger1 = time = 0
+
+	[State 7020]
+		type = turn
+		trigger1 = Time = 0
+		trigger1 = frontedgedist<backedgedist
+
+	[State 7020]
+		type = Null;posset
+		trigger1 = 1
+		x = -160*facing
+
+	[State 7020]
+		type = posfreeze
+		trigger1 = 1
+		x = 1
+		y = 1
+
+	[State 7020]
+		type = playerpush
+		trigger1 = 1
+		value = 1
+
+	[State 7020]
+		type = changeanim
+		trigger1 = 1
+		value = 5000
+
+	[State 7020]
+		type=changestate
+		trigger1 = time>=4
+		value = 7030
+
+	[State 7020,エラー用]
+		type = SelfState
+		trigger1 = Time >= 15
+		value = 5050
+
+;--------------------------------------
+[Statedef 7030,壁バウンド落下]
+	type = A
+	movetype = H
+	physics = N
+
+	[State 7030]
+		type = veladd
+		trigger1 = 1
+		y = 0.385
+
+	[State 7030]
+		type = velset
+		trigger1 = Time = 0
+		x = 1
+		y = -7
+
+	[State 7030]
+		type = changeanim
+		trigger1 = Time = 0
+		value = 5050;ifelse(selfanimexist(5051),5051,5030)
+
+	[State 7030]
+		type = playerpush
+		trigger1 = 1;anim != 5110
+		value = 0
+
+	[State 7030]
+		type = changestate;anim
+		triggerall = Vel Y > 0
+		trigger1 = Pos Y >= 0
+		value = 7040;5110
+
+	[State 7030]
+		type = velset
+		triggerall = Vel Y > 0
+		trigger1 = Pos Y >= 0
+		x = 0
+		y = 0
+
+	[State 7030]
+		type = posset
+		triggerall = Vel Y > 0
+		trigger1 = Pos Y >= 0
+		y = 0
+
+	[State 7030,エラー用]
+		type = SelfState
+		trigger1 = Time >= 100
+		value = 5050
+
+;--------------------------------------
+[Statedef 7040,壁バウンドダウン]
+	type = L
+	movetype = H
+	physics = N
+
+[State -2,床ぶつかりエフェクト]
+	type = Null;Explod
+	trigger1 = time = 0
+	anim = F61
+	pos = 0, 0
+	postype = p1
+;	bindtime = -1
+	supermovetime = 9999
+	pausemovetime = 9999
+	sprpriority = 9999
+;	scale = .5,.5
+	ontop = 1
+	ownpal = 1
+	facing =-1
+	
+[State -2,床SE]
+type = Null;PlaySnd
+trigger1 = time = 0
+value = F7, 2
+volume = 255
+
+	[State 7040]
+		type = changeanim
+		trigger1 = Time = 0
+		value = 5110;ifelse(selfanimexist(5051),5051,5030)
+
+	[State 7040]
+		type = velset
+		trigger1 = Time = 0
+		y = 0
+
+	[State 7040]
+		type = posset
+		trigger1 = Time = 0
+		y = 0
+
+	[State 7040]
+		type = EnvShake
+		trigger1 = Time = 0
+		time = 10
+		freq = 60
+		ampl = -4
+		phase = 0
+		persistent = 0
+
+	[State 7040]
+		Type=SelfState
+		Trigger1 = 1
+		value = 5100
+
+;---------------------------------------------------------------------------
+;床激突本体
+;---------------------------------------------------------------------------
+[Statedef 7050,硬直時間]
+	type = A
+	movetype = H
+	physics = N
+	velset = 0,0
+
+	[State 7050]
+		type = changeanim
+		trigger1 = 1
+		value = 5002
+
+	[State 7050]
+		type = changestate
+		trigger1 = hitshakeover
+		value = 7060
+
+;--------------------------------------
+[Statedef 7060,床に当たるまで吹っ飛び]
+	type = A
+	movetype = H
+	physics = N
+
+	[State 7060]
+		type = playerpush
+		trigger1 = 1
+		value = 0
+
+	[State 7060]
+		type = changeanim
+		trigger1 = Time = 0
+		value = 5050; 吹っ飛び下降
+
+	[State 7060]
+		type = Changestate
+		trigger1 = Vel Y > 0
+		trigger1 = Pos Y >= 0
+		value=7070
+
+	[State a, error]
+		type = SelfState ;ステートを戻す
+		trigger1 = Time >= 600 ;5秒経過・動作が長い場合はもっと長く。短くしすぎないように注意。
+		value = 5050 ;汎用くらい吹っ飛びステートへ
+
+
+;--------------------------------------
+[Statedef 7070,床接地してバウンド]
+	type = A
+	movetype = H
+	physics = N
+
+[State -2,床SE]
+type = PlaySnd
+trigger1 = time = 0
+value = F7, 2
+volume = 255
+
+[State -2,床ぶつかりエフェクト]
+	type = Explod
+	trigger1 = time = 0
+	anim = F61
+	pos = 0, 0
+	postype = p1
+;	bindtime = -1
+	supermovetime = 9999
+	pausemovetime = 9999
+	sprpriority = 9999
+;	scale = .5,.5
+	ontop = 1
+	ownpal = 1
+	facing =-1
+	ignorehitpause = 1
+
+	[State 7070]
+		type = changeanim
+		trigger1 = time = 0
+		value = 5170; 激突後バウンドして仰向けで倒れるまでのアニメ
+
+	[State 7070，床接地]
+		type = PosSet
+		trigger1 = time = 0
+		y = 0
+
+	[State 7070，床接地]
+		type = velSet
+		trigger1 = time = 0
+		x = 0
+		y = 0
+
+	[State 7070]
+		type = playerpush
+		trigger1 = 1
+		value = 1
+
+	[State 7070]
+		type = PosSet
+		trigger1 = time = 1
+		y = -10
+
+	[State 7070]
+		type = velSet
+		trigger1 = time = 1
+		x = -2
+		y = -5.95
+
+	[State 7070]
+		type = velAdd
+		trigger1 = time >= 1
+		y = 0.30
+
+	[State 7070]
+		type = Changeanim
+		triggerAll = time >= 1
+		trigger1 = Anim =5170
+		trigger1 = AnimTime =0
+		value = 5050
+
+	[State 7070]
+		type = Selfstate
+		triggerAll = time >= 4
+		trigger1 = Vel Y > 0
+		trigger1 = Pos Y >= 0
+		value = 5100
+
+	[State a, error]
+		type = SelfState ;ステートを戻す
+		trigger1 = Time >= 600 ;5秒経過・動作が長い場合はもっと長く。短くしすぎないように注意。
+		value = 5050 ;汎用くらい吹っ飛びステートへ

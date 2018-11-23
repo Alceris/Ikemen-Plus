@@ -1,4 +1,4 @@
-﻿; KFM's constants and state file.
+; KFM's constants and state file.
 ; There are comments scattered through this file, so you may like to
 ; take a look if would like to learn more about the cns.
 
@@ -135,7 +135,7 @@ velset = 0,0
 [State 170, 1]
 type = NotHitBy
 trigger1 = 1
-value = SCA
+value = SCA,AA,AP,AT
 time = 1
 
 ;---------------------------------------------------------------------------
@@ -161,7 +161,7 @@ velset = 0,0
 [State 181, 1]
 type = NotHitBy
 trigger1 = 1
-value = SCA
+value = SCA,AA,AP,AT
 time = 1
 
 ;---------------------------------------------------------------------------
@@ -1514,7 +1514,7 @@ physics = N
 [State 1028, 1]
 type = NotHitBy
 trigger1 = 1
-value = , NA, NP
+value = SCA, NA, NP
 
 [State 1028, Vel Y]
 type = VelSet
@@ -2678,7 +2678,7 @@ ctrl = 1
 [State 1310, 3]
 type = NotHitBy
 trigger1 = Time = 0
-value = SCA
+value = SCA,AA,AP,AT
 time = 1
 
 [State 1310, 4]
@@ -2765,7 +2765,7 @@ ctrl = 1
 [State 1330, 3]
 type = NotHitBy
 trigger1 = Time = 0
-value = SCA
+value = SCA,AA,AP,AT
 time = 1
 
 [State 1330, 4]
@@ -2859,7 +2859,7 @@ ctrl = 1
 [State 1350, 3]
 type = NotHitBy
 trigger1 = Time = 0
-value = SCA
+value = SCA,AA,AP,AT
 time = 1
 
 [State 1350, 4] ;Stop KFM in the air
@@ -3221,7 +3221,7 @@ time = 2
 [State 3000, Super D]
 type = NotHitBy
 trigger1 = AnimElem = 2
-value = , NA, SA, AT
+value = SCA, NA, SA, AT
 time = 11
 
 [State 3000, Super E]
@@ -3367,7 +3367,7 @@ time = 2
 [State 3050, Super D]
 type = NotHitBy
 trigger1 = AnimElem = 2
-value = , NA, SA, AT
+value = SCA, NA, SA, AT
 time = 6
 
 [State 3050, 1]

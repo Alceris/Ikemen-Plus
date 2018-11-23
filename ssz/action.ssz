@@ -32,6 +32,12 @@ public &Frame
     ^&.Rect null;
     ret null;
   }
+  public ^&.Rect clsn3()
+  {
+    if(#`clsn > 2) ret `clsn[2];
+    ^&.Rect null;
+    ret null;
+  }
 }
 
 public &Action
@@ -58,8 +64,8 @@ public &Action
     loop{
       ^int ary;
       ^/char line;
-      ^&.Rect clsn1, clsn1d, clsn2, clsn2d;
-      bool defaul1 = true, defaul2 = true;
+      ^&.Rect clsn1, clsn1d, clsn2, clsn2d, clsn3, clsn3d;
+      bool defaul1 = true, defaul2 = true, defaul3 = true;
       while;
     do:
       if(#lines[i] > 0 && lines[i][0] == '['){
@@ -75,12 +81,14 @@ public &Action
         `ani.frames.new[-1].readData(ary, line);
         if(defaul1) clsn1 = clsn1d;
         if(defaul2) clsn2 = clsn2d;
-        if(#clsn1 > 0 || #clsn2 > 0){
-          `ani.frames[-1].clsn.new(2);
+        if(defaul3) clsn3 = clsn3d;
+        if(#clsn1 > 0 || #clsn2 > 0 || #clsn3 > 0){
+          `ani.frames[-1].clsn.new(3);
           `ani.frames[-1].clsn[0] = clsn1;
           `ani.frames[-1].clsn[1] = clsn2;
+          `ani.frames[-1].clsn[2] = clsn3;
         }
-        defaul1 = defaul2 = true;
+        defaul1 = defaul2 = defaul3 = true;
       cond .s.equ("loopstart", line[0..9]):
         `ani.loopstart = #`ani.frames;
       cond .s.equ("clsn", line[0..4]):
@@ -101,6 +109,11 @@ public &Action
             clsn = clsn2;
             if(.s.equ("default", line[5..12])) clsn2d = clsn2;
             defaul2 = false;
+          cond line[4] == '3':
+            clsn3.new(siz);
+            clsn = clsn3;
+            if(.s.equ("default", line[5..12])) clsn3d = clsn3;
+            defaul3 = false;
           else:
             break, break;
           }

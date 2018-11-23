@@ -1,0 +1,144 @@
+[Info]
+name = "Last Corridor"
+displayname = "Last Corridor"
+versiondate = 3,24,2017
+mugenversion = 1.1
+author = "Alceris"
+
+;--------------------------------------------------------
+[Camera]
+startx = 0
+starty = 0
+boundleft = -1040 ;Stage is HUGE
+boundright = 1040
+boundhigh = -400
+boundlow = 400
+tension = 142 ;Camera will always be exactly in the center of all the players.
+overdrawhigh = 25
+overdrawlow = 25
+cuthigh = 35
+cutlow = 25
+zoomout = 0.6
+zoomin = 1
+
+;--------------------------------------------------------
+[PlayerInfo]
+p1startx = -70
+p1starty = 0
+p1startz = 0
+p1facing = 1
+p2startx = 70
+p2starty = 0
+p2startz = 0
+p2facing = -1
+leftbound  = -2000
+rightbound =  2000
+topbound  =  0
+botbound  =  0
+
+;--------------------------------------------------------
+[Bound]
+screenleft = 15
+screenright = 15
+
+;--------------------------------------------------------
+[StageInfo]
+zoffset = 180
+autoturn = 1
+resetBG = 1
+
+;--------------------------------------------------------
+[Shadow]
+intensity = 256
+color = 0,0,0
+yscale = .7
+;fade.range = 0,0
+
+;--------------------------------------------------------
+[Reflection]
+intensity = 0
+
+;--------------------------------------------------------
+[Music]
+bgmusic = sound/MEGALOVANIA.mp3
+bgmloopstart = 1281561 ;Music loops seamlessly.
+bgmloopend = 7810380
+bgmvolume = 100
+
+;========================================================
+;--------------------------------------------------------
+; Background definition
+; ***
+;-------------------------------------
+; [BG x]
+; type = ?       "Normal"/"Parallax"  (def: "normal")
+; spriteno = ?, ? Sprite group and number: groupno, imgno  (req'd)
+; start = ?, ?   Starting location (integer)  (def: 0, 0)
+; delta = ?, ?   Change in location per camera unit moved (float)  (def: 1,1)
+; trans = ?      Transparency settings: "none"/"add"/"add1"/"sub"" (def: "none")
+; mask = ?       Masking (int): 0 - off, 1 - on  (def: 0)
+; velocity = ?, ? Velocity: x, y (float): speed background moves (def: 0, 0)
+; tile = ?, ?    Tiling: xtile, ytile (int): 0 - off, 1 - infinite,
+;                        >1 - tile that number of times  (def: 0, 0) - only for Normal BG
+; tilespacing = ?, ? Tiling: x, y (int) : space between tiles (def: 0, 0)
+;  Parallax-only:
+; xscale = ?, ?    Top xscale, bottom xscale (float)
+; width = ?, ?     Top width, bottom width (int)  (use either this or above, but not both)
+; yscalestart = ?  Starting y-scale (float, in percent)  (def: 100)
+; yscaledelta = ?  Change in y-scale per unit (float, in percent)  (def: 0)
+;-------------------------------------
+
+;-------------------------------------
+; Main background definition
+[BGdef]
+spr = Last Corridor.sff
+debugbg = 0
+
+;----------
+[BG Background]
+type  = normal
+spriteno = 0, 0
+layerno = 0
+start = 0, -120
+delta = 1, 1
+trans = none
+mask  = 0
+tile  = 0, 0
+tilespacing = 0,0
+;window = 0,0, 319, 239
+;windowdelta = 0,0
+
+;----------
+[BG Foreground] ;Really glad that two foreground pillars can show at the same time in the original game, otherwise this wouldn't be possible.
+type  = normal
+spriteno = 0, 10
+layerno = 1
+start = -1120, -120
+delta = 2.2, 1 ;Seems to be accurate to the original.
+zoomdelta = 1,1
+trans = addalpha
+alpha = 128,128
+mask = 1
+velocity = 0, 0
+tile = 0, 0
+tilespacing = 0, 0
+
+[BG Save Point]
+type = anim
+actionno = 1
+start = 0, -120
+
+[BG Genocide Box] ;I mean, this is literally a fighting game, after all.
+type  = normal
+spriteno = 11, 0
+layerno = 0
+start = 0, -120
+delta = 1, 1
+trans = none
+mask  = 1
+tile  = 0, 0
+tilespacing = 0,0
+
+[Begin Action 1]
+10,0, 0,0, 10
+10,1, 0,0, 10

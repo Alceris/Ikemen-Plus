@@ -81,7 +81,7 @@ type = nothitby
 trigger1 = anim = 3000
 trigger2 = anim = 3001 && animelemtime(2) < 1
 time = 1
-value = SCA
+value = SCA,AA,AP,AT
 
 [State 3000, Anim]
 type = changeanim
@@ -187,7 +187,7 @@ fvar(5) = 0
 type = nothitby
 trigger1 = animelemtime(8) < 1
 time = 1
-value = SCA
+value = SCA,AA,AP,AT
 
 [State 3050, hadouken]
 type = helper
@@ -278,7 +278,7 @@ fvar(5) = 0
 type = nothitby
 trigger1 = animelemtime(7) < 0
 time = 1
-value = SCA
+value = SCA,AA,AP,AT
 
 [State 3070, hadouken]
 type = helper
@@ -420,7 +420,7 @@ fvar(5) = 0
 type = nothitby
 trigger1 = anim = 3100 && animelemtime(4) < 0
 time = 1
-value = SCA
+value = SCA,AA,AP,AT
 ignorehitpause = 1
 
 [State 3100, Vel]
@@ -772,7 +772,7 @@ type = nothitby
 trigger1 = anim = 3200
 trigger2 = anim = 3201 && animelemtime(2) < 0
 time = 1
-value = SCA
+value = SCA,AA,AP,AT
 ignorehitpause = 1
 
 [State 3200, Snd]
@@ -1062,7 +1062,7 @@ type = nothitby
 trigger1 = anim = 3250
 trigger2 = anim = 3251 && animelemtime(2) < 0
 time = 1
-value = SCA
+value = SCA,AA,AP,AT
 ignorehitpause = 1
 
 [State 3250, Snd]
@@ -1307,7 +1307,7 @@ fvar(5) = 0
 type = nothitby
 trigger1 = anim = 3300 && animelemtime(2) < 1
 time = 1
-value = SCA
+value = SCA,AA,AP,AT
 ignorehitpause = 1
 
 [State 3300, Push]
@@ -1533,7 +1533,7 @@ fvar(5) = 0
 type = nothitby
 trigger1 = time < 10
 time = 1
-value = SCA
+value = SCA,AA,AP,AT
 
 [State 4000, Vel]
 type = velset
@@ -1750,7 +1750,7 @@ value = 0
 [State 4001, nothitby]
 type = nothitby
 trigger1 = animelemtime(35) < 0
-value = SCA
+value = SCA,AA,AP,AT
 time = 1
 [State 4001, imageoff]
 type = afterimagetime
@@ -2070,7 +2070,7 @@ fvar(5) = 0
 type = nothitby
 trigger1 = anim = 4100
 time = 1
-value = SCA
+value = SCA,AA,AP,AT
 
 [State 4100, Anim]
 type = changeanim
@@ -2362,7 +2362,7 @@ sprpriority = 1
 type = nothitby
 trigger1 = 1
 time = 1
-value = SCA
+value = SCA,AA,AP,AT
 
 [State 1114100, Anim]
 type = changeanim
@@ -2415,7 +2415,7 @@ sprpriority = 1
 type = nothitby
 trigger1 = 1
 time = 1
-value = SCA
+value = SCA,AA,AP,AT
 
 [State 1114110, Anim]
 type = changeanim2
@@ -2515,7 +2515,7 @@ fvar(5) = 0
 type = nothitby
 trigger1 = animelemtime(16) < 0
 time = 1
-value = SCA
+value = SCA,AA,AP,AT
 [State 4200, Push]
 type = playerpush
 trigger1 = animelemtime(17) < 0
@@ -2689,7 +2689,7 @@ fvar(5) = 0
 type = nothitby
 trigger1 = anim = 4300 && animelemtime(9) < 0
 time = 1
-value = SCA
+value = SCA,AA,AP,AT
 ignorehitpause = 1
 
 [State 4300, Snd]

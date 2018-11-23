@@ -1,0 +1,3834 @@
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;コモンステート（基本動作およびやられ動作に関するステート）
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+;■『コモンステート』について■
+;コモンステートとは、全キャラ共通の基本動作とやられ動作のステートです。
+;通常は特に変更しない限り、MUGEN本体のdataフォルダ内「common1.cns」を使用します。
+
+;しかし、common1.cnsのプログラム優先度は最低に属しているため、
+;キャラのステートファイルにcommon1.cnsと同じ番号のステートが存在する場合は
+;処理が上書きされ、common1.cns側の同じ番号のステートは無効となります。
+
+;そのため、基本動作以外のステートにコモンステート用のナンバーを与えた場合
+;キャラの基本動作に不具合が生じるおそれがあります。
+;（例外として、一部使用されていないステートも存在します。そのステートについては
+;　使用しても特に問題ありません。例えば110番、115番のステートは空中ダッシュ等に
+;　流用されることが多いです。）
+
+
+;■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+
+;MUGENがデフォルトで参照するcommon1.cns内のコモンステートの早見表です。
+;common1.cnsに存在しないナンバーは、ユーザーが任意でキャラに追加出来るステート。
+
+;例外として、[Statedef 180]（勝利ポーズ）はcommon1.cns内に含まれていませんが
+;MUGENのシステムで予め処理されているので、コモンステートに含めます。
+
+;■コモンステート一覧■
+
+;   0 - 通常立ち（振り返る動作もシステムがここで処理）
+;  10 - 立ち状態からしゃがむ動作
+;  11 - しゃがみ
+;  12 - しゃがみ状態から立ち上がる動作
+;  20 - 前進＆後退
+
+;  40 - ジャンプ開始
+;  45 - 空中ジャンプ開始
+;  50 - ジャンプ
+;  51 - ジャンプ後の下降（使われていない）
+;  52 - 着地
+
+; 100 - 走る（ダッシュ）
+; 105 - バックステップ
+; 106 - バックステップ後の着地
+; 110 - 用途不明（使われていない）※多くの場合空中ダッシュに使用されます。
+; 115 - 用途不明（使われていない）※多くの場合空中バックステップに使用されます。
+
+; 120 - ガード開始
+; 130 - ガード受付（立ち）
+; 131 - ガード受付（しゃがみ）
+; 132 - ガード受付（空中）
+; 140 - ガード終了
+; 150 - ガード硬直（立ち）
+; 151 - ガード硬直解除後の後退（立ち）
+; 152 - ガード硬直（しゃがみ）
+; 153 - ガード硬直解除後の後退（しゃがみ）
+; 154 - ガード硬直（空中）
+; 155 - ガード硬直解除後の後退（空中）
+
+; 170 - タイムオーバーで負けた時
+; 175 - タイムオーバーで引き分けた時
+;（180 - 勝利時演出）
+; 190 - イントロ準備
+; 191 - イントロ
+
+;5000 - 立ちやられ
+;5001 - 立ちやられノックバック
+;5010 - しゃがみやられ
+;5011 - しゃがみやられノックバック
+
+;5020 - 空中やられ
+;5030 - 吹っ飛び開始
+;5035 - 吹っ飛び（ダウン状態か否かの判断もしている）
+;5040 - 吹っ飛びから自動受け身（ダウン状態ではない時）
+;5050 - 吹っ飛び下降
+;5070 - 転倒・硬直中
+;5071 - 転倒
+
+;5080 - 横臥時のやられ・硬直
+;5081 - 横臥時のやられ
+;5100 - 吹っ飛び後地面に激突
+;5101 - 激突後バウンド
+;5110 - 横たわる
+;5111 - 横たわる（手前向き）（オプション）
+;5120 - 起き上がる
+;5150 - 横たわる（敗北時）
+
+;5200 - 低空時の空中受け身予約
+;5201 - 低空時の空中受け身
+;5210 - 空中受け身
+
+;5500 - コンティニュー画面時
+;5900 - ラウンド開始前初期化専用ステート
+
+;※この早見表とコモンステートについての解説は、
+;　ちょっとこ丸氏の和訳KFM同梱のテキストにLycorisが補足、注釈を加えたものです。
+
+;■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+
+
+;　　　　　　　　　　　　　↓ここからステート記述↓　　　　　　　　　　　　　　
+
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
+;　　　　　　　　　　　　　　　！！！注意！！！　　　　　　　　　　　　　　　　
+;以下のコモンステートにはMUGENデフォルトの「common1.cns」とは異なる内容の
+;ステートが多々あります。決してデフォルトに上書きしたりしないでください。
+;※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	立ち状態（待機）
+;	・すべての動作の基点。基本的に動作を終えたらこのステートに戻ってきます。
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 0]
+type    = S
+physics = S
+sprpriority = 0
+
+[State 0, SprPriority]
+type = SprPriority
+trigger1 = anim = 3505
+value = 4
+ignorehitpause = 1
+
+[State 0, ヘルパーの場合消滅]
+type = DestroySelf
+trigger1 = ishelper
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = command = "holdback"
+sysvar(56) = (sysvar(56) | 16)
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = numtarget(0)
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 0
+ignorehitpause = 1
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+ignorehitpause = 1
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State 0, CtrlSet]
+type = CtrlSet
+trigger1 = roundstate = 2
+value = 1
+ignorehitpause = 1
+
+[State 0, NotHitBy]
+type = NotHitBy
+trigger1 = !fighting
+value = SCA,AA,AP,AT
+time = 1
+dodge = 1
+ignorehitpause = 1
+
+[State 0, アニメ変更] ;振り向き動作から移行
+type = ChangeAnim
+triggerall = anim != 3403 && anim != 3505
+trigger1 = Anim != 0 && Anim != 5
+trigger2 = Anim = 5 && AnimTime = 0 ;Turn anim over
+value = 0
+ignorehitpause = 1
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = p2dist X < 0
+value = 5
+ignorehitpause = 1
+
+[State 0, Turn]
+type = Turn
+trigger1 = p2dist X < 0
+ignorehitpause = 1
+
+[State -1];前転、後転
+	type = ChangeState
+TriggerAll = fighting
+	triggerall = command = "hold_x" || command = "x"
+	trigger1 = ctrl
+	value = 107
+ctrl = 0
+ignorehitpause = 1
+
+[State -1,];そげぶ弾き
+Type=ChangeState
+TriggerAll = fighting
+TriggerAll = StateType != A
+TriggerAll = ctrl
+Trigger1 = var(6)%100 = 11
+value=6450
+ctrl = 0
+ignorehitpause = 1
+
+[State -1,];屈シールド
+Type=ChangeState
+TriggerAll = ctrl
+TriggerAll = StateType != A
+TriggerAll = command = "holddown"
+Trigger1 = command = "hold_z" || command = "z"
+value=6410
+ctrl = 0
+ignorehitpause = 1
+
+[State -1,];立ちシールド
+Type=ChangeState
+TriggerAll = ctrl
+TriggerAll = StateType != A
+Trigger1 = command = "hold_z" || command = "z"
+value=6400
+ctrl = 0
+ignorehitpause = 1
+
+[State 0, 軸位置] ;地上に戻す
+type = PosSet
+trigger1 = time = 0
+y = 0
+ignorehitpause = 1
+
+[State 0, 移動速度] ;Y方向の速度を0に
+type = VelSet
+trigger1 = time = 0
+y = 0
+ignorehitpause = 1
+
+[State 0, 移動速度] ;低速になるか4フレーム経過で停止
+type = VelSet
+trigger1 = abs(vel x) < 1
+x = floor(vel x/2)
+ignorehitpause = 1
+
+[State 0, ステート変更] ;生存判定
+type = ChangeState
+trigger1 = !alive
+value = 5050 ;生存していない場合ステート5050へ
+ignorehitpause = 1
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	立ちからしゃがみへ移行
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 3]
+type    = S
+physics = S
+;anim = 100
+sprpriority = 0
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = 1
+value = ifelse(prevstateno = 8001,0,8001)
+ctrl = 1
+
+[Statedef 10]
+type    = C
+physics = C
+;anim = 10
+ctrl = 1
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = numtarget(0)
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 10
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = command = "holdback"
+sysvar(56) = (sysvar(56) | 16)
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = anim != 10
+value = 10
+
+[State 10, 速度乗算]
+type = VelMul
+trigger1 = time = 0
+x = .75
+
+[State 10, ステート変更] ;しゃがみステートに移行
+type = ChangeState
+trigger1 = animtime = 0
+value = 11
+
+[State 0, Turn]
+type = Turn
+trigger1 = p2dist X < 0
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	しゃがみ状態
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 11]
+type    = C
+physics = C
+anim = 11
+sprpriority = 0
+ctrl = 1
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = numtarget(0)
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 11
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = command = "holdback"
+sysvar(56) = (sysvar(56) | 16)
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State 0, 移動速度] ;低速になるか4フレーム経過で停止
+type = VelSet
+trigger1 = abs(vel x) < 1
+x = vel x/2
+
+[State 11, アニメ変更] ;振り向き動作から移行
+type = ChangeAnim
+trigger1 = Anim = 6 && AnimTime = 0
+value = 11
+
+[State 11, アニメ変更] ;振り向き動作から移行
+type = ChangeAnim
+trigger1 = p2dist X < 0
+value = 11
+
+[State 0, Turn]
+type = Turn
+trigger1 = p2dist X < 0
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	しゃがみから立ちへ移行
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 12]
+type    = S
+physics = S
+;anim = 12
+ctrl = 1
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = numtarget(0)
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 12
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = command = "holdback"
+sysvar(56) = (sysvar(56) | 16)
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = anim != 12
+value = 12
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State 12, ステート変更] ;立ち状態へ移行
+type = ChangeState
+trigger1 = animtime = 0
+value = 0
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	前進・後退
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 20]
+type    = S
+physics = S
+sprpriority = 0
+ctrl = 1
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = numtarget(0)
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 20
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = command = "holdback"
+sysvar(56) = (sysvar(56) | 16)
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State 20, 移動速度] ;前進する速度
+type = VelSet
+trigger1 = command = "holdfwd"
+x = const(velocity.walk.fwd.x) ;定数で設定した速度
+
+[State 20, 移動速度] ;後退する速度
+type = VelSet
+trigger1 = command = "holdback"
+x = const(velocity.walk.back.x) ;定数で設定した速度
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = p2dist X < 0
+value = 5
+
+[State 0, Turn]
+type = Turn
+trigger1 = p2dist X < 0
+
+[State 20, アニメ変更] ;前進するアニメに変更
+type = ChangeAnim
+triggerall = vel x > 0
+trigger1 = Anim != 20 && Anim != 5
+trigger2 = Anim = 5 && AnimTime = 0
+value = 20
+
+[State 20, アニメ変更] ;後退するアニメに変更
+type = ChangeAnim
+triggerall = vel x < 0
+trigger1 = Anim != 21 && Anim != 5
+trigger2 = Anim = 5 && AnimTime = 0
+value = 21
+
+[State 20, SE]
+type = PlaySnd
+trigger1 = animelem = 2 || animtime = 0
+trigger2 = animelem = 7 && anim = 20
+trigger3 = animelem = 10 && anim = 21
+value = s0,65+random%6
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	ジャンプ開始
+;	・ジャンプするための準備段階です。この時点ではまだ地上にいます。
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 40]
+type    = S
+physics = S
+ctrl = 0
+sprpriority = 1
+
+[State 0, Turn]
+type = Turn
+trigger1 = p2dist X < 0
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = numtarget(0)
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 40
+ignorehitpause = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = command = "holdback"
+sysvar(56) = (sysvar(56) | 16)
+
+;--------------------↓ジャンプする方向を制御する変数
+
+[State 40, 変数を設定] ;ジャンプ開始時に変数「sysvar(1)」を0にセット
+type = VarSet
+trigger1 = 1
+sysvar(1) = 0
+ignorehitpause = 1
+
+[State 40, 変数を設定] ;コマンド"holdfwd"の場合「sysvar(1)」を1にセット
+type = VarSet
+trigger1 = command = "holdright" && command != "holdleft"
+sysvar(1) = 1
+ignorehitpause = 1
+
+[State 40, 変数を設定] ;コマンド"holdback"の場合「sysvar(1)」を-1にセット
+type = VarSet
+trigger1 = command = "holdleft" && command != "holdright"
+sysvar(1) = -1
+ignorehitpause = 1
+
+;--------------------↑ジャンプする方向を制御する変数
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = 1
+x = ifelse(anim = 100 || anim = 105,vel X,const(velocity.jump.fwd.x)*sysvar(1)*facing)
+ignorehitpause = 1
+
+[State 40, 移動速度] ;ジャンプ開始時の速度制御
+type = VelSet
+trigger1 = 1
+y = const(velocity.jump.y)
+ignorehitpause = 1
+;↑の変数からジャンプする方向を判別し、定数の[Velocity]より方向ごとの数値を引用。
+;ジャンプしている間は常にこの数値が適用されます。
+
+[State 40, ステート変更] ;ジャンプ中ステートへ移行
+type = ChangeState
+trigger1 = 1
+value = 50
+ctrl = 1
+ignorehitpause = 1
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	空中ジャンプ開始
+;	・諸々の数値だけ設定して0Fでジャンプ中に移行します。
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 45]
+type    = A
+physics = N
+ctrl = 0
+velset = 0,0
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = numtarget(0)
+
+[State 45, アニメ変更]
+type = ChangeAnim
+trigger1 = selfanimexist(44)
+value = 44
+
+[State 45, アニメ変更]
+type = ChangeAnim
+trigger1 = selfanimexist(44)
+value = 41
+
+[State 45, 変数を設定]
+type = VarSet
+trigger1 = time = 0
+sysvar(1) = 0
+
+[State 45, 変数を設定]
+type = VarSet
+trigger1 = command = "holdfwd"
+sysvar(1) = 1
+
+[State 45, 変数を設定]
+type = VarSet
+trigger1 = command = "holdback"
+sysvar(1) = -1
+
+[State 45, 移動速度]
+type = VelSet
+trigger1 = Time = 2
+x = ifelse(sysvar(1)=0, const(velocity.airjump.neu.x), ifelse(sysvar(1)=1, const(velocity.airjump.fwd.x), const(velocity.airjump.back.x)))
+y = const(velocity.airjump.y)
+
+[State 45, ステート変更]
+type = ChangeState
+trigger1 = time = 0
+value = 50
+ctrl = 1
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	ジャンプ中
+;	・ジャンプ開始が終了すると同時にこのステートに飛びます。
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 50]
+type    = A
+physics = N
+ctrl = 1
+
+[State 0, StateTypeSet]
+type = StateTypeSet
+trigger1 = 1
+statetype = A
+ignorehitpause = 1
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = numtarget(0)
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 50
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State 50, 変数を設定]
+type = VarSet
+trigger1 = time = 0
+sysvar(1) = 0
+
+[State 50, アニメ変更] ;表示アニメの決定
+type = ChangeAnim
+trigger1 = anim != [41,46]
+value = 41;ifelse((vel x)=0, 41, ifelse((vel x)>0, 42, 43))
+;X軸の移動速度が0ならば41へ、マイナスならば42へ、それ以外なら43へ
+
+[State 50, Gravity]
+type = VelAdd
+trigger1 = 1
+y = ifelse(-vel Y/6 <= .5,.5,-vel Y/6)
+
+[State 50, アニメ変更]
+type = ChangeAnim
+trigger1 = vel y > -2
+trigger1 = selfanimexist(anim + 3)
+persistent = 0
+value = anim + 3
+
+[State 50,land]
+Type=ChangeState
+Trigger1=Pos Y>=0
+Trigger1=Vel Y >0
+value=53
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	降下中（現在は使われていない）
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 51]
+type    = A
+physics = N
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = numtarget(0)
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 51
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State 51, 1]
+type = Null
+trigger1 = 1
+
+[State 50, 重力付加]
+type = VelAdd
+trigger1 = 1
+y = ifelse(-vel Y/6 <= .5,.5,-vel Y/6)
+
+[State 51,land]
+Type=ChangeState
+Trigger1=Pos Y>=0
+Trigger1=Vel Y >0
+value=53
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	着地移行 (予備、万一相手がこちらを着地動作に飛ばすつもりで52を指定した時用）
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[Statedef 52]
+Type=S
+PhySics=S
+Ctrl=1
+;anim = ifelse((vel x)=0, 47, ifelse((vel x)>0, 48, 49))
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = numtarget(0)
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = var(5) != ifelse(enemynear,pos X < pos X,-1,1)
+var(3) = ifelse(var(3)%10 = 6 || var(3)%10 = 3,-2,ifelse(var(3)%10 = 4 || var(3)%10 = 1,2,0))
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = var(5) != ifelse(enemynear,pos X < pos X,-1,1)
+var(3) = ifelse(floor(var(3)/10)%10 = 6 || floor(var(3)/10)%10 = 3,-20,ifelse(floor(var(3)/10)%10 = 4 || floor(var(3)/10)%10 = 1,20,0))
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = var(5) != ifelse(enemynear,pos X < pos X,-1,1)
+var(3) = ifelse(floor(var(3)/100)%10 = 6 || floor(var(3)/100)%10 = 3,-200,ifelse(floor(var(3)/100)%10 = 4 || floor(var(3)/100)%10 = 1,200,0))
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = var(5) != ifelse(enemynear,pos X < pos X,-1,1)
+var(3) = ifelse(floor(var(3)/1000)%10 = 6 || floor(var(3)/1000)%10 = 3,-2000,ifelse(floor(var(3)/1000)%10 = 4 || floor(var(3)/1000)%10 = 1,2000,0))
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = var(5) != ifelse(enemynear,pos X < pos X,-1,1)
+var(3) = ifelse(floor(var(3)/10000)%10 = 6 || floor(var(3)/10000)%10 = 3,-20000,ifelse(floor(var(3)/10000)%10 = 4 || floor(var(3)/10000)%10 = 1,20000,0))
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(5) = ifelse(enemynear,pos X < pos X,-1,1)
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 52
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State 52,0];?
+Type=ChangeAnim
+Trigger1=anim != [47,49]
+value=ifelse((vel x)=0, 47, ifelse((vel x)>0, 48, 49))
+elem = 1
+
+[State 20, SE]
+type = PlaySnd
+trigger1 = animelem = 1
+value = s0,65+random%6
+volumescale = 400
+
+[State 52,0]
+Type=Turn
+TriggerAll=AnimElem = 1
+Trigger1=P2Dist X<0
+
+[State 52,1]
+Type=VelSet
+Trigger1=Time=0
+y=0
+
+[State 52,2]
+Type=PosSet
+Trigger1=Time=0
+y=0
+
+[State 52,3]
+Type=Null;CtrlSet
+Trigger1=Time=3
+value=1
+
+[State 52,4]
+Type=ChangeState
+Trigger1=AnimElemTime(7) >= 2
+value=0
+Ctrl=1
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	着地 ※着地時の埃を消すための仕様
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[Statedef 53]
+Type=S
+PhySics=S
+Ctrl= ((prevstateno != 1700 && prevstateno != 1750) || (var(1) = 1))
+;anim = ifelse((vel x)=0, 47, ifelse((vel x)>0, 48, 49))
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = numtarget(0)
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = var(5) != ifelse(enemynear,pos X < pos X,-1,1)
+var(3) = ifelse(var(3)%10 = 6 || var(3)%10 = 3,-2,ifelse(var(3)%10 = 4 || var(3)%10 = 1,2,0))
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = var(5) != ifelse(enemynear,pos X < pos X,-1,1)
+var(3) = ifelse(floor(var(3)/10)%10 = 6 || floor(var(3)/10)%10 = 3,-20,ifelse(floor(var(3)/10)%10 = 4 || floor(var(3)/10)%10 = 1,20,0))
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = var(5) != ifelse(enemynear,pos X < pos X,-1,1)
+var(3) = ifelse(floor(var(3)/100)%10 = 6 || floor(var(3)/100)%10 = 3,-200,ifelse(floor(var(3)/100)%10 = 4 || floor(var(3)/100)%10 = 1,200,0))
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = var(5) != ifelse(enemynear,pos X < pos X,-1,1)
+var(3) = ifelse(floor(var(3)/1000)%10 = 6 || floor(var(3)/1000)%10 = 3,-2000,ifelse(floor(var(3)/1000)%10 = 4 || floor(var(3)/1000)%10 = 1,2000,0))
+
+[State 0, VarSet]
+type = VarAdd
+trigger1 = var(5) != ifelse(enemynear,pos X < pos X,-1,1)
+var(3) = ifelse(floor(var(3)/10000)%10 = 6 || floor(var(3)/10000)%10 = 3,-20000,ifelse(floor(var(3)/10000)%10 = 4 || floor(var(3)/10000)%10 = 1,20000,0))
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(5) = ifelse(enemynear,pos X < pos X,-1,1)
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 53
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State 52,0];?
+Type=ChangeAnim
+Trigger1=anim != [47,49]
+value=ifelse((vel x)=0, 47, ifelse((vel x)>0, 48, 49))
+elem = 1
+
+[State 20, SE]
+type = PlaySnd
+trigger1 = animelem = 1
+value = s0,65+random%6
+volumescale = 400
+
+[State 52,0]
+Type=Turn
+TriggerAll=AnimElem = 1
+Trigger1=P2Dist X<0
+
+[State 52,1]
+Type=VelSet
+Trigger1=Time=0
+y=0
+
+[State 52,2]
+Type=PosSet
+Trigger1=Time=0
+y=0
+
+[State 52,3]
+Type=Null;CtrlSet
+Trigger1=Time=3
+value=1
+
+[State 52,4]
+Type=ChangeState
+Trigger1=AnimElemTime(7) >= 2
+value=0
+Ctrl=1
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	ダッシュ
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 100]
+type    = S
+physics = S
+;anim = 100
+sprpriority = 1
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = numtarget(0)
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 100
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+triggerall = anim != 100 && anim != 105
+trigger1 = command = "holdright" && command != "holdleft"
+value = ifelse(facing = 1,100,105)
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+triggerall = anim != 100 && anim != 105
+trigger1 = command = "holdleft" && command != "holdright"
+value = ifelse(facing = -1,100,105)
+
+[State 20, SE]
+type = PlaySnd
+trigger1 = animelem = 3
+trigger2 = animelem = 12
+value = s0,65+random%6
+volumescale = 200
+
+[State 100, 速度設定]
+type = VelSet
+trigger1 = anim = 100
+x = const(velocity.run.fwd.x)
+
+[State 100, 速度設定]
+type = VelSet
+trigger1 = anim = 105
+x = -const(velocity.run.fwd.x)
+
+[State 100, 特殊効果] ;途中で歩くのを防止
+type = AssertSpecial
+trigger1 = 1
+flag = NoWalk
+flag2 = NoStandGuard
+
+[State 100, 4]
+Type=ChangeState
+TriggerAll=AnimElemTime(1)>=4
+trigger1 = facing = ifelse(anim = 100,1,-1)
+Trigger1=command!="holdright" || command = "holdleft"
+trigger2 = facing = ifelse(anim = 105,1,-1)
+Trigger2=command!="holdleft" || command = "holdright"
+value=101
+
+[State 100, ステート変更]
+type = ChangeState
+TriggerAll=AnimElemTime(1)<4
+trigger1 = facing = ifelse(anim = 100,1,-1)
+Trigger1=command!="holdright" || command = "holdleft"
+trigger2 = facing = ifelse(anim = 105,1,-1)
+Trigger2=command!="holdleft" || command = "holdright"
+value = 0
+ctrl = 1
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;ダッシュストップ
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[Statedef 101]
+Type=S
+PhySics=S
+;Anim=101
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = numtarget(0)
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 101
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = anim != 101 && anim != 106
+value = ifelse((anim = 105 && p2dist X >= 0) || (anim = 100 && p2dist X < 0),106,101)
+
+[State 0, Turn]
+type = Turn
+triggerall = animelem = 1
+trigger1 = p2dist X < 0
+
+[State 101,1]
+Type=playsnd
+Trigger1=AnimElem = 1
+value=101,0
+
+[State 101,1]
+Type=CtrlSet
+Trigger1=AnimElemTime(1) >= 12
+value=1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = AnimTime = 0
+var(59) = 0
+
+[State 101,1]
+Type=ChangeState
+trigger1 = anim = 101
+Trigger1=AnimElemTime(5)>=3
+trigger2 = AnimTime = 0
+value=0
+Ctrl=1
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	バックステップ
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 105]
+type    = A
+movetype = I
+physics = A
+ctrl = 0
+;anim = 105
+sprpriority = 1
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = numtarget(0)
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 105
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = anim != 105
+value = 105
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State 105, 移動速度]
+type = VelSet
+trigger1 = time = 0
+x = const(velocity.run.back.x)
+y = const(velocity.run.back.y)
+
+[State 105, 投げ以外無敵]
+type = HitBy
+trigger1 = 1
+value = SCA,AT
+time = 1
+dodge = 1
+
+[State 6400, 受け止め定義];（※８）
+type = Null;ReversalDef
+trigger1 = 1
+reversal.attr = ,AA,AP            ;受け止める相手の攻撃属性を指定
+pausetime     = 0,0;14
+numhits       = 0
+sparkno       = -1
+sparkxy       = 0,0
+hitsound      = -1
+
+[State 105, ステート変更]
+type = ChangeState
+trigger1 = Vel Y > 0
+trigger1 = Pos Y >= 0
+value = 106
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	バックステップ着地
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 106]
+type    = S
+physics = S
+ctrl = 0
+;anim = 106
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = numtarget(0)
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 106
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = anim != 106
+value = 106
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State 106, 着地音]
+Type=PlaySnd
+Trigger1=animelem = 1
+value=40,0
+
+[State 106, 移動速度]
+type = VelSet
+trigger1 = time = 0
+y = 0
+
+[State 106, 軸位置]
+type = PosSet
+trigger1 = time = 0
+y = 0
+
+[State 106, ステート変更]
+type = ChangeState
+trigger1 = animelemtime(1) >= 7
+value = 0
+ctrl = 1
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+; 前転
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[Statedef 107]
+type = S
+movetype = I
+physics = N
+;anim = 107
+ctrl = 0
+sprpriority = -1
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = numtarget(0)
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 107
+
+[State 107, 1]
+type = turn
+triggerall = anim != 100
+triggerAll = p2dist X < 0 || anim = 105
+trigger1 = anim != 107 && anim != 108
+trigger2 = anim = 107 || anim = 108
+trigger2 = animelemtime(11) = 0
+
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+triggerall = anim != 107 && anim != 108
+trigger1 = command = "holdright" && command = "holdleft"
+trigger2 = command = "holdleft" && facing = 1
+trigger3 = command = "holdright" && facing = -1
+value = 108
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+triggerall = anim != 107 && anim != 108
+trigger1 = command != "holdright" && command != "holdleft"
+trigger2 = command = "holdright" && facing = 1
+trigger3 = command = "holdleft" && facing = -1
+value = 107
+
+[State 0, Explod]
+type = Explod
+trigger1 = animelem = 1
+anim = 1054
+ID = 1054
+pos = ifelse(vel X < 0,10,-10),0
+postype = p1
+facing = ifelse(anim = 108,-1,1)
+bindtime = 0
+removetime = -2
+pausemovetime = 0
+scale = 1,1
+sprpriority = 1
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+[State 0, VarAdd]
+type = VarAdd
+triggerall = !numtarget
+trigger1 = animelem = 1
+fvar(0) = 1.0
+
+[State 0, Explod]
+type = Explod
+trigger1 = animelemtime(7) >= 0 && animelemtime(7)%2 = 0
+anim = 421
+ID = 421
+pos = ifelse(vel X < 0,-10,10),0
+postype = p1
+facing = ifelse(vel X < 0,1,-1)
+bindtime = 0
+removetime = -2
+pausemovetime = 0
+scale = 1,1
+sprpriority = 1
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+[State 110,SE]
+type=PlaySnd
+trigger1=AnimElem = 1
+value=1,16
+
+[State 110,SE]
+type=PlaySnd
+trigger1=AnimElem = 7
+value=1,7
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = AnimElem = 1
+value = S2+(Anim = 107),ifelse(Anim = 107,13,0)
+channel = 4
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State 107, 1]
+type = NotHitBy
+trigger1 = 1
+value = SCA,AA,AP,AT
+dodge = 1
+
+[State 0, PalFX]
+type = PalFX
+trigger1 = AnimTime < 0
+time = 1
+add = (256/22)*-animtime,(256/22)*-animtime,(256/22)*-animtime
+
+[State 107, 1]
+type = PlayerPush
+trigger1 = AnimElemTime(11) < 0
+value = 0
+
+[State 0, VelMul]
+type = VelMul
+trigger1 = AnimElemTime(7) > 0
+x = 0.9
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = abs(vel X) < const(movement.stand.friction.threshold)
+x = 0
+
+[State 107, 1]
+type = velset
+trigger1 = AnimElemTime(7) < 0
+x = ifelse(anim = 108,-9,9)
+
+
+[State 0, CtrlSet]
+type = VarSet
+trigger1 = 1
+var(1) = 20
+
+[State 107, 2]
+type = ChangeState
+trigger1 = !AnimTime
+value = 11
+ctrl = 1
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	空中ダッシュ ＊RUN_UP（急上昇？現在は使われていない）
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[Statedef 110]
+Type=A
+PhySics=N
+;Anim=110
+sprPriority=1
+;velset=0,0
+Ctrl=0
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = numtarget(0)
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 110
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = anim != 110
+value = 110
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State -1,使用制限]
+Type=Varadd
+Trigger1=AnimElem = 1
+var(17)=1
+
+[State 110,-1]
+type=Explod
+trigger1=!NumExplod(13500);?
+trigger1=AnimElemtime(2)=0
+anim=13500
+id=13500
+Pos=-35,-50
+Postype=P1
+Ownpal=1
+Scale=0.8,0.8
+sprpriority=2
+
+[State 110,SE]
+type=PlaySnd
+trigger1=AnimElemtime(2)=0
+value=1,32
+
+[State -1,VelSet]
+Type=VelSet
+Trigger1=AnimElemTime(1)=[0,5]
+X=0
+
+[State -1,VelSet]
+Type=VelSet
+Trigger1=AnimElemTime(1)=[0,15]
+X=10
+
+[State -1,VelSet]
+Type=VelSet
+Trigger1=AnimElemTime(1)=16
+X=3.4
+
+[State 50, 重力付加]
+type = VelAdd
+trigger1 = 1
+y = .45
+
+[State -1,VelSet]
+Type=VelSet
+Trigger1=AnimElemTime(1)<16
+Y=0
+
+[State -1,CtrlSet]
+Type=CtrlSet
+Trigger1=AnimElemTime(3)>=0
+Value=1
+
+[State 50,land]
+Type=ChangeState
+Trigger1=Pos Y>=0
+Trigger1=Vel Y >0
+value=53
+
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	RUN_DOWN（急降下？現在は使われていない）
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 115]
+Type=A
+PhySics=N
+;Anim=115
+sprPriority=1
+;velset=0,0
+Ctrl=0
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = numtarget(0)
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 115
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = anim != 115
+value = 115
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = AnimElem = 1
+x = 0
+y = 0
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State -1,使用制限]
+Type=Varadd
+Trigger1=AnimElem = 1
+var(17)=1
+
+[State 110,-1]
+type=Explod
+trigger1=!NumExplod(13500);?
+trigger1=AnimElemtime(2)=0
+anim=13500
+id=13500
+Pos=35,-50
+Postype=P1
+facing = -1
+Ownpal=1
+Scale=0.8,0.8
+sprpriority=2
+
+[State 110,SE]
+type=PlaySnd
+trigger1=AnimElemtime(2)=0
+value=1,32
+
+[State -1,VelSet]
+Type=VelSet
+Trigger1=AnimElemTime(1)=[0,5]
+X=0
+
+[State -1,VelSet]
+Type=VelSet
+Trigger1=AnimElemTime(1)=[0,15]
+X=-10
+
+[State -1,VelSet]
+Type=VelSet
+Trigger1=AnimElemTime(1)=16
+X=-3.4
+
+[State 50, 重力付加]
+type = VelAdd
+trigger1 = 1
+y = .45
+
+[State -1,VelSet]
+Type=VelSet
+Trigger1=AnimElemTime(1)<16
+Y=0
+
+[State -1,CtrlSet]
+Type=CtrlSet
+Trigger1=AnimElemTime(3)>=0
+Value=1
+
+[State 50,land]
+Type=ChangeState
+Trigger1=Pos Y>=0
+Trigger1=Vel Y >0
+value=53
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	ガード開始
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 120]
+type =    U ;直前のステートの状態を引き継ぐ
+physics = U ;直前のステートの体勢を引き継ぐ
+ctrl = 1
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = numtarget(0)
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 120
+
+[State 120, アニメ変更]
+type = Null;ChangeAnim
+trigger1 = anim != 120 + (statetype = C) + (statetype = A)*2
+value = 120 + (statetype = C) + (statetype = A)*2
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State 120, 状態変更]
+type = StateTypeSet
+trigger1 = statetype = S
+physics = S
+
+[State 120, 状態変更]
+type = StateTypeSet
+trigger1 = statetype = C
+physics = C
+
+[State 120, 状態変更]
+type = StateTypeSet
+trigger1 = statetype = A
+physics = A
+
+[State 120, 状態変更] ;立ちガード→しゃがみガード
+type = StateTypeSet
+trigger1 = statetype = S && command = "holddown"
+statetype = C
+physics = C
+
+[State 120, 状態変更] ;しゃがみガード→立ちガード
+type = StateTypeSet
+trigger1 = statetype = C && command != "holddown"
+statetype = S
+physics = S
+
+[State 120, ステート変更]
+type = ChangeState
+trigger1 = command = "holdback";animelemtime(1) > 0
+value = 130 + (statetype = C) + (statetype = A)*2
+
+[State 120, ステート変更]
+type = ChangeState
+trigger1 = command != "holdback"
+trigger2 = !inguarddist
+value = 140
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	立ちガード（ガード中）
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 130]
+type    = S
+physics = S
+ctrl = 1
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = numtarget(0)
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 130
+
+[State 130, アニメ変更]
+type = ChangeAnim
+triggerall = Anim != 130
+triggerall = inguarddist
+trigger1 = command = "holdfwd"
+value = 130
+
+[State 130, アニメ変更]
+type = ChangeAnim
+triggerall = Anim != 21
+trigger1 = command != "holdfwd"
+value = 21
+
+[State 20, SE]
+type = PlaySnd
+triggerall = anim = 21
+trigger1 = animelem = 2 || animtime = 0
+trigger2 = animelem = 10
+value = s0,65+random%6
+
+[State 20, 移動速度] ;後退する速度
+type = VelSet
+trigger1 = command != "holdfwd"
+x = const(velocity.walk.back.x)
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State 130, ステート変更]
+type = ChangeState
+trigger1 = command = "holddown"
+value = 131
+
+[State 130, ステート変更]
+type = ChangeState
+trigger1 = command != "holdback"
+trigger2 = !inguarddist
+value = 140
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	しゃがみガード（ガード中）
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 131]
+type    = C
+physics = C
+ctrl = 1
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = numtarget(0)
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 131
+
+[State 131, アニメ変更]
+type = ChangeAnim
+trigger1 = anim != 131
+value = 131
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State 131, ステート変更]
+type = ChangeState
+trigger1 = command != "holddown"
+value = 130
+
+[State 131, ステート変更]
+type = ChangeState
+trigger1 = command != "holdback"
+trigger2 = !inguarddist
+value = 140
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	空中ガード（ガード中）
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 132]
+type    = A
+physics = N
+ctrl = 1
+
+[State 0, TargetDrop]
+type = TargetDrop
+trigger1 = numtarget(0)
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 132
+
+[State 132, アニメ変更]
+type = ChangeAnim
+trigger1 = Anim != 132
+value = 132
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State 50, 重力付加]
+type = VelAdd
+trigger1 = 1
+y = ifelse(-vel Y/6 <= .5,.5,-vel Y/6)
+
+[State 132, 変数を設定]
+type = VarSet
+trigger1 = 1
+sysvar(0) = (pos y >= 0) && (vel y > 0)
+
+[State 132, 速度増減]
+type = VelSet
+trigger1 = sysvar(0)
+y = 0
+
+[State 132, 軸位置]
+type = PosSet
+trigger1 = sysvar(0)
+y = 0
+
+[State 132, ステート変更]
+type = ChangeState
+trigger1 = sysvar(0)
+trigger1 = command = "holdback"
+trigger1 = inguarddist
+value = 130
+
+[State 132, ステート変更]
+type = ChangeState
+trigger1 = sysvar(0)
+value = 52
+
+[State 132, ステート変更] ;Stop Guarding
+type = ChangeState
+trigger1 = command != "holdback"
+trigger2 = !inguarddist
+value = 140
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	ガード終了
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 140]
+type =    U ;直前のステートの状態を引き継ぐ
+physics = U ;直前のステートの体勢を引き継ぐ
+ctrl = 1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 140
+
+[State 140, アニメ変更]
+type = ChangeAnim
+trigger1 = anim != 140 + (statetype = C) + (statetype = A)*2
+value = 140 + (statetype = C) + (statetype = A)*2
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State 140, 状態変更]
+type = StateTypeSet
+trigger1 = statetype = S
+physics = S
+
+[State 140, 状態変更]
+type = StateTypeSet
+trigger1 = statetype = C
+physics = C
+
+[State 140, 状態変更]
+type = StateTypeSet
+trigger1 = statetype = A
+physics = A
+
+[State 140, 状態変更] ;しゃがみ→立ち
+type = StateTypeSet
+trigger1 = statetype = S && command = "holddown"
+statetype = C
+physics = C
+
+[State 140, 状態変更] ;立ち→しゃがみ
+type = StateTypeSet
+trigger1 = statetype = C && command != "holddown"
+statetype = S
+physics = S
+
+;[State 140, ステート変更] ;Implemented within engine
+;type = ChangeState
+;trigger1 = animtime = 0
+;value = (statetype = C)*11 + (statetype = A)*51
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	立ちガード（ヒット硬直中）
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 150]
+type    = S
+movetype= H
+physics = N
+velset = 0,0
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 150
+
+[State 150, アニメ変更]
+type = ChangeAnim
+trigger1 = 1
+value = 150
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State 150, ステート変更]
+type = ChangeState
+trigger1 = HitShakeOver
+value = 151+ 2*(command = "holddown")
+
+[State 150, 状態変更] ;立ち→しゃがみ
+type = StateTypeSet
+trigger1 = statetype = S && command = "holddown"
+statetype = C
+physics = C
+
+[State 150, 状態変更] ;しゃがみ→立ち
+type = StateTypeSet
+trigger1 = statetype = C && command != "holddown"
+statetype = S
+physics = S
+
+[State 150, コントローラの振動] ;使えるのか不明。消しても問題なし
+type = ForceFeedback
+trigger1 = time = 0
+waveform = square
+time = 3
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	立ちガード（ノックバック）
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 151]
+type    = S
+movetype= H
+physics = S
+;anim = 150
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 151
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = anim != 150
+value = 150
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State -2]
+Type = VarSet
+Trigger1 = Ctrl
+V = 9
+Value = -Life
+
+[State 0, 2]
+type = PosSet
+trigger1 = 1
+y = 1
+
+[State 151, 1]
+type = HitVelSet
+trigger1 = time = 0
+x = 1
+
+[State 151, 移動速度]
+type = VelSet
+trigger1 = animelemtime(1) >= gethitvar(slidetime)
+trigger2 = hitover
+x = 0
+
+[State 151, コントロール可否]
+type = CtrlSet
+trigger1 = animelemtime(1) >= gethitvar(ctrltime)
+value = 1
+
+[State 151, 状態変更] ;立ち→しゃがみ
+type = StateTypeSet
+trigger1 = statetype = S && command = "holddown"
+statetype = C
+physics = C
+
+[State 151, 状態変更] ;しゃがみ→立ち
+type = StateTypeSet
+trigger1 = statetype = C && command != "holddown"
+statetype = S
+physics = S
+
+[State 151, ステート変更]
+type = ChangeState
+trigger1 = hitover
+value = 130
+ctrl = 1
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	しゃがみガード（ヒット硬直中）
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 152]
+type    = C
+movetype= H
+physics = N
+velset = 0,0
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 152
+
+[State 152, アニメ変更]
+type = ChangeAnim
+trigger1 = 1
+value = 151
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State 152, ステート変更]
+type = ChangeState
+trigger1 = HitShakeOver
+value = 151+ 2*(command = "holddown")
+
+[State 152, 状態変更] ;立ち→しゃがみ
+type = StateTypeSet
+trigger1 = statetype = S && command = "holddown"
+statetype = C
+physics = C
+
+[State 152, 状態変更] ;しゃがみ→立ち
+type = StateTypeSet
+trigger1 = statetype = C && command != "holddown"
+statetype = S
+physics = S
+
+[State 152, コントローラの振動]
+type = ForceFeedback
+trigger1 = time = 0
+waveform = square
+time = 4
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	しゃがみガード（ノックバック）
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 153]
+type    = C
+movetype= H
+physics = C
+;anim = 151
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 153
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = anim != 151
+value = 151
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State -2]
+Type = VarSet
+Trigger1 = Ctrl
+V = 9
+Value = -Life
+
+[State 153, 1]
+type = HitVelSet
+trigger1 = time = 0
+x = 1
+
+[State 153, 移動速度]
+type = VelSet
+trigger1 = animelemtime(1) >= gethitvar(slidetime)
+trigger2 = hitover
+x = 0
+
+[State 153, コントロール可否]
+type = CtrlSet
+trigger1 = animelemtime(1) >= gethitvar(ctrltime)
+value = 1
+
+[State 153, 状態変更] ;立ち→しゃがみ
+type = StateTypeSet
+trigger1 = statetype = S && command = "holddown"
+statetype = C
+physics = C
+
+[State 153, 状態変更] ;しゃがみ→立ち
+type = StateTypeSet
+trigger1 = statetype = C && command != "holddown"
+statetype = S
+physics = S
+
+[State 153, ステート変更]
+type = ChangeState
+trigger1 = hitover
+value = 131
+ctrl = 1
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	空中ガード（ヒット硬直中）
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 154]
+type    = A
+movetype= H
+physics = N
+velset = 0,0
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 154
+
+[State 154, アニメ変更]
+type = ChangeAnim
+trigger1 = 1
+value = 152
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State 154, ステート変更]
+type = ChangeState
+trigger1 = HitShakeOver
+value = 155 ;AGUARDHIT2
+
+[State 154, コントローラの振動]
+type = ForceFeedback
+trigger1 = time = 0
+waveform = square
+time = 4
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	立ちガード（ノックバック）
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 155]
+type    = A
+movetype= H
+physics = N
+;anim = 152
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(59) = 155
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = anim != 152
+value = 152
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 0
+attr = ,AP
+slot = 0
+stateno = 8001
+time = 1
+forceair = 0
+nothitstate = 1
+hotype = 1
+destroyaggressor = 6451
+allproj = 1
+allhelpers = enemynear,name = "Vargskelethor"
+
+[State -2]
+Type = VarSet
+Trigger1 = Ctrl
+V = 9
+Value = -Life
+
+[State 155, 1]
+type = HitVelSet
+trigger1 = time = 0
+x = 1
+y = 1
+
+[State 155, 速度増減]
+type = VelAdd
+trigger1 = 1
+y = Const(movement.yaccel)
+
+[State 155, コントロール可否]
+type = CtrlSet
+trigger1 = animelemtime(1) >= gethitvar(ctrltime)
+value = 1
+
+[State 155, 変数を設定]
+type = VarSet
+trigger1 = 1
+sysvar(0) = (pos y >= 0) && (vel y > 0)
+
+[State 155, 移動速度]
+type = VelSet
+trigger1 = sysvar(0)
+y = 0
+
+[State 155, 軸位置]
+type = PosSet
+trigger1 = sysvar(0)
+y = 0
+
+[State 155, ステート変更]
+type = ChangeState
+trigger1 = sysvar(0)
+trigger1 = command = "holdback"
+trigger1 = inguarddist
+value = 130
+
+[State -2]
+Type = VarSet
+Trigger1 = SysVar(0)
+V = 9
+Value = -Life
+
+[State 155, ステート変更]
+type = ChangeState
+trigger1 = sysvar(0)
+value = 52
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	タイムオーバー負け
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 170]
+type = S
+ctrl = 0
+anim = 170
+velset = 0,0
+
+[State 170, 1]
+type = NotHitBy
+trigger1 = 1
+value = SCA,AA,AP,AT
+time = 1
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	タイムオーバー引き分け
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[Statedef 175]
+type = S
+ctrl = 0
+velset = 0,0
+
+[State 175, ステート変更] ; If no anim, use go to lose state.
+type = ChangeState
+trigger1 = time = 0
+trigger1 = !SelfAnimExist(175)
+value = 170
+
+[State 175, 2]
+type = ChangeAnim
+trigger1 = time = 0
+value = 175
+
+[State 175, 3]
+type = NotHitBy
+trigger1 = 1
+value = SCA,AA,AP,AT
+time = 1
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	イントロ導入
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 190]
+type = S
+ctrl = 0
+velset = 0,0
+
+[State 190, 1]
+type = ChangeAnim
+trigger1 = SelfAnimExist(190)
+value = 190
+
+[State 190, ステート変更] ;Go straight to intro.
+type = ChangeState
+trigger1 = time = 0
+value = 191
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	立ちやられ
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 5000]
+type    = S
+movetype= H
+physics = N
+velset = 0,0
+movehitpersist = 1
+hitdefpersist = 1
+hitcountpersist = 1
+
+[State 0, ヘルパーの場合消滅]
+type = DestroySelf
+trigger1 = ishelper
+
+[State 5010,やられボイス]
+Type=playSnd
+Trigger1=Time=0
+Trigger1=random%2=0
+value=11,1+random%3
+channel = 0
+
+[State 5000, アニメ変更] ;Light～Hard
+type = ChangeAnim
+trigger1 = time = 0
+trigger1 = gethitvar(animtype) != [3,5]
+value = ifelse((gethitvar(groundtype) = 1),5000,5010) + gethitvar(animtype)
+;受けたHitdefのanimtype（やられの強さ）を判定して表示するアニメを決定
+;ground.type = 1（High）である場合は立ちやられを、それ以外はしゃがみやられを表示
+;animtype   ：0 - light, 1 - medium, 2 - hard, 3 - back, 4 - up, 5 - diag-up
+;ground.type：0 - non,   1 - high,   2 - low,  3 - trip
+
+[State 5000, アニメ変更] ;吹っ飛び開始
+type = ChangeAnim
+trigger1 = time = 0
+trigger1 = gethitvar(animtype) = [3,5]
+value = 5030
+;「back」「up」「diag-up」のいずれかの場合吹っ飛びのアニメに
+
+[State 5000, アニメ変更] ;垂直吹っ飛び・対角吹っ飛び (オプション)
+type = ChangeAnim
+trigger1 = time = 0
+trigger1 = (gethitvar(animtype) = [4,5]) && (SelfAnimExist(5047 + gethitvar(animtype)))
+value = 5047 + gethitvar(animtype) ;5051 - 4 + type
+;垂直吹っ飛びなら5047、対角吹っ飛びなら5048を表示。アニメがなければ5030が表示される。
+
+[State 5000, アニメ変更] ;Freeze anim
+type = ChangeAnim
+trigger1 = Time > 0
+value = anim
+
+[State 5000, 状態変更] ;吹っ飛んだ場合に状態を空中に設定
+type = StateTypeSet
+trigger1 = time = 0
+trigger1 = gethitvar(yvel) != 0 || gethitvar(fall)
+trigger2 = Pos Y != 0
+statetype = A
+
+[State 5000, ステート変更]
+type = ChangeState
+trigger1 = HitShakeOver
+trigger1 = gethitvar(yvel) = 0 && !gethitvar(fall)
+value = 5001 ;立ちやられノックバック
+
+[State 5000, ステート変更]
+type = ChangeState
+trigger1 = HitShakeOver
+value = 5030
+
+[State 5000, コントローラの振動 Light]
+type = ForceFeedback
+trigger1 = anim = 5000
+trigger2 = anim = 5010
+persistent = 0
+time = 6
+waveform = square
+
+[State 5000, コントローラの振動 Medium]
+type = ForceFeedback
+trigger1 = anim = 5001
+trigger2 = anim = 5011
+persistent = 0
+time = 8
+waveform = sinesquare
+ampl = 110,-1,-.3
+
+[State 5000, コントローラの振動 Hard]
+type = ForceFeedback
+trigger1 = anim = 5012
+trigger2 = anim = 5002
+trigger3 = anim = 5030
+persistent = 0
+time = 15
+waveform = sinesquare
+ampl = 140
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	立ちやられノックバック
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 5001]
+type    = S
+movetype= H
+physics = S
+movehitpersist = 1
+hitdefpersist = 1
+hitcountpersist = 1
+
+[State -2]
+Type = VarSet
+Trigger1 = HitOver
+V = 9
+Value = -Life
+
+[State 5001, HitDefの速度] ;受けたHitdefが指定した速度を有効にする
+type = HitVelSet
+trigger1 = time = 0
+x = 1 ;0で無効、1で有効
+
+[State 5001, アニメ変更]
+type = ChangeAnim
+trigger1 = animtime = 0
+value = 5005 + gethitvar(animtype) + (gethitvar(groundtype)=2)*10
+
+[State 5001, 速度乗算] ;ノックバックを終了
+type = VelMul
+trigger1 = Time >= gethitvar(slidetime)
+x = .6
+
+[State 5001, 移動速度]
+type = VelSet
+trigger1 = hitover
+x = 0
+
+[State 5001, 防御力指定] ;防御力補正を通常に戻す
+type = DefenceMulSet
+trigger1 = hitover
+value = 1
+
+[State 5001, ステート変更]
+type = ChangeState
+trigger1 = hitover
+value = 0
+ctrl = 1
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	しゃがみやられ
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 5010]
+type    = C
+movetype= H
+physics = N
+velset = 0,0
+movehitpersist = 1
+hitdefpersist = 1
+hitcountpersist = 1
+
+[State 0, ヘルパーの場合消滅]
+type = DestroySelf
+trigger1 = ishelper
+
+[State 5010,やられボイス]
+Type=playSnd
+triggerall = alive
+Trigger1=Time=0
+Trigger1=random%2=0
+value=11,1+random%3
+channel = 0
+
+[State 5010, アニメ変更] ;Light～Hard
+type = ChangeAnim
+trigger1 = time = 0
+trigger1 = gethitvar(animtype) != [3,5]
+value = 5020 + gethitvar(animtype)
+
+[State 5010, アニメ変更] ;吹っ飛び開始
+type = ChangeAnim
+trigger1 = time = 0
+trigger1 = gethitvar(animtype) = [3,5]
+value = 5030
+
+[State 5010, アニメ変更] ;垂直吹っ飛び・対角吹っ飛び (オプション)
+type = ChangeAnim
+trigger1 = time = 0
+trigger1 = (gethitvar(animtype) = [4,5]) && (SelfAnimExist(5047 + gethitvar(animtype)))
+value = 5047 + gethitvar(animtype) ;5051 - 4 + type
+
+[State 5010, アニメ変更]
+type = ChangeAnim
+trigger1 = Time > 0
+value = anim
+
+[State 5010, 状態変更] ;吹っ飛んだ場合に状態を空中に設定
+type = StateTypeSet
+triggerall = time = 0
+trigger1 = gethitvar(yvel) != 0 || gethitvar(fall)
+trigger2 = Pos Y != 0
+statetype = A
+
+[State 5010, ステート変更] ;しゃがみやられノックバック
+type = ChangeState
+trigger1 = HitShakeOver
+trigger1 = gethitvar(yvel) = 0 && !gethitvar(fall)
+value = 5011
+
+[State 5010, ステート変更] ;吹っ飛び開始
+type = ChangeState
+trigger1 = HitShakeOver
+value = 5030
+
+[State 5010, コントローラの振動 Light]
+type = ForceFeedback
+trigger1 = anim = 5020
+persistent = 0
+time = 6
+waveform = square
+
+[State 5010, コントローラの振動 Medium]
+type = ForceFeedback
+trigger1 = anim = 5021
+persistent = 0
+time = 8
+waveform = sinesquare
+ampl = 110,-1,-.3
+
+[State 5010, コントローラの振動 Hard]
+type = ForceFeedback
+trigger1 = anim = 5022
+persistent = 0
+time = 15
+waveform = sinesquare
+ampl = 140
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	しゃがみやられノックバック
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 5011]
+type    = C
+movetype= H
+physics = C
+movehitpersist = 1
+hitdefpersist = 1
+hitcountpersist = 1
+
+[State -2]
+Type = VarSet
+Trigger1 = HitOver
+V = 9
+Value = -Life
+
+[State 5011, HitDefの速度]
+type = HitVelSet
+trigger1 = time = 0
+x = 1
+
+[State 5011, アニメ変更]
+type = ChangeAnim
+trigger1 = animtime = 0
+value = 5025 + gethitvar(animtype)
+
+[State 5011, 速度乗算] ;ノックバックを終了
+type = VelMul
+trigger1 = Time >= gethitvar(slidetime)
+x = .6
+
+[State 5011, 移動速度]
+type = VelSet
+trigger1 = hitover
+x = 0
+
+[State 5011, 防御力指定] ;防御力補正を通常に戻す
+type = DefenceMulSet
+trigger1 = hitover
+value = 1
+
+[State 5011, ステート変更]
+type = ChangeState
+trigger1 = hitover
+value = 11
+ctrl = 1
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	空中やられ
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 5020]
+type    = A
+movetype= H
+physics = N
+velset = 0,0
+movehitpersist = 1
+hitdefpersist = 1
+hitcountpersist = 1
+
+[State 0, ヘルパーの場合消滅]
+type = DestroySelf
+trigger1 = ishelper
+
+[State 5020,やられボイス]
+Type=playSnd
+triggerall = alive
+Trigger1=Time=0
+Trigger1=random%2=0
+value=11,1+random%2
+channel = 0
+
+[State 5020, アニメ変更] ;Light～Hard
+type = ChangeAnim
+trigger1 = time = 0
+trigger1 = gethitvar(animtype) != [3,5]
+value = ifelse((gethitvar(airtype) = 1),5000,5010) + gethitvar(animtype)
+
+[State 5020, アニメ変更] ;吹っ飛び開始
+type = ChangeAnim
+trigger1 = time = 0
+trigger1 = gethitvar(animtype) = [3,5]
+value = 5030
+
+[State 5020, アニメ変更] ;垂直吹っ飛び・対角吹っ飛び (オプション)
+type = ChangeAnim
+trigger1 = time = 0
+trigger1 = (gethitvar(animtype) = [4,5]) && (SelfAnimExist(5047 + gethitvar(animtype)))
+value = 5047 + gethitvar(animtype) ;5051 - 4 + type
+
+[State 5020, アニメ変更] ;Freeze anim
+type = ChangeAnim
+trigger1 = Time > 0
+value = anim
+
+[State 5020, ステート変更] ;硬直
+type = ChangeState
+trigger1 = HitShakeOver
+value = 5030
+
+[State 5020, コントローラの振動 Light]
+type = ForceFeedback
+trigger1 = anim = 5000
+trigger2 = anim = 5010
+persistent = 0
+time = 6
+waveform = square
+
+[State 5020, コントローラの振動 Medium]
+type = ForceFeedback
+trigger1 = anim = 5001
+trigger2 = anim = 5011
+persistent = 0
+time = 8
+waveform = sinesquare
+ampl = 110,-1,-.3
+
+[State 5020, コントローラの振動 Hard]
+type = ForceFeedback
+trigger1 = anim = 5012
+trigger2 = anim = 5002
+trigger3 = anim = 5030
+trigger4 = anim = [5051,5059]
+persistent = 0
+time = 15
+waveform = sinesquare
+ampl = 140
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	吹っ飛び開始
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 5030]
+type    = A
+movetype= H
+physics = N
+ctrl = 0
+movehitpersist = 1
+hitdefpersist = 1
+hitcountpersist = 1
+
+[State 5030, 速度増減] ;重力
+type = VelAdd
+trigger1 = 1
+y = gethitvar(yaccel)
+
+[State 5030, HitDefの速度]
+type = HitVelSet
+trigger1 = time = 0
+x = 1
+y = 1
+
+[State 5030, ステート変更]
+type = ChangeState
+triggerall = !HitFall
+trigger1 = hitover
+trigger2 = Vel Y > 0    ;Hit ground
+trigger2 = Pos Y >= 10  ;.
+value = 5040 ;HITA_RECOV
+
+[State 5030, ステート変更]
+type = ChangeState
+triggerall = HitFall
+trigger1 = hitover
+trigger2 = Vel Y > 0    ;Hit ground
+trigger2 = Pos Y >= 10  ;.
+value = 5050 ;HITA_FALL
+
+[State 5030, ステート変更]
+type = ChangeState
+trigger1 = animtime = 0
+value = 5035 ;HITA_UP (transition)
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	吹っ飛び
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[Statedef 5035]
+type    = A
+movetype= H
+physics = N
+movehitpersist = 1
+hitdefpersist = 1
+hitcountpersist = 1
+
+[State 5035, アニメ変更]
+type = ChangeAnim
+trigger1 = time = 0
+trigger1 = SelfAnimExist(5035)
+trigger1 = Anim != [5051,5059] ;Not if in hit up anim
+trigger1 = Anim != 5090 ;Not if hit off ground anim
+value = 5035
+
+[State 5035, 速度増減]
+type = VelAdd
+trigger1 = 1
+y = gethitvar(yaccel)
+
+[State 5035, ステート変更]
+type = ChangeState
+triggerall = !HitFall
+trigger1 = hitover  ;Hit is over
+trigger2 = animtime = 0 ;Animation over
+trigger3 = Vel Y > 0    ;Hit ground
+trigger3 = Pos Y >= 10  ;.
+trigger4 = time = 0     ;No transition anim
+trigger4 = Anim != 5035 ;.
+value = 5040 ;HITA_RECOV
+
+[State 5035, ステート変更]
+type = ChangeState
+triggerall = HitFall
+trigger1 = hitover  ;Hit is over
+trigger2 = animtime = 0 ;Anim is over
+trigger3 = Vel Y > 0    ;Hit ground
+trigger3 = Pos Y >= 10  ;.
+trigger4 = time = 0     ;No transition anim
+trigger4 = Anim != 5035 ;.
+value = 5050 ;HITA_FALL
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	空中リカバリー(吹っ飛び下降でないとき)
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 5040]
+type    = A
+movetype= H
+physics = N
+movehitpersist = 1
+hitdefpersist = 1
+hitcountpersist = 1
+
+[State -2]
+Type = VarSet
+Trigger1 = HitOver
+V = 9
+Value = -Life
+
+[State 5040, ステート変更]
+type = ChangeState
+trigger1 = !Alive
+value = 5050
+
+[State 5040, アニメ変更]
+type = ChangeAnim
+trigger1 = animtime = 0
+trigger1 = Anim != 5040
+trigger2 = time = 0
+trigger2 = Anim != 5035
+value = 5040
+
+[State 5040, コントロール可否]
+type = CtrlSet
+trigger1 = hitover
+value = 1
+
+[State 5040, 状態変更]
+type = StateTypeSet
+trigger1 = hitover
+movetype = I
+
+[State 5040, 速度増減]
+type = VelAdd
+trigger1 = 1
+y = gethitvar(yaccel)
+
+[State 5040, ステート変更]
+type = ChangeState
+trigger1 = Vel Y > 0
+trigger1 = Pos Y >= 0
+value = 52 ;JUMPLAND
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	吹っ飛び下降
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 5050]
+type    = A
+movetype= H
+physics = N
+movehitpersist = 1
+hitdefpersist = 1
+hitcountpersist = 1
+
+[State 5050, アニメ変更] ;Change anim when done with transition
+type = ChangeAnim
+trigger1 = animtime = 0
+trigger1 = Anim = 5035
+trigger2 = time = 0     ;If no transition anim
+trigger2 = Anim != 5035
+trigger2 = (Anim != [5051, 5059]) && (Anim != [5061, 5069])
+trigger2 = Anim != 5090 ;Not if hit off ground anim
+value = 5050
+
+[State 5050, アニメ変更] ;Coming down anim
+type = ChangeAnim
+trigger1 = anim = [5050,5059]
+trigger1 = Vel Y >= ifelse(anim = 5050, 1, -2)
+trigger1 = SelfAnimExist(anim+10)
+value = anim+10
+persistent = 0
+
+[State 5050, 速度増減] ;重力
+type = VelAdd
+trigger1 = 1
+y = gethitvar(yaccel)
+
+[State 5050, ステート変更] ;Recover near ground
+type = ChangeState
+triggerall = Vel Y > 0
+triggerall = Pos Y >= -20
+triggerall = alive
+triggerall = CanRecover
+trigger1 = Command = "recovery"
+value = 5200 ;HITFALL_RECOVER
+
+[State 5050, ステート変更]; Recover in mid air
+type = ChangeState
+triggerall = Vel Y > -1
+triggerall = alive
+triggerall = CanRecover
+trigger1 = Command = "recovery"
+value = 5210 ;HITFALL_AIRRECOVER
+
+[State 5050, ステート変更]
+type = ChangeState
+trigger1 = Vel Y > 0
+trigger1 = Pos Y >= ifelse((anim = [5051,5059]) || (anim = [5061,5069]), 0, 25)
+value = 5100 ;HIT_BOUNCE
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	転倒（硬直中）
+;	・ground.type = tripで表示されるステートです。
+;	　硬直が解除され次第ステート5071に飛びます。
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 5070]
+type    = A
+movetype= H
+physics = N
+velset = 0,0
+movehitpersist = 1
+hitdefpersist = 1
+hitcountpersist = 1
+
+[State 5070,やられボイス]
+Type=playSnd
+triggerall = alive
+Trigger1=Time=0
+Trigger1=random%2=0
+value=11,1+random%3
+channel = 0
+
+[State 5070, アニメ変更]
+type = ChangeAnim
+trigger1 = 1
+value = 5070
+
+[State 5070, ステート変更]
+type = ChangeState
+trigger1 = HitShakeOver
+value = 5071
+
+[State 5070, 3]
+type = ForceFeedback
+trigger1 = time = 0
+time = 12
+waveform = sinesquare
+ampl = 140
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	転倒
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 5071]
+type    = A
+movetype= H
+physics = N
+movehitpersist = 1
+hitdefpersist = 1
+hitcountpersist = 1
+
+[State 5071, 1]
+type = HitVelSet
+trigger1 = time = 0
+x = 1
+y = 1
+
+[State 5071, 速度増減] ;Acceleration
+type = VelAdd
+trigger1 = 1
+y = gethitvar(yaccel)
+
+[State 5071, ステート変更] ;Hit ground
+trigger1 = Vel Y > 0
+trigger1 = Pos Y >= 15
+type = ChangeState
+value = 5110
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	ダウン中やられ（硬直中）
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 5080]
+type    = L
+movetype= H
+physics = N
+velset = 0,0
+
+[State 0, ChangeState]
+type = ChangeState
+triggerall = alive
+trigger1 = Command = "recovery" || Command = "holdleft" || command = "holdright" || command = "holdup"
+value = 5200
+
+[State 5080, 1] ;Set default anim
+type = VarSet
+trigger1 = time = 0
+sysvar(2) = ifelse (gethitvar(yvel) = 0, 5080, 5090)
+
+[State 5080, 2]
+type = VarAdd
+trigger1 = time = 0
+trigger1 = (anim = [5081,5089]) || (anim = [5111,5119])
+trigger1 = SelfAnimExist(sysvar(2) + (anim % 10))
+sysvar(2) = anim % 10
+
+[State 5080, 3] ;If 5090 doesn't exist, default to 5030
+type = VarSet
+trigger1 = time = 0
+trigger1 = sysvar(2) = 5090
+trigger1 = !SelfAnimExist(5090)
+sysvar(2) = 5030
+
+[State 5080, アニメ変更] ;Freeze
+type = ChangeAnim
+trigger1 = 1
+value = sysvar(2)
+
+[State 5080, ステート変更]
+type = ChangeState
+trigger1 = HitShakeOver
+trigger1 = gethitvar(yvel) = 0
+value = 5081 ;HITL_SLIDE
+
+[State 5080, ステート変更]
+type = ChangeState
+trigger1 = HitShakeOver
+trigger1 = gethitvar(yvel) != 0
+value = 5030 ;HITA_UP
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	ダウン中やられ
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 5081]
+type    = L
+movetype= H
+physics = C
+
+[State 0, ChangeState]
+type = ChangeState
+triggerall = alive
+trigger1 = Command = "recovery" || Command = "holdleft" || command = "holdright" || command = "holdup"
+value = 5200
+
+[State 5081, 1]
+type = HitVelSet
+trigger1 = time = 0
+x = 1
+
+[State 5081, 2]
+type = VelSet
+trigger1 = hitover
+x = 0
+
+[State 5081, 3] ;Don't show hit ground frame
+type = VarSet
+trigger1 = time = 0
+sysvar(0) = 1
+
+[State 5081, ステート変更]
+type = ChangeState
+trigger1 = hitover
+value = 5110 ;HIT_LIEDOWN
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	吹っ飛び後地面に激突
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 5100]
+type    = L
+movetype= H
+physics = N
+
+[State 0, ChangeState]
+type = ChangeState
+triggerall = alive
+trigger1 = Command = "recovery" || Command = "holdleft" || command = "holdright" || command = "holdup"
+value = 5200
+
+[State 5100, 1]
+type = VelSet
+trigger1 = time = 0
+trigger1 = gethitvar(fall.yvel) = 0
+trigger1 = vel x > 1
+x = 1
+
+[State 5100, EnvShake]
+type = FallEnvShake
+trigger1 = time = 0
+
+[State 5100, Var] ;Save fall velocity
+type = VarSet
+trigger1 = time = 0
+sysvar(1) = floor(vel y)
+
+[State 5100, アニメ変更] ;Hit ground anim (normal)
+type = ChangeAnim
+triggerall = time = 0
+trigger1 = (anim != [5051,5059]) && (anim != [5061,5069])
+trigger2 = !SelfAnimExist(5100 + (anim % 10))
+value = 5100
+
+[State 5100, アニメ変更] ;Hit ground anim (for hit up)
+type = ChangeAnim
+trigger1 = time = 0
+trigger1 = (anim = [5051,5059]) || (anim = [5061,5069])
+trigger1 = SelfAnimExist(5100 + (anim % 10))
+value = 5100 + (anim % 10)
+
+[State 5100, 4]
+type = PosSet
+trigger1 = time = 0
+y = 0
+
+[State 5100, 5]
+type = VelSet
+trigger1 = time = 0
+y = 0
+
+[State 5100, 速度乗算] ;Reduce speed
+type = VelMul
+trigger1 = time = 0
+x = 0.75
+
+[State 5100, ステート変更]
+type = ChangeState
+trigger1 = time = 0
+trigger1 = gethitvar(fall.yvel) = 0
+value = 5110 ;HIT_LIEDOWN
+
+[State 5100, 8]
+type = GameMakeAnim
+trigger1 = time = 1
+value = 60 + (sysvar(1) > 5) + (sysvar(1) > 14)
+pos = 0, 0
+under = sysvar(1) <= 14
+
+[State 5100, 9]
+type = HitFallDamage
+trigger1 = time = 3
+
+[State 5100,10]
+Type=PlaySnd
+Trigger1=Time=1
+value=0,13
+
+[State 5100, 11]
+type = PosFreeze
+trigger1 = 1
+
+[State 5100, ステート変更]
+type = ChangeState
+trigger1 = animtime = 0
+value = 5101
+
+[State 5100, 13]
+type = ForceFeedback
+trigger1 = time = 0
+waveform = sinesquare
+ampl = 128,-3,-.2,.005
+time = 20
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	激突後のバウンド
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 5101]
+type    = L
+movetype= H
+physics = N
+
+[State 0, ChangeState]
+type = ChangeState
+triggerall = alive
+trigger1 = Command = "recovery" || Command = "holdleft" || command = "holdright" || command = "holdup"
+value = 5200
+
+[State 5101, アニメ変更] ;Coming hit ground anim (normal)
+type = ChangeAnim
+triggerall = time = 0
+trigger1 = anim != [5101,5109]
+trigger2 = !SelfAnimExist(5160 + (anim % 10))
+value = 5160
+
+[State 5101, アニメ変更] ;Coming hit ground anim (for hit up)
+type = ChangeAnim
+triggerall = time = 0
+trigger1 = anim = [5101,5109]
+trigger1 = SelfAnimExist(5160 + (anim % 10))
+value = 5160 + (anim % 10)
+
+[State 5101, 3]
+type = HitFallVel
+trigger1 = time = 0
+
+[State 5101, 4]
+type = PosSet
+trigger1 = time = 0
+y = 20
+
+[State 5101, 速度増減] ;Acceleration
+type = VelAdd
+trigger1 = 1
+y = .4
+
+[State 5101, ステート変更] ;Hit ground
+type = ChangeState
+trigger1 = Vel Y > 0
+trigger1 = Pos Y >= 12
+value = 5110
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	横たわる
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 5110]
+type    = L
+movetype= I
+physics = N
+
+[State 0, ChangeState]
+type = ChangeState
+triggerall = alive
+trigger1 = Command = "recovery" || Command = "holdleft" || command = "holdright" || command = "holdup"
+value = 5200
+
+[State 5110, EnvShake]
+type = FallEnvShake
+trigger1 = time = 0
+
+[State 5110, アニメ変更] ;For hit up/up-diag type (from state 5081)
+type = ChangeAnim
+persistent = 0
+trigger1 = SelfAnimExist(5110 + (anim % 10))
+trigger1 = anim = [5081,5089]
+value = 5110 + (anim % 10)
+
+[State 5110, アニメ変更] ;Hit ground anim (normal)
+type = ChangeAnim
+triggerall = time = 0
+triggerall = anim != [5110,5119] ;Not already changed anim
+trigger1 = anim != [5161,5169]
+trigger2 = !SelfAnimExist(5170 + (anim % 10))
+value = 5170
+
+[State 5110, アニメ変更] ;Hit ground anim (for hit up)
+type = ChangeAnim
+triggerall = time = 0
+triggerall = anim != [5110,5119] ;Not already changed anim
+trigger1 = anim = [5161,5169]
+trigger1 = SelfAnimExist(5170 + (anim % 10))
+value = 5170 + (anim % 10)
+
+[State 5110, 4]
+type = HitFallDamage
+trigger1 = time = 0
+
+[State 5110, 5]
+type = PosSet
+trigger1 = time = 0
+y = 0
+
+[State 5110, Var] ;Get fall velocity
+type = VarSet
+trigger1 = time = 0
+trigger1 = gethitvar(fall.yvel) != 0
+sysvar(1) = floor(vel y)
+
+[State 5110,6]
+Type=PlaySnd
+Trigger1=Time=0
+Trigger1=!SysVar(0)
+value=0,13
+
+[State 5110,dust]
+Type=Explod
+Trigger1=Time=1
+Anim=6200
+Pos=-30,floor(10*const(Size.yScale))
+PosType=P1
+sprPriority=-5
+Ownpal=1
+Scale=const(Size.xScale),const(Size.yScale)
+
+[State 5110, 7]
+type = GameMakeAnim
+trigger1 = time = 0
+trigger1 = !SysVar(0)
+value = 60 + (sysvar(1) > 5) + (sysvar(1) > 14)
+pos = 0, 0
+under = sysvar(1) <= 14
+
+[State 5110, 8]
+type = VelSet
+trigger1 = time = 0
+y = 0
+
+[State 5110, アニメ変更] ;For hit up type
+type = ChangeAnim
+persistent = 0
+triggerall = anim = [5171,5179]
+triggerall = SelfAnimExist(5110 + (anim % 10))
+trigger1 = animtime = 0
+trigger2 = SysVar(0) ;SysVar(0) = 1 avoids hit ground anim
+value = 5110 + (anim % 10)
+
+[State 5110, アニメ変更] ;For normal
+type = ChangeAnim
+persistent = 0
+triggerall = Anim != [5111,5119]
+trigger1 = animtime = 0
+trigger2 = SysVar(0) ;SysVar(0) = 1 avoids hit ground frame
+value = 5110
+
+[State 5110, ステート変更] ;If just died
+type = ChangeState
+triggerall = !alive
+trigger1 = animtime = 0
+trigger2 = SysVar(0) ;SysVar(0) = 1 avoids hit ground frame
+trigger3 = Anim = [5110,5119]
+value = 5150
+
+[State 5110, 12]
+type = VarSet
+trigger1 = SysVar(0)
+trigger1 = time = 0
+sysvar(0) = 0
+
+[State 5110, 速度乗算] ;Friction
+type = VelMul
+trigger1 = 1
+x = 0.85
+
+[State 5110, 14]
+type = ForceFeedback
+trigger1 = alive
+trigger1 = time = 0
+time = 8
+ampl = 240
+waveform = sine
+
+[State 5110, 15]
+type = ForceFeedback
+trigger1 = !alive
+trigger1 = time = 0
+ampl = 200, 7, -.467
+time = 30
+waveform = sine
+
+[State -I1, Getup2]
+type = VarAdd
+trigger1 = 1
+sysvar(54) = 1
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	起き上がる
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 5120]
+type    = L
+movetype= I
+physics = N
+
+[State 0, ChangeState]
+type = ChangeState
+triggerall = alive
+trigger1 = Command = "recovery" || Command = "holdleft" || command = "holdright" || command = "holdup"
+value = 5200
+
+[State 5120, アニメ変更] ;Get up anim (normal)
+type = ChangeAnim
+triggerall = time = 0
+trigger1 = anim != [5111,5119]
+trigger2 = !SelfAnimExist(5120 + (anim % 10))
+value = 5120
+
+[State 5120, アニメ変更] ;Get up anim (for hit up/diag-up)
+type = ChangeAnim
+triggerall = time = 0
+trigger1 = anim = [5111,5119]
+trigger1 = SelfAnimExist(5120 + (anim % 10))
+value = 5120 + (anim % 10)
+
+[State 5120, 速度設定]
+type = VelSet
+trigger1 = time = 0
+x = 0
+
+[State 5120,やられボイス]
+Type=playSnd
+triggerall = alive
+Trigger1=Time=0
+Trigger1=Anim=[5120,5121]
+value=11,4+random%3
+channel = 0
+
+[State 5120, ヒット無効]
+type = NotHitBy
+trigger1 = 1
+value = SCA,AA,AP,AT
+time = 1
+
+[State 5120, フォール設定]
+type = HitFallSet
+trigger1 = animtime = 0
+value = 1
+
+[State 5120, ヒット無効] ;起き上がり後の投げ無敵
+type = NotHitBy
+trigger1 = animtime = 0
+value = SCA,AT
+time = 12
+
+[State 5120, ヒット無効] ;起き上がり無敵
+type = NotHitBy
+trigger1 = animtime = 0
+value2 = SCA,AA,AP,AT
+time = 3
+
+[State 5120, ステート変更]
+type = ChangeState
+trigger1 = animtime = 0
+value = 0
+ctrl = 1
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	横たわる（敗北時）
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 5150]
+type    = L
+movetype= H
+physics = N
+nominus = anim = 3421
+sprpriority = -3
+
+[State 0, StopSnd]
+type = StopSnd
+trigger1 = anim = 3421
+channel = -1
+
+[State 0, ChangeState]
+type = ChangeState
+triggerall = alive
+trigger1 = Command = "recovery" || Command = "holdleft" || command = "holdright" || command = "holdup"
+value = 5200
+
+[State 5110, 相手消滅]
+type = AssertSpecial
+trigger1 = anim = 3421
+flag = invisible
+flag2 = noshadow
+
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 = anim = 3421
+id = -1
+
+[State 5150, アニメ変更] ;Normal anim
+type = ChangeAnim
+triggerall = anim != 3421
+triggerall = !time
+triggerall = SelfAnimExist(5140)
+trigger1 = (anim != [5111,5119]) && (anim != [5171,5179])
+trigger2 = !SelfAnimExist(5140 + (anim % 10))
+value = 5140
+
+[State 5150, アニメ変更] ;Hit up type anim
+type = ChangeAnim
+triggerall = anim != 3421
+triggerall = !time
+trigger1 = (anim = [5111,5119]) || (anim = [5171,5179])
+trigger1 = SelfAnimExist(5140 + (anim % 10))
+value = 5140 + (anim % 10)
+
+[State 5150, アニメ変更] ;Match over anim
+type = ChangeAnim
+triggerall = anim != 3421
+;trigger1 = time = 0
+trigger1 = MatchOver = 1
+trigger1 = Anim = [5140,5149]
+trigger1 = SelfAnimExist(anim+10)
+value = anim+10
+persistent = 0
+
+[State 5150, アニメ変更] ;Switch to 5110 if liedead anim does not exist
+type = ChangeAnim
+triggerall = anim != 3421
+triggerall = !time
+trigger1 = Anim != [5140,5159]
+trigger1 = Anim != [5110,5119]
+value = 5110
+
+[State 5150, 速度乗算] ;Friction
+type = VelMul
+trigger1 = 1
+x = 0.85
+
+[State 5150, 7] ;Friction
+type = VelSet
+trigger1 = Vel x < .05
+persistent = 0
+x = 0
+
+[State 5150, 8]
+type = NotHitBy
+trigger1 = 1
+value = SCA,AA,AP,AT
+time = 1
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	低空時の空中受け身予約
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 5200]
+type    = S
+movetype= I
+physics = N
+sprpriority = -1
+
+[State 0, PosSet]
+type = PosSet
+trigger1 = 1
+y = 0
+ignorehitpause = 1
+
+[State 0, Offset]
+type = Offset
+trigger1 = 1
+x = 0
+y = 0
+ignorehitpause = 1
+
+[State 0, AngleDraw]
+type = AngleDraw
+trigger1 = 1
+value = 0
+scale = 1,1
+ignorehitpause = 1
+
+[State 0, DisplayToClipboard]
+type = DisplayToClipboard
+trigger1 = 1
+text = "pos Y = %f"
+params = pos Y
+ignorehitpause = 1
+
+[State 0, Turn]
+type = Turn
+triggerall = p2dist X < 0
+trigger1 = !time
+trigger2 = anim != 5200 && animelem = 6
+
+[State 5200, 中央の☆っぽいの]
+type = Explod
+trigger1 = !time
+anim = 10050
+id = 10050
+pos = 0,-45
+postype = p1
+ownpal = 1
+bindtime = 0
+scale = 0.6,0.6
+pausemovetime = -1
+sprpriority = 2
+
+[State 5200, 砂煙（透過）]
+type = Explod
+trigger1 = !time
+anim = 10051
+id = 10051
+pos = 0,0
+postype = p1
+ownpal = 1
+bindtime = 0
+scale = 0.75,0.9
+persistent = 0
+sprpriority = 3
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+triggerall = !time
+trigger1 = command != "holdleft" && command != "holdright"
+trigger2 = command = "holdleft" && command = "holdright"
+value = 5200
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+triggerall = !time
+trigger1 = command = "holdright" && command != "holdleft" && facing = 1
+trigger2 = command = "holdleft" && command != "holdright" && facing = -1
+value = 5201
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+triggerall = !time
+trigger1 = command = "holdleft" && command != "holdright" && facing = 1
+trigger2 = command = "holdright" && command != "holdleft" && facing = -1
+value = 5202
+
+[State 0, PlayerPush]
+type = PlayerPush
+trigger1 = anim != 5200
+value = 0
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = !time
+x = ifelse(anim = 5201,4.8,ifelse(anim = 5202,-4.8,0))
+y = 0
+
+[State 5200, 無敵]
+type = NotHitBy
+trigger1 = 1
+value = SCA,AA,AP,AT
+time = 12
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = !time
+value = S0,32
+
+[State 5200, 点滅]
+type = PalFX
+trigger1 = time <= 6
+trigger1 = time%2 = 0
+time = 1
+add = 12,222,12
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = Time >= 15
+value = 0
+ctrl = 1
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	低空時の空中受け身
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	空中受け身
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 5210]
+type    = A
+movetype= I
+physics = N
+anim = 5210
+ctrl = 0
+
+[State 5210, 1] ;Blink white
+type = PalFX
+trigger1 = time = 0
+time = 3
+add = 128,128,128 ;256,256,256
+
+[State 5210, 1]
+type = PosFreeze
+trigger1 = time = 0
+value = 4
+
+[State 5210, 2] ;Turn if not facing opponent
+type = Turn
+trigger1 = time = 0
+trigger1 = p2dist X < -20
+
+[State 5210, 速度乗算]
+type = VelMul
+trigger1 = time = 4
+x = .8
+y = .8
+
+[State 5210, 速度増減]
+type = VelAdd
+trigger1 = time = 4
+y = -4.5
+
+[State 5210, 速度乗算]
+type = VelMul
+trigger1 = time = 4
+trigger1 = Vel Y > 0
+y = .5
+
+[State 5210, 速度増減]
+type = VelAdd
+trigger1 = time = 4
+trigger1 = Vel Y > -3
+y = -2
+
+[State 5210, 速度増減]
+type = VelAdd
+trigger1 = time = 4
+trigger1 = Vel Y > -2
+y = -1
+
+[State 5210, 速度増減] ;Go up
+type = VelAdd
+trigger1 = time = 4
+trigger1 = Command = "holdup"
+y = -2
+
+[State 5210, 速度増減] ;Go down
+type = VelAdd
+trigger1 = time = 4
+trigger1 = Command = "holddown"
+y = 1.5
+
+[State 5210, 速度乗算] ;Go fwd
+type = VelMul
+trigger1 = time = 4
+trigger1 = Command = "holdfwd"
+x = 1
+
+[State 5210, 速度増減] ;Go back
+type = VelAdd
+trigger1 = time = 4
+trigger1 = Command = "holdback"
+x = -1
+
+[State 5210, 3]
+type = NotHitBy
+trigger1 = 1
+value = SCA,AA,AP,AT
+time = 15
+
+[State 5210, 4]
+type = CtrlSet
+trigger1 = time = 20
+value = 1
+
+[State 5210, 速度増減] ;重力
+type = VelAdd
+trigger1 = Time >= 4
+y = .35
+
+[State 5210, ステート変更] ;Land on ground
+type = ChangeState
+trigger1 = Vel Y > 0
+trigger1 = Pos Y >= 0
+value = 52 ;JUMP_LAND
+ctrl = 1
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	コンティニュー画面
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Statedef 5500]
+type = S
+ctrl = 0
+anim = 5300
+velset = 0,0
+
+
+[State 5500, アニメ変更] ;Use continue animation if available
+type = ChangeAnim
+trigger1 = time = 0
+trigger1 = SelfAnimExist(5300)
+value = 5300
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;	ラウンド開始前（初期化専用ステート）
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[Statedef 5900]
+type = S
+
+[State -2,初期ゲージ設定]
+	Type= PowerSet
+	trigger1 = roundsexisted = 0 && power < 1000
+	value = 1000
+
+[State 0, RemapPal]
+type = RemapPal
+trigger1 = 1
+source = 1,1
+dest = 1,palno
+
+[State 0, NotHitBy]
+type = NotHitBy
+trigger1 = 1
+value = SCA,AA,AP,AT
+time = 1
+
+[State 5900,ラウンド初期化];特殊勝利初期化
+type = VarSet
+trigger1 = var(52) != 0
+var(52) = 0
+
+[State 5900,ラウンド初期化];特殊勝利初期化
+type = VarSet
+trigger1 = var(42) != 0
+var(42) = 0
+
+[State 5900,ラウンド初期化];タイマー初期化
+type = VarSet
+trigger1 = var(21) != 0
+var(21) = 0
+
+[State 5900, 1] ;Clear all int variables
+type = VarRangeSet
+trigger1 = roundsexisted = 0
+value = 0
+
+[State 5900, 2] ;Clear all float variables
+type = VarRangeSet
+trigger1 = roundsexisted = 0
+fvalue = 0
+
+[State 5900, 3] ;Intro for round 1
+type = ChangeState
+	trigger1 = TeamMode = Single ||TeamMode = simul
+	trigger1 = RoundsExisted = 0
+	trigger2 = TeamMode = Turns
+	trigger3 = enemy,teammode = Turns
+	value = 190
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = 1
+value = 0
+ctrl = 0
+

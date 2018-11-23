@@ -108,57 +108,56 @@
  ;Insert your characters below.
 
 kfm, stages/kfm.def, 1=kfm
-ShinGouki, order=3, boss=1
+kamijo
+Archetype-Alceris
+ShinGouki
 randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-randomselect
-Catwalk, order=2, exclude=1, bonus=1, zoom=0, winscreen=0
-DuckHunt, order=2, exclude=1, bonus=1, zoom=0, winscreen=0
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
+none
 Training, exclude=1
 
 [ExtraStages]
@@ -204,6 +203,7 @@ Training, exclude=1
 
 stages/kfm.def
 stages/stage0.def
+stages/Last Corridor.def
 
 ;---------------------------------------------------------------------
 [Options]

@@ -952,12 +952,12 @@ public void readAnim(&.sff.Anim!&.bg.Frame? a=, &.ActionList al=, ^/char data)
     `round.new(9);
     `round:<-[void(r=){r.lay.layerno = 2;}];
     `fight.lay.layerno = 2;
-    `ko.lay.layerno = 1;
-    `dko.lay.layerno = 1;
-    `to.lay.layerno = 1;
-    `win.lay.layerno = 1;
-    `win2.lay.layerno = 1;
-    `drawn.lay.layerno = 1;
+    `ko.lay.layerno = 2;
+    `dko.lay.layerno = 2;
+    `to.lay.layerno = 2;
+    `win.lay.layerno = 2;
+    `win2.lay.layerno = 2;
+    `drawn.lay.layerno = 2;
   }
   public void read(&.com.Section sc=)
   {
@@ -1601,16 +1601,16 @@ public &Fight
   {
     `lb.new(3);
     `lb[0].new(2);
-    `lb[1].new(8);
+    `lb[1].new(4);
     `lb[2].new(2);
     `pb.new(2);
     `fa.new(3);
     `fa[0].new(2);
-    `fa[1].new(8);
+    `fa[1].new(4);
     `fa[2].new(2);
     `nm.new(3);
     `nm[0].new(2);
-    `nm[1].new(8);
+    `nm[1].new(4);
     `nm[2].new(2);
     `wi.new(2);
   }
@@ -1703,10 +1703,6 @@ public &Fight
           `lb[1][1].read("p2.", sc=);
           `lb[1][2].read("p3.", sc=);
           `lb[1][3].read("p4.", sc=);
-          `lb[1][4].read("p5.", sc=);
-          `lb[1][5].read("p6.", sc=);
-          `lb[1][6].read("p7.", sc=);
-          `lb[1][7].read("p8.", sc=);
           slifebarflg = false;
         }
       cond .s.equ(.s.toLower(sec[0..4]), "face"):
@@ -1715,10 +1711,6 @@ public &Fight
           `fa[1][1].read("p2.", sc=);
           `fa[1][2].read("p3.", sc=);
           `fa[1][3].read("p4.", sc=);
-          `fa[1][4].read("p5.", sc=);
-          `fa[1][5].read("p6.", sc=);
-          `fa[1][6].read("p7.", sc=);
-          `fa[1][7].read("p8.", sc=);
           sfaceflg = false;
         }
       cond .s.equ(.s.toLower(sec[0..4]), "name"):
@@ -1727,10 +1719,6 @@ public &Fight
           `nm[1][1].read("p2.", sc=);
           `nm[1][2].read("p3.", sc=);
           `nm[1][3].read("p4.", sc=);
-          `nm[1][4].read("p5.", sc=);
-          `nm[1][5].read("p6.", sc=);
-          `nm[1][6].read("p7.", sc=);
-          `nm[1][7].read("p8.", sc=);
           snameflg = false;
         }
       }

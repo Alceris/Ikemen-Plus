@@ -19,9 +19,9 @@ poweradd = 78
 facep2 = 1
 
 [State 700, HB]
-type = hitby
+type = nothitby
 trigger1 = 1
-value = SCA, AT
+value = SCA,AA,AP
 time = 1
 [State 700, Stop]
 type = posfreeze
@@ -95,9 +95,9 @@ poweradd = 78
 facep2 = 1
 
 [State 701, HB]
-type = hitby
+type = nothitby
 trigger1 = 1
-value = SCA, AT
+value = SCA,AA,AP
 time = 1
 [State 701, Stop]
 type = posfreeze
@@ -172,9 +172,9 @@ poweradd = 78
 facep2 = 1
 
 [State 702, HB]
-type = hitby
+type = nothitby
 trigger1 = time < 15
-value = SCA, AT
+value = SCA,AA,AP
 time = 1
 
 [State 702, Pause]
@@ -265,9 +265,9 @@ type = playerpush
 trigger1 = 1
 value = 0
 [State 710, HB]
-type = hitby
+type = nothitby
 trigger1 = 1
-value = SCA, AT
+value = SCA,AA,AP
 time = 1
 [State 710, Attack]
 type = changestate
@@ -309,9 +309,9 @@ type = playerpush
 trigger1 = 1
 value = 0
 [State 720, HB]
-type = hitby
+type = nothitby
 trigger1 = animelemtime(8) < 0
-value = SCA, AT
+value = SCA,AA,AP
 time = 1
 [State 720, End]
 type = changestate
@@ -531,7 +531,7 @@ type = nothitby
 trigger1 = anim = 760
 trigger2 = anim = 761 && time <= 1
 time = 8
-value = SCA
+value = SCA,AA,AP,AT
 
 [State 760, Shadows]
 type = afterimage
@@ -1410,7 +1410,7 @@ anim = 5130
 [State 5130, NHB]
 type = nothitby
 trigger1 = !alive
-value = SCA
+value = SCA,AA,AP,AT
 [State 5130, Pos]
 type = posset
 trigger1 = 1
@@ -1428,7 +1428,7 @@ anim = 5131
 [State 5131, NHB]
 type = nothitby
 trigger1 = !alive
-value = SCA
+value = SCA,AA,AP,AT
 [State 5131, Pos]
 type = posset
 trigger1 = 1
@@ -1643,7 +1643,7 @@ velset = 0, 0
 [State 170, NHB]
 type = nothitby
 trigger1 = 1
-value = SCA
+value = SCA,AA,AP,AT
 time = 1
 [State 170, Dust]
 type = explod
@@ -1670,7 +1670,7 @@ velset = 0, 0
 [State 175, NHB]
 type = nothitby
 trigger1 = 1
-value = SCA
+value = SCA,AA,AP,AT
 time = 1
 [State 175, Dust]
 type = explod
@@ -2884,7 +2884,7 @@ ownpal = 1
 [State 5201, NHB]
 type = nothitby
 trigger1 = 1
-value = SCA
+value = SCA,AA,AP,AT
 time = 1
 [State 5201, End]
 type = changestate
@@ -2932,7 +2932,7 @@ trigger1 = p2dist x < 0
 [State 5210, NHB]
 type = nothitby
 trigger1 = time < 14
-value = SCA
+value = SCA,AA,AP,AT
 time = 1
 
 [State 5210, Ctrl]
@@ -3072,7 +3072,7 @@ facep2 = 1
 [State 5085, nothitby]
 type = nothitby
 trigger1 = gethitvar(fallcount) > 1
-value = SCA
+value = SCA,AA,AP,AT
 time = 1
 
 [State 5085, hfs]
@@ -3096,7 +3096,7 @@ ctrl = 0
 [State 5086, nothitby]
 type = nothitby
 trigger1 = gethitvar(fallcount) > 1
-value = SCA
+value = SCA,AA,AP,AT
 time = 1
 
 [State 5086, Vel]

@@ -25,32 +25,34 @@ public int min(int x, int y)
 
 |Key
 {
-  B, D, F, U, DB, UB, DF, UF,
-  nB, nD, nF, nU, nDB, nUB, nDF, nUF,
-  Bs, Ds, Fs, Us, DBs, UBs, DFs, UFs,
-  nBs, nDs, nFs, nUs, nDBs, nUBs, nDFs, nUFs,
+  L, DL, UL, R, DR, UR, B, D, F, U, DB, UB, DF, UF,
+  nL, nDL, nUL, nR, nDR, nUR, nB, nD, nF, nU, nDB, nUB, nDF, nUF,
+  Ls, DLs, ULs, Rs, DRs, URs, Bs, Ds, Fs, Us, DBs, UBs, DFs, UFs,
+  nLs, nDLs, nULs, nRs, nDRs, nURs, nBs, nDs, nFs, nUs, nDBs, nUBs, nDFs, nUFs,
   a, b, c, x, y, z, s,
   na, nb, nc, nx, ny, nz, ns,
 }
 
 public &Buffer
 {
-  public int Bb, Db, Fb, Ub;
+  public int Lb, Rb, Bb, Db, Fb, Ub;
   public int ab, bb, cb, xb, yb, zb, sb;
-  public byte B, D, F, U;
+  public byte L, R, B, D, F, U;
   public byte a, b, c, x, y, z, s, esc;
   new()
   {
     `reset();
   }
   public void input(
-    bool B, bool D, bool F, bool U, bool a, bool b, bool c,
+    bool L, bool R, bool B, bool D, bool F, bool U, bool a, bool b, bool c,
     bool x, bool y, bool z, bool s)
   {
-    if((B&!F) != (`B>0)){`Bb = 0; `B *= -1;} `Bb += `B;
-    if((D&!U) != (`D>0)){`Db = 0; `D *= -1;} `Db += `D;
-    if((F&!B) != (`F>0)){`Fb = 0; `F *= -1;} `Fb += `F;
-    if((U&!D) != (`U>0)){`Ub = 0; `U *= -1;} `Ub += `U;
+    if(L != (`L>0)){`Lb = 0; `L *= -1;} `Lb += `L;
+    if(R != (`R>0)){`Rb = 0; `R *= -1;} `Rb += `R;
+    if(B != (`B>0)){`Bb = 0; `B *= -1;} `Bb += `B;
+    if(D != (`D>0)){`Db = 0; `D *= -1;} `Db += `D;
+    if(F != (`F>0)){`Fb = 0; `F *= -1;} `Fb += `F;
+    if(U != (`U>0)){`Ub = 0; `U *= -1;} `Ub += `U;
     if(a != (`a>0)){`ab = 0; `a *= -1;} `ab += `a;
     if(b != (`b>0)){`bb = 0; `b *= -1;} `bb += `b;
     if(c != (`c>0)){`cb = 0; `c *= -1;} `cb += `c;
@@ -61,31 +63,47 @@ public &Buffer
   }
   public void reset()
   {
-    `Bb = 0; `Db = 0; `Fb = 0; `Ub = 0;
+    `Lb = 0; `Rb = 0; `Bb = 0; `Db = 0; `Fb = 0; `Ub = 0;
     `ab = 0; `bb = 0; `cb = 0;
     `xb = 0; `yb = 0; `zb = 0; `sb = 0;
-    `B=-1; `D=-1; `F=-1; `U=-1;
+    `L=-1; `R=-1; `B=-1; `D=-1; `F=-1; `U=-1;
     `a=-1; `b=-1; `c=-1;
     `x=-1; `y=-1; `z=-1; `s=-1; `esc=-1;
   }
   /int keyState(|.Key k)
   {
     switch(k){
+    case .Key::L: ret .min(-.max(`Db, `Ub), `Lb);
+    case .Key::R: ret .min(-.max(`Db, `Ub), `Rb);
     case .Key::B: ret .min(-.max(`Db, `Ub), `Bb);
     case .Key::D: ret .min(-.max(`Bb, `Fb), `Db);
     case .Key::F: ret .min(-.max(`Db, `Ub), `Fb);
     case .Key::U: ret .min(-.max(`Bb, `Fb), `Ub);
       //
+    case .Key::DL: ret .min(`Db, `Lb);
+    case .Key::UL: ret .min(`Ub, `Lb);
+    case .Key::DR: ret .min(`Db, `Rb);
+    case .Key::UR: ret .min(`Ub, `Rb);
     case .Key::DB: ret .min(`Db, `Bb);
     case .Key::UB: ret .min(`Ub, `Bb);
     case .Key::DF: ret .min(`Db, `Fb);
     case .Key::UF: ret .min(`Ub, `Fb);
       //
+    case .Key::Ls: ret `Lb;
+    case .Key::Rs: ret `Rb;
     case .Key::Bs: ret `Bb;
     case .Key::Ds: ret `Db;
     case .Key::Fs: ret `Fb;
     case .Key::Us: ret `Ub;
       //
+    case .Key::DLs:
+      ret .min(-.max(`Ub, `Rb), .max(`Db, `Lb));
+    case .Key::ULs:
+      ret .min(-.max(`Db, `Rb), .max(`Ub, `Lb));
+    case .Key::DRs:
+      ret .min(-.max(`Ub, `Lb), .max(`Db, `Rb));
+    case .Key::URs:
+      ret .min(-.max(`Db, `Lb), .max(`Ub, `Rb));
     case .Key::DBs:
       ret .min(-.max(`Ub, `Fb), .max(`Db, `Bb));
     case .Key::UBs:
@@ -103,21 +121,37 @@ public &Buffer
     case .Key::z: ret `zb;
     case .Key::s: ret `sb;
       //
+    case .Key::nL: ret -.min(-.max(`Db, `Ub), `Lb);
+    case .Key::nR: ret -.min(-.max(`Db, `Ub), `Rb);
     case .Key::nB: ret -.min(-.max(`Db, `Ub), `Bb);
     case .Key::nD: ret -.min(-.max(`Bb, `Fb), `Db);
     case .Key::nF: ret -.min(-.max(`Db, `Ub), `Fb);
     case .Key::nU: ret -.min(-.max(`Bb, `Fb), `Ub);
       //
+    case .Key::nDL: ret -.min(`Db, `Lb);
+    case .Key::nUL: ret -.min(`Ub, `Lb);
+    case .Key::nDR: ret -.min(`Db, `Rb);
+    case .Key::nUR: ret -.min(`Ub, `Rb);
     case .Key::nDB: ret -.min(`Db, `Bb);
     case .Key::nUB: ret -.min(`Ub, `Bb);
     case .Key::nDF: ret -.min(`Db, `Fb);
     case .Key::nUF: ret -.min(`Ub, `Fb);
       //
+    case .Key::nLs: ret -`Lb;
+    case .Key::nRs: ret -`Rb;
     case .Key::nBs: ret -`Bb;
     case .Key::nDs: ret -`Db;
     case .Key::nFs: ret -`Fb;
     case .Key::nUs: ret -`Ub;
       //
+    case .Key::nDLs:
+      ret -.min(-.max(`Ub, `Rb), .max(`Db, `Lb));
+    case .Key::nULs:
+      ret -.min(-.max(`Db, `Rb), .max(`Ub, `Lb));
+    case .Key::nDRs:
+      ret -.min(-.max(`Ub, `Lb), .max(`Db, `Rb));
+    case .Key::nURs:
+      ret -.min(-.max(`Db, `Lb), .max(`Ub, `Rb));
     case .Key::nDBs:
       ret -.min(-.max(`Ub, `Fb), .max(`Db, `Bb));
     case .Key::nUBs:
@@ -149,11 +183,21 @@ public &Buffer
       ret -.max(a, .max(b, c));
     }
     switch(k){
+    case .Key::Ls: ret `Lb < 0 ? `Lb : .min(#`Lb, .min(#`Db, #`Ub));
+    case .Key::Rs: ret `Rb < 0 ? `Rb : .min(#`Rb, .min(#`Db, #`Ub));
     case .Key::Bs: ret `Bb < 0 ? `Bb : .min(#`Bb, .min(#`Db, #`Ub));
     case .Key::Ds: ret `Db < 0 ? `Db : .min(#`Db, .min(#`Bb, #`Fb));
     case .Key::Fs: ret `Fb < 0 ? `Fb : .min(#`Fb, .min(#`Db, #`Ub));
     case .Key::Us: ret `Ub < 0 ? `Ub : .min(#`Ub, .min(#`Bb, #`Fb));
       //
+    case .Key::DLs:
+      ret `keyState(.Key::DLs) < 0 ? `keyState(.Key::DLs) : .min(#`Db, #`Lb);
+    case .Key::ULs:
+      ret `keyState(.Key::ULs) < 0 ? `keyState(.Key::ULs) : .min(#`Ub, #`Lb);
+    case .Key::DRs:
+      ret `keyState(.Key::DRs) < 0 ? `keyState(.Key::DRs) : .min(#`Db, #`Rb);
+    case .Key::URs:
+      ret `keyState(.Key::URs) < 0 ? `keyState(.Key::URs) : .min(#`Ub, #`Rb);
     case .Key::DBs:
       ret `keyState(.Key::DBs) < 0 ? `keyState(.Key::DBs) : .min(#`Db, #`Bb);
     case .Key::UBs:
@@ -163,6 +207,10 @@ public &Buffer
     case .Key::UFs:
       ret `keyState(.Key::UFs) < 0 ? `keyState(.Key::UFs) : .min(#`Ub, #`Fb);
       //
+    case .Key::nLs:
+      ret foo(`keyState(.Key::L), `keyState(.Key::DL), `keyState(.Key::UL));
+    case .Key::nRs:
+      ret foo(`keyState(.Key::R), `keyState(.Key::DR), `keyState(.Key::UR));
     case .Key::nBs:
       ret foo(`keyState(.Key::B), `keyState(.Key::DB), `keyState(.Key::UB));
     case .Key::nDs:
@@ -172,6 +220,14 @@ public &Buffer
     case .Key::nUs:
       ret foo(`keyState(.Key::U), `keyState(.Key::UB), `keyState(.Key::UF));
       //
+    case .Key::nDLs:
+      ret foo(`keyState(.Key::DL), `keyState(.Key::D), `keyState(.Key::L));
+    case .Key::nULs:
+      ret foo(`keyState(.Key::UL), `keyState(.Key::U), `keyState(.Key::L));
+    case .Key::nDRs:
+      ret foo(`keyState(.Key::DR), `keyState(.Key::D), `keyState(.Key::R));
+    case .Key::nURs:
+      ret foo(`keyState(.Key::UR), `keyState(.Key::U), `keyState(.Key::R));
     case .Key::nDBs:
       ret foo(`keyState(.Key::DB), `keyState(.Key::D), `keyState(.Key::B));
     case .Key::nUBs:
@@ -185,7 +241,7 @@ public &Buffer
   }
   /int lastDirectionTime()
   {
-     ret .min(#`Bb)<, .min(#`Db)<, .min(#`Fb)<, #`Ub;
+     ret .min(#`Bb)<, .min(#`Db)<, .min(#`Fb)<, .min(#`Lb)<, .min(#`Rb)<, #`Ub;
  }
   /int lastChangeTime()
   {
@@ -225,6 +281,8 @@ public &Buffer
   /void input(&.Buffer b=, int f)
   {
     b.input(
+	  (`stat&`L) != 0,
+	  (`stat&`R) != 0,
       f < 0 ? (`stat&`R) != 0 : (`stat&`L) != 0,
       (`stat&`D) != 0,
       f < 0 ? (`stat&`L) != 0 : (`stat&`R) != 0,
@@ -695,7 +753,7 @@ public &Command
   public %&CmdButton cmd;
   public index cmdidx = 0, tameidx = -1;
   public int time = 1, current = 0;
-  public int buffertime = 1, curbuftime = 0;
+  public int buffertime = 1, curbuftime = 0, nopausebuf = 0;
   public void readCmd(^/char cmdstr)
   {
     char nextChar(^/char s, index i=)
@@ -752,14 +810,26 @@ public &Command
       }
       loop{while; do:
         switch(nextChar(cmds[j], i=)){
+        case 'L':
+          `cmd[-1].key .= (tilde ? .Key::nL : .Key::L);
+          tilde = false;
         case 'B':
           `cmd[-1].key .= (tilde ? .Key::nB : .Key::B);
           tilde = false;
+        case 'R':
+          `cmd[-1].key .= (tilde ? .Key::nR : .Key::R);
+          tilde = false;
         case 'D':
           branch{
+          cond cmds[j][i+1] == 'L':
+            i++;
+            `cmd[-1].key .= (tilde ? .Key::nDL : .Key::DL);
           cond cmds[j][i+1] == 'B':
             i++;
             `cmd[-1].key .= (tilde ? .Key::nDB : .Key::DB);
+          cond cmds[j][i+1] == 'R':
+            i++;
+            `cmd[-1].key .= (tilde ? .Key::nDR : .Key::DR);
           cond cmds[j][i+1] == 'F':
             i++;
             `cmd[-1].key .= (tilde ? .Key::nDF : .Key::DF);
@@ -772,9 +842,15 @@ public &Command
           tilde = false;
         case 'U':
           branch{
+          cond cmds[j][i+1] == 'L':
+            i++;
+            `cmd[-1].key .= (tilde ? .Key::nUL : .Key::UL);
           cond cmds[j][i+1] == 'B':
             i++;
             `cmd[-1].key .= (tilde ? .Key::nUB : .Key::UB);
+          cond cmds[j][i+1] == 'R':
+            i++;
+            `cmd[-1].key .= (tilde ? .Key::nUR : .Key::UR);
           cond cmds[j][i+1] == 'F':
             i++;
             `cmd[-1].key .= (tilde ? .Key::nUF : .Key::UF);
@@ -794,14 +870,23 @@ public &Command
         case '$':
           i++;
           switch(nextChar(cmds[j], i=)){
+          case 'L':
+            `cmd[-1].key .= (tilde ? .Key::nLs : .Key::Ls);
+            tilde = false;
           case 'B':
             `cmd[-1].key .= (tilde ? .Key::nBs : .Key::Bs);
             tilde = false;
           case 'D':
             branch{
+            cond cmds[j][i+1] == 'L':
+              i++;
+              `cmd[-1].key .= (tilde ? .Key::nDLs : .Key::DLs);
             cond cmds[j][i+1] == 'B':
               i++;
               `cmd[-1].key .= (tilde ? .Key::nDBs : .Key::DBs);
+            cond cmds[j][i+1] == 'R':
+              i++;
+              `cmd[-1].key .= (tilde ? .Key::nDRs : .Key::DRs);
             cond cmds[j][i+1] == 'F':
               i++;
               `cmd[-1].key .= (tilde ? .Key::nDFs : .Key::DFs);
@@ -809,14 +894,23 @@ public &Command
               `cmd[-1].key .= (tilde ? .Key::nDs : .Key::Ds);
             }
             tilde = false;
+          case 'R':
+            `cmd[-1].key .= (tilde ? .Key::nRs : .Key::Rs);
+            tilde = false;
           case 'F':
             `cmd[-1].key .= (tilde ? .Key::nFs : .Key::Fs);
             tilde = false;
           case 'U':
             branch{
+            cond cmds[j][i+1] == 'L':
+              i++;
+              `cmd[-1].key .= (tilde ? .Key::nULs : .Key::ULs);
             cond cmds[j][i+1] == 'B':
               i++;
               `cmd[-1].key .= (tilde ? .Key::nUBs : .Key::UBs);
+            cond cmds[j][i+1] == 'R':
+              i++;
+              `cmd[-1].key .= (tilde ? .Key::nURs : .Key::URs);
             cond cmds[j][i+1] == 'F':
               i++;
               `cmd[-1].key .= (tilde ? .Key::nUFs : .Key::UFs);
@@ -978,7 +1072,7 @@ public &Command
       && ((int)`cmd[`cmdidx-1].key[0]-(int)`cmd[`cmdidx].key[0] & 7) == 0
       :
       branch{
-      cond kbuf.B < 0 && kbuf.D < 0 && kbuf.F < 0 && kbuf.U < 0:
+      cond kbuf.L < 0 && kbuf.B < 0 && kbuf.D < 0 && kbuf.R < 0 && kbuf.F < 0 && kbuf.U < 0:
         `tameidx = `cmdidx;
       else:
         ret fail(::);
@@ -1010,8 +1104,15 @@ public &Command
   }
   public void step(^&.Buffer kbuf, bool ai, bool hitpause, int buftime)
   {
-    if(!hitpause && `curbuftime > 0) `curbuftime--;
+	bool hp = hitpause;
+	int bt = buftime;
+	if(hp && ((#`cmd == 1 && `cmd[0].slash) || `nopausebuf != 0))
+	{
+		hp = false;
+		bt--;
+	}
     if(#`cmd == 0) ret;
+    if(!hp && `curbuftime > 0) `curbuftime--;
     {
       int ocbt = `curbuftime;
       ^bool holdTemp;
@@ -1031,7 +1132,7 @@ public &Command
       comm:
         `clear();
       diff<a>:
-        `curbuftime = `buffertime + buftime;
+        `curbuftime = `buffertime + bt;
       }
     break:
       if(`curbuftime < ocbt) `curbuftime = ocbt;
@@ -1057,6 +1158,7 @@ public &Command
     `current = c.current;
     `buffertime = c.buffertime;
     `curbuftime = c.curbuftime;
+    `nopausebuf = c.nopausebuf;
   }
 }
 
@@ -1141,8 +1243,7 @@ public &CommandList
         else:
           l = r = u = d = a = b = c = x = y = z = s = false;
         comm:
-          `buffer~input(
-            facing < 0 ? r : l, d, facing < 0 ? l : r, u, a, b, c, x, y, z, s);
+          `buffer~input(l, r, facing < 0 ? r : l, d, facing < 0 ? l : r, u, a, b, c, x, y, z, s);
         }
       }
     }
@@ -1150,7 +1251,7 @@ public &CommandList
   }
   public void step(int facing, bool ai, bool hitpause, int buftime)
   {
-    `commands:<-:<-[void(c=){c.step(`buffer, ai, hitpause, buftime);}];
+    `commands:<-:<-[void(c=){c.step(`buffer, ai, hitpause && c.nopausebuf == 0, (int)(hitpause && c.nopausebuf == 0));}];
   }
   public void bufReset()
   {
