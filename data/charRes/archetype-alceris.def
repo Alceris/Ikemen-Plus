@@ -1,0 +1,58 @@
+[Output]
+ ;Filename of the SFF file to create (required).
+;filename = 
+
+[Option]
+input.dir =
+sprite.compress.5 = lz5 ;none/lz5/rle5
+sprite.compress.8 = png8 ;none/rle8/png8
+sprite.compress.24 = png24 ;none/png24
+sprite.compress.32 = png32 ;none/png32
+sprite.decompressonload = 0 ;0/1
+sprite.detectduplicates = 0 ;0/1
+sprite.autocrop = 1 ;0/1
+pal.detectduplicates = 1 ;0/1
+pal.discardduplicates = 1 ;0/1
+
+[Pal]
+;Enter pals here (png or act files)
+;0,0, filename.png, 0,255 ;grp,idx, fname, startcol,endcol
+
+[Option]
+sprite.usepal = -1 ;Set this to the right pal
+
+[Sprite]
+   0, 0, tools\wip\archetype-alceris\s000.png,  54,109
+   0, 1, tools\wip\archetype-alceris\s001.png,  58,109
+   0, 2, tools\wip\archetype-alceris\s002.png,  60,110
+   0, 3, tools\wip\archetype-alceris\s003.png,  58,110
+   0, 4, tools\wip\archetype-alceris\s004.png,  53,110
+   0, 5, tools\wip\archetype-alceris\s005.png,  48,109
+   0, 6, tools\wip\archetype-alceris\s006.png,  49,109
+   0, 7, tools\wip\archetype-alceris\s007.png,  51,108
+   0, 8, tools\wip\archetype-alceris\s008.png,  51,107
+ 181, 0, tools\wip\archetype-alceris\s311.png,  56,108
+ 181, 1, tools\wip\archetype-alceris\s312.png,  52,105
+ 181, 2, tools\wip\archetype-alceris\s313.png,  38,105
+ 181, 3, tools\wip\archetype-alceris\s314.png,  42,105
+ 181, 4, tools\wip\archetype-alceris\s315.png,  59,107
+ 181, 5, tools\wip\archetype-alceris\s316.png,  63,107
+ 181, 6, tools\wip\archetype-alceris\s317.png,  56,106
+ 181, 7, tools\wip\archetype-alceris\s318.png,  61,106
+ 181, 8, tools\wip\archetype-alceris\s319.png,  40,107
+ 181, 9, tools\wip\archetype-alceris\s320.png,  29,106
+ 181,10, tools\wip\archetype-alceris\s321.png,  55,106
+ 181,11, tools\wip\archetype-alceris\s322.png,  60,107
+ 181,12, tools\wip\archetype-alceris\s323.png,  63,108
+ 181,13, tools\wip\archetype-alceris\s324.png,  64,108
+ 181,14, tools\wip\archetype-alceris\s325.png,  60,109
+ 181,15, tools\wip\archetype-alceris\s326.png,  55,109
+ 181,16, tools\wip\archetype-alceris\s327.png,  49,109
+ 181,17, tools\wip\archetype-alceris\s328.png,  48,109
+ 181,18, tools\wip\archetype-alceris\s329.png,  49,109
+ 181,19, tools\wip\archetype-alceris\s330.png,  49,109
+ 181,20, tools\wip\archetype-alceris\s331.png,  49,109
+5040, 0, tools\wip\archetype-alceris\s586.png,  45, 64
+5040,10, tools\wip\archetype-alceris\s587.png,  46, 42
+5040,20, tools\wip\archetype-alceris\s588.png,  47, 24
+5300, 0, tools\wip\archetype-alceris\s632.png,  53,109

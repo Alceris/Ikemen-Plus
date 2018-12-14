@@ -10136,6 +10136,12 @@ poweradd = -PowerMax
 Ctrl=0
 sprPriority=-1
 
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+var(10) = 0
+ignorehitpause = 1
+
 [State 0, NotHitBy]
 type = NotHitBy
 trigger1 = 1
@@ -10248,11 +10254,6 @@ trigger1 = 1
 var(59) = 3501
 ignorehitpause = 1
 
-[State 0, VarSet]
-type = VarSet
-trigger1 = prevstateno = 3500 && !time
-var(10) = 0
-
 [State 0, ChangeAnim]
 type = ChangeAnim
 trigger1 = anim = 3500
@@ -10261,7 +10262,8 @@ elem = animelemno(-1)
 
 [State 0, ChangeAnim]
 type = ChangeAnim
-trigger1 = var(10) = 4
+trigger1 = anim = 3500
+trigger1 = var(10) >= 4
 value = 3501
 elem = 1
 

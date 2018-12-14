@@ -82,12 +82,12 @@ trigger1 = P2Dist X < 0
 
 [State 0, PosSet]
 type = PosSet
-trigger1 = !time
+trigger1 = 1
 y = 0
 
 [State 0, 2]
 type = VelSet
-trigger1 = !time
+trigger1 = 1
 y = 0
 
 [State 0, 3] ;Stop moving if low velocity or 4 ticks pass
@@ -196,12 +196,6 @@ x = const(velocity.walk.fwd.x)
 type = VelSet
 trigger1 = command = "holdback" && command != "holdfwd"
 x = -const(velocity.walk.fwd.x)
-
-[State 20, 2]
-type = ChangeState
-triggerall = palno != 12
-trigger1 = command = "holdback"
-value = 130
 
 [State 20, 3]
 type = ChangeAnim
@@ -820,76 +814,44 @@ value = 0
 [Statedef 130]
 type    = S
 physics = N
-ctrl = 1
+ctrl = 0
 
 [State 130, 1]
 type = ChangeAnim
-trigger1 = inguarddist
-trigger1 = Anim != 130
-trigger1 = Anim != 131
-trigger1 = Anim != 120
-trigger1 = Anim != [150,152]
-trigger1 = Command = "holdfwd" && command = "holdback"
+triggerall = anim != 120
+triggerall = inguarddist
+triggerall = Anim != 130
+triggerall = command = "holdback" || anim != 140
+triggerall = Anim != [150,152]
+trigger1 = anim = 5 || anim = 12
+trigger1 = !animtime
+trigger2 = anim != 5 && anim != 12
 value = 120
 
 [State 130, 1]
 type = ChangeAnim
-triggerall = inguarddist
 triggerall = Anim != 130
-triggerall = Command = "holdfwd" && command = "holdback"
+triggerall = command = "holdback"
 trigger1 = Anim = 120
 trigger1 = !AnimTime
 trigger2 = anim = [150,152]
-trigger3 = anim = 131
 value = 130
 
 [State 140, 1]
 type = ChangeAnim
-triggerall = anim != 140
 triggerall = !inguarddist || command != "holdback"
-triggerall = Command = "holdfwd" || command != "holdback"
-trigger1 = anim = 131
+trigger1 = anim = [120,131]
 trigger2 = anim = [150,152]
-trigger3 = anim = 130
-trigger4 = anim = 120
 value = 140
 
 [State 0, ChangeAnim]
 type = ChangeAnim
-trigger1 = anim = [6,11]
-trigger2 = anim = 121 || anim = 141
-value = 12
-
-[State 0, ChangeAnim]
-type = ChangeAnim
-triggerall = Command = "holdfwd" || command != "holdback"
-trigger1 = (anim != [120,140])
-trigger1 = anim != [0,12]
-trigger1 = anim != 47
-trigger2 = anim = 140
-trigger2 = !animtime
-trigger3 = anim = 12
-trigger3 = !animtime
-trigger4 = Anim = 5 && !AnimTime
-trigger5 = anim = 47 && !AnimTime
-value = 0
-
-[State 0, ChangeAnim]
-type = ChangeAnim
-triggerall = p2dist X < 0
-trigger1 = anim = 0
-trigger2 = anim = 5
+trigger1 = p2dist X < 0
 value = 5
 
 [State 0, Turn]
 type = Turn
 trigger1 = p2dist X < 0
-
-[State 20, 2]
-type = VelSet
-trigger1 = command != "holdfwd"
-trigger1 = command = "holdback"
-x = const(velocity.walk.back.x)
 
 [State 0, VelSet]
 type = VelSet
@@ -903,28 +865,41 @@ y = 0
 
 [State 0, VelMul]
 type = VelMul
-trigger1 = command = "holdfwd" || command != "holdback"
+trigger1 = 1
 x = const(movement.stand.friction)
 
 [State 20, 4]
-type = ChangeAnim
+type = ChangeState
 triggerall = command != "holdfwd"
-triggerall = command = "holdback"
-trigger1 = Anim != 21 && Anim != 5
-trigger2 = Anim = 5 && AnimTime = 0
-value = 21
+trigger1 = command = "holdback"
+value = 20
+ctrl = 1
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = command = "holddown"
+value = 10
+elem = 1
+ignorehitpause = 1
 
 [State 130, Hi to Lo]
 type = ChangeState
 trigger1 = command = "holddown"
 value = 131
+ctrl = 0
 ignorehitpause = 1
 
 [State 130, Stop Guarding]
 type = ChangeState
-triggerall = command != "holdback"
-trigger1 = anim = 0
+trigger1 = anim = 140 && !animtime
 value = 0
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+triggerall = !inguarddist || command != "holdback"
+trigger1 = anim != [120,155]
+value = ifelse(anim = 12,12,0)
 ctrl = 1
 
 ;---------------------------------------------------------------------------
@@ -932,7 +907,44 @@ ctrl = 1
 [Statedef 131]
 type    = C
 physics = N
-ctrl = 1
+ctrl = 0
+
+[State 130, 1]
+type = ChangeAnim
+triggerall = anim != 121
+triggerall = inguarddist
+triggerall = Anim != 131
+triggerall = command = "holdback" || anim != 141
+triggerall = Anim != [150,152]
+trigger1 = anim = 6 || anim = 10
+trigger1 = !animtime
+trigger2 = anim != 6 && anim != 10
+value = 121
+
+[State 130, 1]
+type = ChangeAnim
+triggerall = Anim != 131
+triggerall = command = "holdback"
+trigger1 = Anim = 121
+trigger1 = !AnimTime
+trigger2 = anim = [150,152]
+value = 131
+
+[State 140, 1]
+type = ChangeAnim
+triggerall = !inguarddist || command != "holdback"
+trigger1 = anim = [120,131]
+trigger2 = anim = [150,152]
+value = 141
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = p2dist X < 0
+value = 6
+
+[State 0, Turn]
+type = Turn
+trigger1 = p2dist X < 0
 
 [State 0, VelMul]
 type = VelMul
@@ -949,77 +961,31 @@ type = PosSet
 trigger1 = !time
 y = 0
 
-[State 130, 1]
-type = ChangeAnim
-triggerall = inguarddist && command = "holdback"
-trigger1 = Anim != 130
-trigger1 = Anim != 131
-trigger1 = Anim != 121
-trigger1 = Anim != [150,152]
-value = 121
-
-[State 130, 1]
-type = ChangeAnim
-triggerall = inguarddist && command = "holdback"
-triggerall = Anim != 131
-trigger1 = Anim = 121
-trigger1 = !AnimTime
-trigger2 = anim = [150,152]
-trigger3 = anim = 130
-value = 131
-
-[State 140, 1]
-type = ChangeAnim
-triggerall = anim != 141
-triggerall = !inguarddist || command != "holdback"
-trigger1 = anim = 130
-trigger2 = anim = [150,152]
-trigger3 = anim = 131
-trigger4 = anim = 121
-value = 141
-
 [State 0, ChangeAnim]
 type = ChangeAnim
-triggerall = anim != [6,11]
-trigger1 = anim = [0,12]
-trigger2 = !inguarddist
-trigger2 = anim != 121 && anim != 131 && anim != 141
-trigger3 = anim = 47
-value = 10
-
-[State 0, ChangeAnim]
-type = ChangeAnim
-trigger1 = anim != 121 && anim != 131 && anim != 141
-trigger1 = anim != [0,12]
-trigger2 = anim = 141
-trigger2 = !animtime
-trigger3 = anim = 10
-trigger3 = !animtime
-trigger4 = Anim = 6 && !AnimTime
-value = 11
-
-[State 0, ChangeAnim]
-type = ChangeAnim
-triggerall = p2dist X < 0
-trigger1 = anim = 11
-trigger2 = anim = 6
-value = 6
-
-[State 0, Turn]
-type = Turn
-trigger1 = p2dist X < 0
+trigger1 = command != "holddown"
+value = 12
+elem = 1
+ignorehitpause = 1
 
 [State 131, Lo to Hi]
 type = ChangeState
 trigger1 = command != "holddown"
 value = 130
+ctrl = 0
 ignorehitpause = 1
 
 [State 131, Stop Guarding]
 type = ChangeState
-triggerall = command != "holdback"
-trigger1 = anim = 11
+trigger1 = anim = 141 && !animtime
 value = 11
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+triggerall = !inguarddist || command != "holdback"
+trigger1 = anim != [120,155]
+value = ifelse(anim = 10,10,11)
 ctrl = 1
 
 ;---------------------------------------------------------------------------
@@ -1168,17 +1134,7 @@ value = 150
 [State 150, 2]
 type = ChangeState
 trigger1 = HitShakeOver
-value = 151 + 2*(command = "holddown")
-
-[State 150, Hi to Lo]
-type = StateTypeSet
-trigger1 = statetype = S && command = "holddown"
-statetype = C
-
-[State 150, Lo to Hi]
-type = StateTypeSet
-trigger1 = statetype = C && command != "holddown"
-statetype = S
+value = 151
 
 [State 150, 3]
 type = ForceFeedback
@@ -1268,17 +1224,7 @@ value = 151
 [State 152, 3]
 type = ChangeState
 trigger1 = HitShakeOver
-value = 151 + 2*(command = "holddown")
-
-[State 152, Hi to Lo]
-type = StateTypeSet
-trigger1 = statetype = S && command = "holddown"
-statetype = C
-
-[State 152, Lo to Hi]
-type = StateTypeSet
-trigger1 = statetype = C && command != "holddown"
-statetype = S
+value = 153
 
 [State 152, 4]
 type = ForceFeedback
@@ -1591,7 +1537,7 @@ trigger1 = anim = 192
 trigger1 = pos y = 0
 anim = 10080
 id = 10080
-pos = 0,-22
+pos = 0,0
 postype = p1
 ownpal = 1
 bindtime = 1
@@ -1605,7 +1551,7 @@ trigger1 = anim = 192
 trigger1 = pos y = 0
 anim = 12190
 id = 12190
-pos = 0,-22
+pos = 0,0
 postype = p1
 ownpal = 1
 bindtime = 1
@@ -1635,12 +1581,12 @@ value = 1920
 
 [State 0, PlaySnd]
 type = PlaySnd
-trigger1 = anim = 1920 && animelemtime(3) = 59
+trigger1 = anim = 1920 && animelemtime(5) = 59
 value = S192,0
 
 [State 0, Helper]
 type = Helper
-trigger1 = anim = 1920 && animelemtime(3) = 59
+trigger1 = anim = 1920 && animelemtime(5) = 59
 ID = 1921
 stateno = 1921
 pausemovetime = -1
@@ -1649,7 +1595,7 @@ ownpal = 1
 
 [State 0, PlaySnd]
 type = PlaySnd
-trigger1 = anim = 1920 && animelem = 4
+trigger1 = anim = 1920 && animelem = 6
 value = S100,199+(random%2)
 channel = 4
 
@@ -1674,7 +1620,7 @@ ctrl = 0
 type = ChangeAnim
 trigger1 = 1
 value = 1920
-elem = 3
+elem = 5
 
 [State 0, PalFX]
 type = PalFX
@@ -2962,8 +2908,23 @@ ignorehitpause = 1
 [State 0, HitOverride]
 type = HitOverride
 trigger1 = (!MoveClash && !MoveClashed) || hitpausetime
-attr = ,AA,AP
+attr = SC,AA
 slot = 1
+time = 1
+forceair = 0
+hitsound = S901,random%2
+sparkno = S12030
+pausetime = 0,0
+ignorehitpause = 1
+clashpriority = 6
+nothitstate = 1
+hotype = 2
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = (!MoveClash && !MoveClashed) || hitpausetime
+attr = ,AP
+slot = 2
 time = 1
 forceair = 0
 hitsound = S901,random%2
@@ -4677,9 +4638,19 @@ type = Turn
 triggerall = !time
 trigger1 = p2dist X < 0
 
+[State 0, PowerSet]
+type = PowerSet
+triggerall = anim = 970
+triggerall = animelemtime(3) >= 0
+triggerall = power < 6000
+trigger1 = (power+3) >= 6000
+value = 6000
+ignorehitpause = 1
+
 [State 6500, パワーゲージ増減]
 type = PowerAdd
 triggerall = anim = 970
+triggerall = power < 6000
 trigger1 = animelemtime(3)>=0
 value = ((power < 1000)*9)+((power < 2000)*5)+((power < 3000)*5)+((power < 4000)*3)+((power < 5000)*2)+((power < 6000)*3)
 
@@ -4717,6 +4688,11 @@ MoveType = I
 Physics  = N
 Ctrl = 0
 sprpriority = 2
+
+[State 0, AssertSpecial]
+type = AssertSpecial
+trigger1 = 1
+flag = noshadow
 
 [State 0, ChangeAnim]
 type = ChangeAnim
@@ -11633,6 +11609,20 @@ triggerall = stateno != 3700
 type = StopSnd
 trigger1 = movetype = H && time = 1 && stateno != [150,155]
 channel = 4
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = 1
+sysvar(4) = ifelse(ctrlover,0,ifelse(stateno = 130 || stateno = 131,1,ctrl))
+
+[State 0, VarSet]
+type = VarSet
+triggerall = stateowner = playerno
+triggerall = !ctrlover
+trigger1 = movetype = H
+trigger1 = !hitfall
+trigger1 = hitover
+sysvar(4) = 1
 
 [State 0, AssertSpecial]
 type = Null;AssertSpecial

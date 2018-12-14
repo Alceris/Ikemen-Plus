@@ -317,20 +317,11 @@ command = /L
 ;---------------------------------------------------------------------------
 [Statedef -4]
 
-[State 0, CtrlSet]
-type = CtrlSet
-triggerall = stateowner = playerno
-trigger1 = movetype = H
-trigger1 = !hitfall
-trigger1 = hitover
-value = 1
-
 [State 0, AssertSpecial]
 type = AssertSpecial
-trigger1 = palno = 12
-flag = nostandguard
-flag2 = nocrouchguard
-flag3 = noairguard
+trigger1 = 1
+flag = noguard
+flag2 = noshadow
 ignorehitpause = 1
 
 [State 0, AssertSpecial]
@@ -442,6 +433,7 @@ trigger3 = time = 0 && (movetype = H || stateowner != playerno) && (command = "z
 ;trigger3 = fighting
 value = 3700
 ignorehitpause = 1
+ctrl = 0
 
 [State 30001,タイマー1]
 type = Varadd
@@ -997,7 +989,7 @@ ignorehitpause = 1
 ;triggerall = command = "holdup"
 ;triggerall = command != "holddown"
 ;triggerall = StateType != A
-;trigger1 = (ctrl && (fighting || roundstate > 2))
+;trigger1 = (sysvar(4) && (fighting || roundstate > 2))
 ;trigger2 = stateno = [200,599]
 ;trigger2 = MoveHit
 ;trigger3 = stateno = 1000
@@ -1012,9 +1004,10 @@ triggerall = var(6)%100 = 14
 triggerall = var(12) >= 7000
 triggerall = statetype != A
 triggerall = !var(1)
-trigger1 = (ctrl && fighting)
+trigger1 = (sysvar(4) && fighting)
 value = 3400
 ignorehitpause = 1
+ctrl = 0
 
 [State 0, VarSet]
 type = VarSet
@@ -1033,7 +1026,7 @@ type = ChangeState
 triggerall = command = "holdup"
 triggerall = command != "holddown"
 triggerall = StateType != A
-trigger1 = ctrl
+trigger1 = sysvar(4)
 trigger2 = 0;stateno = [200,599]
 trigger2 = MoveHit || MoveClash || MoveClashed
 trigger3 = stateno = 1000
@@ -1048,7 +1041,7 @@ type = ChangeState
 triggerall = (sysvar(3) & 2) = 0
 triggerall = command = "holdup" && (sysvar(3) & 1) = 0
 triggerall = StateType = A
-trigger1 = ctrl
+trigger1 = sysvar(4)
 trigger2 = 0;stateno = [600,699]
 trigger2 = MoveHit || MoveClash || MoveClashed
 trigger3 = stateno = 1000
@@ -1063,7 +1056,7 @@ ignorehitpause = 1
 ;v = 20
 ;triggerall = (floor(var(1)/100) = 632 && command = "hold_c" && !var(12))||command = "236c"
 ;triggerall = power >= 1000
-;trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+;trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 ;trigger2 = stateno = [200,699]
 ;trigger2 = MoveContact
 ;trigger3 = stateno = 1000
@@ -1078,7 +1071,7 @@ ignorehitpause = 1
 type = ChangeState
 triggerall = var(6)%100 = 10
 triggerall = var(12) >= 6000
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = (stateno = [200,699]) || (stateno = [1200,1205]) || stateno = 2200
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 trigger3 = stateno = 1000
@@ -1086,12 +1079,13 @@ trigger3 = animelemtime(7) > 0
 trigger4 = stateno = 1050
 trigger4 = animelemtime(7) > 10
 value = 3050
+ctrl = 0
 
 [State 0, ChangeState]
 type = ChangeState
 triggerall = var(6)%100 = 10
 triggerall = power >= 6000 || var(12) || roundstate > 2
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = (stateno = [200,699]) || (stateno = [1200,1205]) || stateno = 2200
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 trigger3 = stateno = 1000
@@ -1099,12 +1093,13 @@ trigger3 = animelemtime(7) > 0
 trigger4 = stateno = 1050
 trigger4 = animelemtime(7) > 10
 value = 3000
+ctrl = 0
 
 [State 0, ChangeState]
 type = ChangeState
 TriggerAll = var(6)%100 = 3
 triggerall = power >= 1000 || var(12) || roundstate > 2
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = stateno = [200,699]
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 trigger3 = stateno = 1000
@@ -1114,13 +1109,14 @@ trigger4 = animelemtime(7) > 10
 trigger5 = stateno = [1200,1205]
 trigger5 = MoveHit || MoveClash || MoveClashed
 value = 2000
+ctrl = 0
 
 ;[State 0, VarSet]
 ;type = VarSet
 ;v = 20
 ;triggerall = (floor(var(1)/100) = 326 && command = "hold_c" && !var(12))||command = "623c"
 ;triggerall = power >= 1000
-;trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+;trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 ;trigger2 = stateno = [200,699]
 ;trigger2 = MoveContact
 ;trigger3 = stateno = 1000
@@ -1135,7 +1131,7 @@ value = 2000
 type = ChangeState
 TriggerAll = var(6)%100 = 9
 triggerall = power >= 3000 || var(12) || roundstate > 2
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = stateno = [200,699]
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 trigger3 = stateno = 1000
@@ -1145,6 +1141,7 @@ trigger4 = animelemtime(7) > 10
 trigger5 = stateno = [1200,1205]
 trigger5 = MoveHit || MoveClash || MoveClashed
 value = 2200
+ctrl = 0
 
 ;[State 0, VarSet]
 ;type = VarSet
@@ -1152,7 +1149,7 @@ value = 2200
 ;triggerall = statetype != A
 ;triggerall = (floor(var(1)/1000) = 22 && command = "hold_c" && !var(12))||command = "22c"
 ;triggerall = power >= 1000
-;trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+;trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 ;trigger2 = stateno = [200,699]
 ;trigger2 = MoveContact
 ;trigger3 = stateno = 1000
@@ -1167,7 +1164,7 @@ value = 2200
 type = ChangeState
 triggerall = var(6)%100 = 13
 triggerall = power >= 2000 || var(12) || roundstate > 2
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = stateno = [200,699]
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 trigger3 = stateno = 1000
@@ -1177,12 +1174,13 @@ trigger4 = animelemtime(7) > 10
 trigger5 = stateno = [1200,1205]
 trigger5 = MoveHit || MoveClash || MoveClashed
 value = 2300
+ctrl = 0
 
 ;[State 0, VarSet]
 ;type = VarSet
 ;v = 20
 ;triggerall = (floor(var(1)/100) = 632 && command = "hold_a" && !var(10))||command = "236a"
-;trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+;trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 ;trigger2 = stateno = [200,699]
 ;trigger2 = MoveContact
 ;value = 1000
@@ -1192,16 +1190,17 @@ type = ChangeState
 triggerall = floor(var(0)/1000000)%10 < 2
 triggerall = numhelper(1001) + numhelper(1005) < 2
 TriggerAll = var(6)%100 = 1
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = stateno = [200,699]
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 value = 1000
+ctrl = 0
 
 ;[State 0, VarSet]
 ;type = VarSet
 ;v = 20
 ;triggerall = ((floor(var(1)/100) = 632 && command = "hold_b" && !var(11))||command = "236b")||((floor(var(1)/100) = 632 && command = "hold_c" && !var(12))||command = "236c")
-;trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+;trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 ;trigger2 = stateno = [200,699]
 ;trigger2 = MoveContact
 ;value = 1050
@@ -1211,16 +1210,17 @@ type = ChangeState
 triggerall = floor(var(0)/1000000)%10 < 2
 triggerall = numhelper(1001) + numhelper(1005) < 2
 TriggerAll = var(6)%100 = 2 || var(6)%100 = 3
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = stateno = [200,699]
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 value = 1050
+ctrl = 0
 
 ;[State 0, VarSet]
 ;type = VarSet
 ;v = 20
 ;triggerall = (floor(var(1)/100) = 412 && command = "hold_a" && !var(10))||command = "214a"
-;trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+;trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 ;trigger2 = stateno = [200,699]
 ;trigger2 = MoveContact
 ;value = 1100
@@ -1228,24 +1228,26 @@ value = 1050
 [State 0, ChangeState]
 type = ChangeState
 TriggerAll = var(6)%100 = 4
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = stateno = [200,699]
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 value = 1100
+ctrl = 0
 
 [State 0, ChangeState]
 type = ChangeState
 TriggerAll = var(6)%100 = 5 || var(6)%100 = 6
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = stateno = [200,699]
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 value = 1105
+ctrl = 0
 
 ;[State 0, VarSet]
 ;type = VarSet
 ;v = 20
 ;triggerall = (floor(var(1)/100) = 326 && command = "hold_a" && !var(10))||command = "623a"
-;trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+;trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 ;trigger2 = stateno = [200,699]
 ;trigger2 = MoveContact
 ;value = 1200
@@ -1253,16 +1255,17 @@ value = 1105
 [State 0, ChangeState]
 type = ChangeState
 TriggerAll = var(6)%100 = 7
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = stateno = [200,699]
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 value = 1200
+ctrl = 0
 
 ;[State 0, VarSet]
 ;type = VarSet
 ;v = 20
 ;triggerall = ((floor(var(1)/100) = 326 && command = "hold_b" && !var(11))||command = "623b")||((floor(var(1)/100) = 326 && command = "hold_c" && !var(12))||command = "623c")
-;trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+;trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 ;trigger2 = stateno = [200,699]
 ;trigger2 = MoveContact
 ;value = 1205
@@ -1270,17 +1273,18 @@ value = 1200
 [State 0, ChangeState]
 type = ChangeState
 TriggerAll = var(6)%100 = 8 || var(6)%100 = 9
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = stateno = [200,699]
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 value = 1205
+ctrl = 0
 
 ;[State 0, VarSet]
 ;type = VarSet
 ;v = 20
 ;triggerall = statetype != A
 ;triggerall = (floor(var(1)/1000) = 22 && command = "hold_a" && !var(10))||command = "22a"
-;trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+;trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 ;trigger2 = stateno = [200,699]
 ;trigger2 = MoveContact
 ;value = 1300
@@ -1289,17 +1293,18 @@ value = 1205
 type = ChangeState
 triggerall = statetype != A
 TriggerAll = var(6)%100 = 11
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = stateno = [200,699]
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 value = 1300
+ctrl = 0
 
 ;[State 0, VarSet]
 ;type = VarSet
 ;v = 20
 ;triggerall = statetype != A
 ;triggerall = ((floor(var(1)/1000) = 22 && command = "hold_b" && !var(11))||command = "22b")||((floor(var(1)/1000) = 22 && command = "hold_c" && !var(12))||command = "22c")
-;trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+;trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 ;trigger2 = stateno = [200,699]
 ;trigger2 = MoveContact
 ;value = 1310
@@ -1308,16 +1313,17 @@ value = 1300
 type = ChangeState
 triggerall = statetype != A
 TriggerAll = var(6)%100 = 12 || var(6)%100 = 13
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = stateno = [200,699]
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 value = 1310
+ctrl = 0
 
 ;[State 0, VarSet]
 ;type = VarSet
 ;triggerall = statetype != A
 ;triggerall = (command = "hold_a" && !var(10))||command = "a"
-;trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+;trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 ;trigger2 = stateno = 200
 ;trigger2 = MoveContact
 ;v = 20
@@ -1328,35 +1334,38 @@ type = ChangeState
 triggerall = statetype != A
 triggerall = command = "a" || var(2)%10
 triggerall = command = "holddown"
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = stateno = 200 || stateno = 400
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 value = 400
+ctrl = 0
 
 [State 0, ChangeState]
 type = ChangeState
 triggerall = statetype != A
 triggerall = command = "a" || var(2)%10
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = stateno = 200 || stateno = 400
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 value = 200
+ctrl = 0
 
 [State 0, ChangeState]
 type = ChangeState
 triggerall = statetype = A
 triggerall = command = "a" || var(2)%10
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = stateno = 600
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 value = 600
+ctrl = 0
 
 ;[State 0, VarSet]
 ;type = VarSet
 ;v = 20
 ;triggerall = statetype != A
 ;triggerall = (command = "hold_b" && !var(11))||command = "b"
-;trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+;trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 ;trigger2 = stateno = 200
 ;trigger2 = MoveContact
 ;value = 210
@@ -1366,35 +1375,38 @@ type = ChangeState
 triggerall = statetype != A
 triggerall = command = "b" || floor(var(2)/10)%10
 triggerall = command = "holddown"
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = stateno = 200 || stateno = 400
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 value = 410
+ctrl = 0
 
 [State 0, ChangeState]
 type = ChangeState
 triggerall = statetype != A
 triggerall = command = "b" || floor(var(2)/10)%10
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = stateno = 200 || stateno = 400
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 value = 210
+ctrl = 0
 
 [State 0, ChangeState]
 type = ChangeState
 triggerall = statetype = A
 triggerall = command = "b" || floor(var(2)/10)%10
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = stateno = 600
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 value = 610
+ctrl = 0
 
 ;[State 0, VarSet]
 ;type = VarSet
 ;v = 20
 ;triggerall = statetype != A
 ;triggerall = (command = "hold_c" && !var(12))||command = "c"
-;trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+;trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 ;trigger2 = stateno = [200,219]
 ;trigger2 = MoveContact
 ;value = 220
@@ -1405,39 +1417,43 @@ triggerall = statetype != A
 triggerall = command = "c" || floor(var(2)/100)%10
 triggerall = command = "holdfwd"
 triggerall = command = "holddown"
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = stateno = [200,420]
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 value = 425
+ctrl = 0
 
 [State 0, ChangeState]
 type = ChangeState
 triggerall = statetype != A
 triggerall = command = "c" || floor(var(2)/100)%10
 triggerall = command = "holddown"
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = (stateno = [200,219]) || (stateno = [400,419])
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 value = 420
+ctrl = 0
 
 [State 0, ChangeState]
 type = ChangeState
 triggerall = statetype != A
 triggerall = command = "c" || floor(var(2)/100)%10
 triggerall = command = "holdfwd"
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = (stateno = [200,219]) || (stateno = [400,419])
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 value = 225
+ctrl = 0
 
 [State 0, ChangeState]
 type = ChangeState
 triggerall = statetype != A
 triggerall = command = "c" || floor(var(2)/100)%10
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = (stateno = [200,219]) || (stateno = [400,419])
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 value = 220
+ctrl = 0
 
 [State 0, VelSet]
 type = VelSet
@@ -1452,10 +1468,11 @@ y = -2.6
 type = ChangeState
 triggerall = statetype = A
 triggerall = command = "c" || floor(var(2)/100)%10
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 trigger2 = stateno = [600,619]
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 value = 620
+ctrl = 0
 
 ;[State 0, VarSet]
 ;type = VarSet
@@ -1463,7 +1480,7 @@ value = 620
 ;triggerall = !numhelper(910)
 ;triggerall = power > 0
 ;triggerall = command = "hold_z"
-;trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+;trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 ;value = 900
 
 [State 0, ChangeState]
@@ -1472,7 +1489,7 @@ triggerall = !AILevel
 triggerall = !numhelper(910)
 triggerall = power > 0
 triggerall = command = "hold_z"
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 value = 900
 
 ;[State 0, VarSet]
@@ -1481,7 +1498,7 @@ value = 900
 ;triggerall = statetype != A
 ;;triggerall = power < powermax
 ;triggerall = command = "hold_y"
-;trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time)
+;trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time)
 ;value = 970
 
 [State 0, ChangeState]
@@ -1490,10 +1507,11 @@ triggerall = statetype != A
 triggerall = command = "y" || floor(var(2)/1000)%10
 triggerall = command = "holdfwd" || command = "holdback"
 triggerall = fighting
-trigger1 = (ctrl && (fighting || roundstate > 2))
+trigger1 = (sysvar(4) && (fighting || roundstate > 2))
 trigger2 = (stateno = [200,699])
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 value = 800
+ctrl = 0
 
 [State 0, ChangeState]
 type = ChangeState
@@ -1504,11 +1522,12 @@ triggerall = command != "holdfwd"
 triggerall = command != "holdback"
 triggerall = fighting
 triggerall = !var(12)
-trigger1 = ctrl
+trigger1 = sysvar(4)
 trigger2 = (stateno = [200,699]) || stateno = 1200 || stateno = 1205 || stateno = 2200
 trigger2 = MoveHit || MoveGuarded || MoveClash || MoveClashed
 trigger3 = stateno = 970
 value = 930
+ctrl = 0
 
 [State 0, ChangeState]
 type = ChangeState
@@ -1519,14 +1538,16 @@ triggerall = command = "hold_y"
 triggerall = command != "holddown"
 triggerall = command != "holdfwd"
 triggerall = command != "holdback"
-trigger1 = ctrl && fighting
+triggerall = fighting
+trigger1 = sysvar(4)
 value = 970
+ctrl = 0
 
 ;[State 0, VarSet]
 ;type = VarSet
 ;v = 20
 ;triggerall = command = "hold_x" && !var(13)
-;trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time > 30)
+;trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time > 30)
 ;trigger2 = stateno = [200,699]
 ;trigger2 = MoveHit
 ;value = 760
@@ -1534,16 +1555,18 @@ value = 970
 [State 0, ChangeState]
 type = ChangeState
 triggerall = command = "start"
-trigger1 = (ctrl && (fighting || roundstate > 2))
+trigger1 = (sysvar(4) && (fighting || roundstate > 2))
 value = 700
+ctrl = 0
 
 [State 0, ChangeState]
 type = ChangeState
 triggerall = command = "hold_x" && !var(13)
-trigger1 = (ctrl && (fighting || roundstate > 2)) || (stateno = 760 && time > 30) || (stateno >= 150 && stateno <= 155 && hitshakeover)
+trigger1 = (sysvar(4) && (fighting || roundstate > 2)) || (stateno = 760 && time > 30) || (stateno >= 150 && stateno <= 155 && hitshakeover)
 trigger2 = stateno = [200,699]
 trigger2 = MoveHit || MoveClash || MoveClashed
 value = 760
+ctrl = 0
 
 ;[State 0, VarSet]
 ;type = VarSet
@@ -1552,12 +1575,12 @@ value = 760
 ;triggerall = floor(var(1)/1000) = 66
 ;triggerall = stateno != 100
 ;triggerall = stateno != 40
-;trigger1 = (ctrl && (fighting || roundstate > 2))
+;trigger1 = (sysvar(4) && (fighting || roundstate > 2))
 ;value = 100
 
 [State 0, ChangeState]
 type = ChangeState
-triggerall = ctrl
+triggerall = sysvar(4)
 triggerall = statetype != A
 triggerall = stateno != 100
 triggerall = stateno != 40
@@ -1570,7 +1593,7 @@ ctrl = 1
 
 [State 0, ChangeState]
 type = ChangeState
-triggerall = ctrl
+triggerall = sysvar(4)
 triggerall = statetype = A
 triggerall = stateno != 100
 triggerall = stateno != 40
@@ -1586,19 +1609,19 @@ ctrl = 1
 ;v = 20
 ;triggerall = statetype != A
 ;triggerall = floor(var(1)/1000) = 44
-;trigger1 = (ctrl && (fighting || roundstate > 2))
+;trigger1 = (sysvar(4) && (fighting || roundstate > 2))
 ;value = 105
 
 [State 0, ChangeState]
 type = Null;ChangeState
 triggerall = statetype != A
 triggerall = floor(var(3)/1000) = 44
-trigger1 = ctrl
+trigger1 = sysvar(4)
 value = 105
 ctrl = 1
 
 [State 0, ChangeState]
-type = ChangeState
+type = Null;ChangeState
 triggerall = stateno != 110
 triggerall = stateno != 100
 triggerall = palno != 12
@@ -1607,12 +1630,12 @@ triggerall = stateno != 131
 triggerall = command = "holdback"
 triggerall = command != "holddown"
 triggerall = command != "holdup"
-trigger1 = ctrl
+trigger1 = sysvar(4)
 trigger1 = StateType != A
 value = 130
 
 [State 0, ChangeState]
-type = ChangeState
+type = Null;ChangeState
 triggerall = stateno != 110
 triggerall = stateno != 100
 triggerall = palno != 12
@@ -1621,18 +1644,18 @@ triggerall = stateno != 131
 triggerall = command = "holdback"
 triggerall = command = "holddown"
 triggerall = command != "holdup"
-trigger1 = ctrl
+trigger1 = sysvar(4)
 trigger1 = StateType != A
 value = 131
 
 [State 0, ChangeState]
-type = ChangeState
+type = Null;ChangeState
 triggerall = stateno != 110
 triggerall = stateno != 100
 triggerall = palno != 12
 triggerall = stateno != 132
 triggerall = command = "holdback"
-trigger1 = ctrl
+trigger1 = sysvar(4)
 trigger1 = StateType = A
 value = 132
 
@@ -1712,6 +1735,40 @@ type = VarSet
 trigger1 = (movetype = H || stateowner != playerno) && time
 var(1) = 0
 
+[State 0, StateTypeSet]
+type = StateTypeSet
+triggerall = palno < 12
+triggerall = stateowner = playerno || ctrl
+triggerall = ctrl || (stateno = [0,155]) || (movetype = H && !hitfall && hitover)
+triggerall = statetype = C
+triggerall = command != "holddown"
+trigger1 = (command = "holdleft" && enemynear,pos X >= pos X) || (stateno = [120,155])
+trigger2 = (command = "holdright" && enemynear,pos X <= pos X) || (stateno = [120,155])
+statetype = S
+ignorehitpause = 1
+
+[State 0, StateTypeSet]
+type = StateTypeSet
+triggerall = palno < 12
+triggerall = stateowner = playerno || ctrl
+triggerall = ctrl || (stateno = [0,155]) || (movetype = H && !hitfall && hitover)
+triggerall = statetype = S
+triggerall = command = "holddown"
+trigger1 = (command = "holdleft" && enemynear,pos X >= pos X) || (stateno = [120,155])
+trigger2 = (command = "holdright" && enemynear,pos X <= pos X) || (stateno = [120,155])
+statetype = C
+ignorehitpause = 1
+
+[State 0, AssertSpecial]
+type = AssertSpecial
+triggerall = palno < 12
+triggerall = stateowner = playerno || ctrl
+triggerall = ctrl || (stateno = [0,155]) || (movetype = H && !hitfall && hitover)
+trigger1 = (command = "holdleft" && enemynear,pos X >= pos X) || (stateno = [120,155])
+trigger2 = (command = "holdright" && enemynear,pos X <= pos X) || (stateno = [120,155])
+flag = guard
+ignorehitpause = 1
+
 [State 0, DisplayToClipboard]
 type = DisplayToClipboard
 trigger1 = 1
@@ -1743,10 +1800,87 @@ var(1) = -1
 
 [State 0, VarAdd]
 type = VarAdd
-triggerall = !pause || sysvar(46)
+triggerall = (!pause || sysvar(46)) || (super && sysvar(47))
 triggerall = !super || sysvar(47)
 trigger1 = var(2) > 0
 var(2) = -(ifelse(var(2)%10,1,0)+ifelse(floor(var(2)/10)%10,10,0)+ifelse(floor(var(2)/100)%10,100,0)+ifelse(floor(var(2)/1000)%10,1000,0))
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+triggerall = !ctrlover
+triggerall = (!pause || sysvar(46)) || (super && sysvar(47))
+triggerall = !super || sysvar(47)
+triggerall = anim != 10
+triggerall = command = "holddown"
+trigger1 = stateno = 0
+trigger2 = stateno = 12
+trigger3 = stateno = 20
+trigger4 = stateno = 100
+trigger5 = stateno = 101
+trigger6 = stateno = 700
+trigger6 = stateowner = playerno
+trigger6 = time >= 51
+trigger7 = stateno = 130
+trigger8 = stateno = 10
+value = 10
+elem = 1
+
+[State 0, ChangeState]
+type = SelfState
+triggerall = !ctrlover
+triggerall = (!pause || sysvar(46)) || (super && sysvar(47))
+triggerall = !super || sysvar(47)
+triggerall = command = "holddown"
+trigger1 = stateno = 0
+trigger2 = stateno = 12
+trigger3 = stateno = 20
+trigger4 = stateno = 100
+trigger5 = stateno = 101
+trigger6 = stateno = 700
+trigger6 = stateowner = playerno
+trigger6 = time >= 51
+trigger7 = stateno = 130
+value = 10
+ctrl = 1
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+triggerall = !ctrlover
+triggerall = (!pause || sysvar(46)) || (super && sysvar(47))
+triggerall = !super || sysvar(47)
+triggerall = anim != 12
+triggerall = command != "holddown"
+trigger1 = stateno = 10
+trigger2 = stateno = 11
+trigger3 = stateno = 131
+trigger4 = stateno = 12
+value = 12
+elem = 1
+
+[State 0, ChangeState]
+type = SelfState
+triggerall = !ctrlover
+triggerall = (!pause || sysvar(46)) || (super && sysvar(47))
+triggerall = !super || sysvar(47)
+triggerall = command != "holddown"
+trigger1 = stateno = 10
+trigger2 = stateno = 11
+trigger3 = stateno = 131
+value = 12
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+triggerall = !ctrlover
+triggerall = (!pause || sysvar(46)) || (super && sysvar(47))
+triggerall = !super || sysvar(47)
+triggerall = palno < 12
+triggerall = stateowner = playerno && ctrl
+triggerall = stateno != [120,155]
+trigger1 = statetype = S && command = "holdleft" && command = "holdright" && inguarddist
+trigger2 = statetype = C && command = "holdback" && inguarddist
+value = ifelse(statetype = S,130,131)
+ctrl = 0
 
 ;---------------------------------------------------------------------------
 [Statedef -6]
@@ -1770,7 +1904,7 @@ ignorehitpause = 1
 [State 0, VarAdd]
 type = VarAdd
 triggerall = var(6) >= 100
-trigger1 = !pause || sysvar(46)
+trigger1 = (!pause || sysvar(46)) || (super && sysvar(47))
 trigger1 = !super || sysvar(47)
 trigger2 = super && sysvar(47)
 var(6) = -100

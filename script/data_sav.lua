@@ -18,4 +18,4 @@ data.contSelection = true
 data.aiRamping = true
 data.autoguard = false
 data.lifebar = 'data/gms_lifebar/fight.def'
-data.sffConversion = false
+data.sffConversion = true

@@ -4,10 +4,11 @@ data.includestage = 0
 --parse character data
 function f_parseChar(t, cel)
 	local line = ''
-	local displayname = getCharName(cel):gsub('^["%s]*(.-)["%s]*$', '%1')
 	local def = getCharFileName(cel)
+	local displayname = def:gsub('chars/[^/]+/', '')
 	if displayname ~= '' and def ~= 'randomselect' then
 		local dir = def:gsub('[^/]+%.def$', '')
+		displayname = displayname:gsub('%.def', '')
 		t['displayname'] = displayname
 		t['def'] = def
 		t['dir'] = dir
